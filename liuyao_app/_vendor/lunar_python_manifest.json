@@ -1,0 +1,93 @@
+{
+  "name": "lunar_python",
+  "version": "1.4.8",
+  "license": "MIT",
+  "source": "https://github.com/6tail/lunar-python",
+  "distribution_sha256": "3aa11cc73c25e70ddf0ba5bdac7398c03acc9491a3aa512a91c9642973b669d6",
+  "vendored_path": "liuyao_app/_vendor/lunar_python",
+  "distribution_url": "https://files.pythonhosted.org/packages/59/45/5154c95ae7feaab7ca508e71c3288692c09952dfe33b03b7c2f18a32e2cd/lunar_python-1.4.8.tar.gz",
+  "upstream_modifications": [],
+  "license_file": "lunar_python/LICENSE",
+  "purpose": "Calendar conversion only; bundled interpretation and fortune methods are not called.",
+  "calculation_policy": {
+    "policy_id": "beijing_standard_lichun_jie_midnight_late_zi",
+    "authority": "software_calendar_convention",
+    "timezone": "UTC+08:00",
+    "timezone_label": "北京时间（固定 UTC+08:00）",
+    "year_boundary": "lichun_exact_instant",
+    "month_boundary": "jie_exact_instant",
+    "day_boundary": "00:00:00",
+    "late_zi_hour": "23:00–23:59 日柱仍属当天，时柱用次日子时",
+    "hour_pillar_day_basis": "next_day_at_23_else_current_day",
+    "six_spirits_day_basis": "displayed_day_pillar",
+    "library_eight_char_sect": 2,
+    "true_solar_time": false,
+    "historical_daylight_saving": false,
+    "supported_beijing_years": [
+      1900,
+      2100
+    ],
+    "solar_term_precision": "library_computed_second"
+  },
+  "vendored_file_sha256": {
+    "EightChar.py": "d38241e75b693f25fc8c2a3e1587fd028a0a52cc504f9d5c7b47326eef051c0c",
+    "Foto.py": "94e3e72fb625f0e60a474d420f7ceb24bca8ee647243d7f1b20140b9238b2cf8",
+    "FotoFestival.py": "44d2d1853e47b5155b1090b832ecb60a446f64e4654b419f46f2be908ef03798",
+    "Fu.py": "ef61ccbfa86e7d2481dda0e0e3d413dc3ede1d3045518a45b71a00c4de518a54",
+    "Holiday.py": "109a40074b0dd53d50353157fb808e30565f9b8fde198eb79153e2110105a3f2",
+    "JieQi.py": "c4d760d317d09053b228dd851616ba68a5455482f206e08ac750ca6148daf459",
+    "LICENSE": "a9d04f47f0615c0ce48bdbe2ff58d5c174279d9f20f044ef29249632302a4ab3",
+    "Lunar.py": "489a1725a2ba443f9e8acf0534f05a0ee28c24f8904adb129c8a30daa3ed7079",
+    "LunarMonth.py": "4559d617666bb00ad8db1633bd59332242795b81bd049643a64cfe6aff47ab28",
+    "LunarTime.py": "63f073d30c524cc25abf8c58adcc02d6fe836eba1f450254c7f231fd8103f91a",
+    "LunarYear.py": "84308cf06c2e7666401676b58fdbc1a9a81491584b710cd9927fd5d2d579bbb5",
+    "NineStar.py": "b52c00d12d5c8080a27d9f34afba3a8e4e3c6e7941033fb55fb5a507ab5cd1ec",
+    "ShuJiu.py": "af852d2db583d0b08757ebdf39d1064a0e6101506e976f6d02ba32e4bdb5952a",
+    "Solar.py": "8fa3df760f59ea937dae7125d49406985df90d92178a0741d6d4c2ff85b26d5e",
+    "SolarHalfYear.py": "569c98ab78e137aebf431ca85512a2e2610c637d2d747ed9ffde707aeebfd3c3",
+    "SolarMonth.py": "f3957598018c35114099cd48030fa287c1767f69b63dd84c51dd999c5997827b",
+    "SolarSeason.py": "4fdaca631c3f28112e4d557f8ce88037b31c85fd257db5872f10aa5a68e38192",
+    "SolarWeek.py": "f90bc349f31d52bc25646957b443b8c9e41d68874b714d947915d1535588291b",
+    "SolarYear.py": "66e87edb42688fc805bcfe39bce4958fe810a76fed294aaa514402d6f6304a10",
+    "Tao.py": "bed11b1de9d83a4381029d3c7b57325eff7943a74fe52abf69255ba351044f37",
+    "TaoFestival.py": "d3fc8f576c74dc5e83b7233d20873f094b23e0f3e2a0680b54d4d54450e0f9ea",
+    "__init__.py": "fddc55f6b0bd5cc424f4d861d910fa938f94bd5c5761517672a279f32854f5c7",
+    "eightchar/DaYun.py": "039749b92900097bcfa40e8b67b44eca7b7b48ecb3af0ce1b8c554a762c82ce7",
+    "eightchar/LiuNian.py": "a069ceca115f0ddeba0b720bf3edf20c882aec88c25140478d4742218b26678b",
+    "eightchar/LiuYue.py": "4aa59e23263a1b3ac6979ff57a0abf4f15f3cb10976e6e1305308d0d3f8f0a46",
+    "eightchar/XiaoYun.py": "a1ea1352db91f967ca6b77ebf2827f789aeeb715cfdbe4664dfc8a1ee5009ffd",
+    "eightchar/Yun.py": "b532004acb38a3caa7f399e3a3d5269c586538f9acf95e526be8bbd2d31bf696",
+    "eightchar/__init__.py": "b2ea776642cb827d79ec1110cdfdcf8ad98eec63bc8f90a83ece496bb378cfbb",
+    "util/FotoUtil.py": "e07a7f395082e46c691bf6579a096b9b71755aee7152d98b3a89b7ca74323e74",
+    "util/HolidayUtil.py": "e62b6e8d796ac8df6a058788133f336f47cf320196f45ed03cc7e99ef86b6ae6",
+    "util/LunarUtil.py": "87a84818a3ddd10925cbb28ec04a048b27e1ac46f291ff4d9a861f15fb59aa00",
+    "util/ShouXingUtil.py": "5247110bf663bce23e9185cc9d4022950a9f7be5664a619286c1b657476ad9d6",
+    "util/SolarUtil.py": "bba034d893ef74e4f219452ed143302082532990b2aafc852f74c90bfb25a7a3",
+    "util/TaoUtil.py": "20ea01c41caa09affbaac0da793b88efb7e1cc4bb363aeb6d1edef2114493dee",
+    "util/__init__.py": "8beb7a058bcf5862b53441beb41855140e8ef4c914f59eef22cfb81f1f4ad8f2"
+  },
+  "upstream_test_sources": {
+    "EightCharTest.py": {
+      "url": "https://raw.githubusercontent.com/6tail/lunar-python/master/test/EightCharTest.py",
+      "sha256": "7bbebe669bd332175d05a038265f424403d16669900ca6fd9a55e8067620a5d4"
+    },
+    "JieQiTest.py": {
+      "url": "https://raw.githubusercontent.com/6tail/lunar-python/master/test/JieQiTest.py",
+      "sha256": "f553da9ac2033ce08c8b7d6c21ee966d9c3fa49f635b3e5e84ed88a9758c4a18"
+    },
+    "LunarTest.py": {
+      "url": "https://raw.githubusercontent.com/6tail/lunar-python/master/test/LunarTest.py",
+      "sha256": "b6709c6f19cf294ca7a221a5bad0506a4cee065624e165935208db4c28c9ddde"
+    }
+  },
+  "verification": {
+    "adapter_tests": 12,
+    "adapter_test_status": "passed",
+    "primary_fixture_files": [
+      "test_gan_zhi/test7/test10 and inverse dates in EightCharTest.py",
+      "test28/test29 in LunarTest.py",
+      "test7 in JieQiTest.py"
+    ],
+    "calendar_date_crosscheck": "https://www.hko.gov.hk/tc/gts/time/calendar/pdf/files/2024.pdf"
+  }
+}

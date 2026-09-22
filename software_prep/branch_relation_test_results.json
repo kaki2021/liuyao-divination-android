@@ -1,0 +1,204 @@
+{
+  "scope": "Deterministic mutual-form and mutual-harm pairs/categories and inclusive origin tracing only",
+  "tests_run": 31,
+  "passed": 31,
+  "failed": 0,
+  "tests": [
+    {
+      "test_id": "BR-ORIGIN-子",
+      "title": "子的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-子",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ORIGIN-丑",
+      "title": "丑的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-丑",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ORIGIN-寅",
+      "title": "寅的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-寅",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ORIGIN-卯",
+      "title": "卯的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-卯",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ORIGIN-辰",
+      "title": "辰的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-辰",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ORIGIN-巳",
+      "title": "巳的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-巳",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ORIGIN-午",
+      "title": "午的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-午",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ORIGIN-未",
+      "title": "未的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-未",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ORIGIN-申",
+      "title": "申的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-申",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ORIGIN-酉",
+      "title": "酉的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-酉",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ORIGIN-戌",
+      "title": "戌的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-戌",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ORIGIN-亥",
+      "title": "亥的十位形来源与阴阳计数",
+      "evidence": "test_branch_relations.py:BR-ORIGIN-亥",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-FORM-子卯",
+      "title": "子卯双向互形分类：无恩之形",
+      "evidence": "test_branch_relations.py:BR-FORM-子卯",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-FORM-寅巳",
+      "title": "寅巳双向互形分类：无恩之形",
+      "evidence": "test_branch_relations.py:BR-FORM-寅巳",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-FORM-申亥",
+      "title": "申亥双向互形分类：无恩之形",
+      "evidence": "test_branch_relations.py:BR-FORM-申亥",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-FORM-午酉",
+      "title": "午酉双向互形分类：恃势之形",
+      "evidence": "test_branch_relations.py:BR-FORM-午酉",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-FORM-丑戌",
+      "title": "丑戌双向互形分类：无礼之形",
+      "evidence": "test_branch_relations.py:BR-FORM-丑戌",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-FORM-辰未",
+      "title": "辰未双向互形分类：无礼之形",
+      "evidence": "test_branch_relations.py:BR-FORM-辰未",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-HARM-子未",
+      "title": "子未双向互害分类：害间",
+      "evidence": "test_branch_relations.py:BR-HARM-子未",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-HARM-卯辰",
+      "title": "卯辰双向互害分类：害间",
+      "evidence": "test_branch_relations.py:BR-HARM-卯辰",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-HARM-午丑",
+      "title": "午丑双向互害分类：恩间",
+      "evidence": "test_branch_relations.py:BR-HARM-午丑",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-HARM-寅巳",
+      "title": "寅巳双向互害分类：恩间",
+      "evidence": "test_branch_relations.py:BR-HARM-寅巳",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-HARM-申亥",
+      "title": "申亥双向互害分类：恩间",
+      "evidence": "test_branch_relations.py:BR-HARM-申亥",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-HARM-酉戌",
+      "title": "酉戌双向互害分类：恩间",
+      "evidence": "test_branch_relations.py:BR-HARM-酉戌",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-MATRIX",
+      "title": "全部144个有序地支对精确匹配，无增补自形或其他体系配对",
+      "evidence": "test_branch_relations.py:BR-MATRIX",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-COUNT",
+      "title": "含首尾共十位，阳顺阴逆求来源时正确逆解",
+      "evidence": "test_branch_relations.py:BR-COUNT",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-OVERLAP",
+      "title": "寅巳与申亥的互形和互害同时保留",
+      "evidence": "test_branch_relations.py:BR-OVERLAP",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-INVALID",
+      "title": "两个配对参数和来源参数均拒绝无效地支",
+      "evidence": "test_branch_relations.py:BR-INVALID",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-SOURCE",
+      "title": "来源页码规则标识正确，输出限定义无个案结论",
+      "evidence": "test_branch_relations.py:BR-SOURCE",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-ISOLATION",
+      "title": "返回值可JSON保存且修改一次结果不污染后续查表",
+      "evidence": "test_branch_relations.py:BR-ISOLATION",
+      "status": "passed"
+    },
+    {
+      "test_id": "BR-DIGEST",
+      "title": "模块摘要与实际实现文件一致",
+      "evidence": "test_branch_relations.py:BR-DIGEST",
+      "status": "passed"
+    }
+  ],
+  "source_id": "SRC-BSZS-SUPP",
+  "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+  "engine_build": "c0485f122523de2924bad8c113ec57894a6f64d9233e52fe9f003bd865a7f916",
+  "limits": [
+    "No predictive outcome verification",
+    "No inferred personal motive",
+    "No day/month applicability or combination-breaking direction",
+    "No global reverse five-element arithmetic",
+    "No chart/store/AI integration"
+  ]
+}

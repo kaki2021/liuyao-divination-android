@@ -1,0 +1,748 @@
+{
+  "purpose": "Generated definition references; no predictive interpretation",
+  "source": {
+    "source_id": "SRC-BSZS-SUPP",
+    "sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af"
+  },
+  "module_sha256": "c0485f122523de2924bad8c113ec57894a6f64d9233e52fe9f003bd865a7f916",
+  "branch_order": [
+    "子",
+    "丑",
+    "寅",
+    "卯",
+    "辰",
+    "巳",
+    "午",
+    "未",
+    "申",
+    "酉",
+    "戌",
+    "亥"
+  ],
+  "form_origins": [
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "子",
+      "branch_polarity": "yang",
+      "origin_branch": "卯",
+      "count_direction_from_origin": "forward",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "卯",
+        "辰",
+        "巳",
+        "午",
+        "未",
+        "申",
+        "酉",
+        "戌",
+        "亥",
+        "子"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          2
+        ],
+        "anchors": [
+          "PDF-P2"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    },
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "丑",
+      "branch_polarity": "yin",
+      "origin_branch": "戌",
+      "count_direction_from_origin": "reverse",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "戌",
+        "酉",
+        "申",
+        "未",
+        "午",
+        "巳",
+        "辰",
+        "卯",
+        "寅",
+        "丑"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    },
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "寅",
+      "branch_polarity": "yang",
+      "origin_branch": "巳",
+      "count_direction_from_origin": "forward",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "巳",
+        "午",
+        "未",
+        "申",
+        "酉",
+        "戌",
+        "亥",
+        "子",
+        "丑",
+        "寅"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          2
+        ],
+        "anchors": [
+          "PDF-P2"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    },
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "卯",
+      "branch_polarity": "yin",
+      "origin_branch": "子",
+      "count_direction_from_origin": "reverse",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "子",
+        "亥",
+        "戌",
+        "酉",
+        "申",
+        "未",
+        "午",
+        "巳",
+        "辰",
+        "卯"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    },
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "辰",
+      "branch_polarity": "yang",
+      "origin_branch": "未",
+      "count_direction_from_origin": "forward",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "未",
+        "申",
+        "酉",
+        "戌",
+        "亥",
+        "子",
+        "丑",
+        "寅",
+        "卯",
+        "辰"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          2
+        ],
+        "anchors": [
+          "PDF-P2"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    },
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "巳",
+      "branch_polarity": "yin",
+      "origin_branch": "寅",
+      "count_direction_from_origin": "reverse",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "寅",
+        "丑",
+        "子",
+        "亥",
+        "戌",
+        "酉",
+        "申",
+        "未",
+        "午",
+        "巳"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    },
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "午",
+      "branch_polarity": "yang",
+      "origin_branch": "酉",
+      "count_direction_from_origin": "forward",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "酉",
+        "戌",
+        "亥",
+        "子",
+        "丑",
+        "寅",
+        "卯",
+        "辰",
+        "巳",
+        "午"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          2
+        ],
+        "anchors": [
+          "PDF-P2"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    },
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "未",
+      "branch_polarity": "yin",
+      "origin_branch": "辰",
+      "count_direction_from_origin": "reverse",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "辰",
+        "卯",
+        "寅",
+        "丑",
+        "子",
+        "亥",
+        "戌",
+        "酉",
+        "申",
+        "未"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    },
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "申",
+      "branch_polarity": "yang",
+      "origin_branch": "亥",
+      "count_direction_from_origin": "forward",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "亥",
+        "子",
+        "丑",
+        "寅",
+        "卯",
+        "辰",
+        "巳",
+        "午",
+        "未",
+        "申"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          2
+        ],
+        "anchors": [
+          "PDF-P2"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    },
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "酉",
+      "branch_polarity": "yin",
+      "origin_branch": "午",
+      "count_direction_from_origin": "reverse",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "午",
+        "巳",
+        "辰",
+        "卯",
+        "寅",
+        "丑",
+        "子",
+        "亥",
+        "戌",
+        "酉"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    },
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "戌",
+      "branch_polarity": "yang",
+      "origin_branch": "丑",
+      "count_direction_from_origin": "forward",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "丑",
+        "寅",
+        "卯",
+        "辰",
+        "巳",
+        "午",
+        "未",
+        "申",
+        "酉",
+        "戌"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          2
+        ],
+        "anchors": [
+          "PDF-P2"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    },
+    {
+      "fact_type": "form_origin_definition",
+      "branch": "亥",
+      "branch_polarity": "yin",
+      "origin_branch": "申",
+      "count_direction_from_origin": "reverse",
+      "inclusive_count": 10,
+      "moves": 9,
+      "count_path": [
+        "申",
+        "未",
+        "午",
+        "巳",
+        "辰",
+        "卯",
+        "寅",
+        "丑",
+        "子",
+        "亥"
+      ],
+      "rule_id": "relation.three_forms_pairs",
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "origin_position_only"
+    }
+  ],
+  "mutual_form_pairs": [
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_form",
+      "label": "互形",
+      "pair": [
+        "子",
+        "卯"
+      ],
+      "symmetric": true,
+      "category_code": "wuen",
+      "category_label": "无恩之形",
+      "rule_ids": [
+        "relation.three_forms_pairs",
+        "relation.three_forms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    },
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_form",
+      "label": "互形",
+      "pair": [
+        "丑",
+        "戌"
+      ],
+      "symmetric": true,
+      "category_code": "wuli",
+      "category_label": "无礼之形",
+      "rule_ids": [
+        "relation.three_forms_pairs",
+        "relation.three_forms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    },
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_form",
+      "label": "互形",
+      "pair": [
+        "寅",
+        "巳"
+      ],
+      "symmetric": true,
+      "category_code": "wuen",
+      "category_label": "无恩之形",
+      "rule_ids": [
+        "relation.three_forms_pairs",
+        "relation.three_forms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    },
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_form",
+      "label": "互形",
+      "pair": [
+        "辰",
+        "未"
+      ],
+      "symmetric": true,
+      "category_code": "wuli",
+      "category_label": "无礼之形",
+      "rule_ids": [
+        "relation.three_forms_pairs",
+        "relation.three_forms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    },
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_form",
+      "label": "互形",
+      "pair": [
+        "午",
+        "酉"
+      ],
+      "symmetric": true,
+      "category_code": "shishi",
+      "category_label": "恃势之形",
+      "rule_ids": [
+        "relation.three_forms_pairs",
+        "relation.three_forms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    },
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_form",
+      "label": "互形",
+      "pair": [
+        "申",
+        "亥"
+      ],
+      "symmetric": true,
+      "category_code": "wuen",
+      "category_label": "无恩之形",
+      "rule_ids": [
+        "relation.three_forms_pairs",
+        "relation.three_forms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          3
+        ],
+        "anchors": [
+          "PDF-P3"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    }
+  ],
+  "mutual_harm_pairs": [
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_harm",
+      "label": "互害",
+      "pair": [
+        "子",
+        "未"
+      ],
+      "symmetric": true,
+      "category_code": "haijian",
+      "category_label": "害间",
+      "rule_ids": [
+        "relation.six_harms_pairs",
+        "relation.six_harms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          4
+        ],
+        "anchors": [
+          "PDF-P4"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    },
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_harm",
+      "label": "互害",
+      "pair": [
+        "丑",
+        "午"
+      ],
+      "symmetric": true,
+      "category_code": "enjian",
+      "category_label": "恩间",
+      "rule_ids": [
+        "relation.six_harms_pairs",
+        "relation.six_harms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          4
+        ],
+        "anchors": [
+          "PDF-P4"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    },
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_harm",
+      "label": "互害",
+      "pair": [
+        "寅",
+        "巳"
+      ],
+      "symmetric": true,
+      "category_code": "enjian",
+      "category_label": "恩间",
+      "rule_ids": [
+        "relation.six_harms_pairs",
+        "relation.six_harms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          4
+        ],
+        "anchors": [
+          "PDF-P4"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    },
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_harm",
+      "label": "互害",
+      "pair": [
+        "卯",
+        "辰"
+      ],
+      "symmetric": true,
+      "category_code": "haijian",
+      "category_label": "害间",
+      "rule_ids": [
+        "relation.six_harms_pairs",
+        "relation.six_harms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          4
+        ],
+        "anchors": [
+          "PDF-P4"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    },
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_harm",
+      "label": "互害",
+      "pair": [
+        "申",
+        "亥"
+      ],
+      "symmetric": true,
+      "category_code": "enjian",
+      "category_label": "恩间",
+      "rule_ids": [
+        "relation.six_harms_pairs",
+        "relation.six_harms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          4
+        ],
+        "anchors": [
+          "PDF-P4"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    },
+    {
+      "fact_type": "relation_definition",
+      "relation_type": "mutual_harm",
+      "label": "互害",
+      "pair": [
+        "酉",
+        "戌"
+      ],
+      "symmetric": true,
+      "category_code": "enjian",
+      "category_label": "恩间",
+      "rule_ids": [
+        "relation.six_harms_pairs",
+        "relation.six_harms_categories"
+      ],
+      "source": {
+        "source_id": "SRC-BSZS-SUPP",
+        "source_sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+        "pdf_pages": [
+          4
+        ],
+        "anchors": [
+          "PDF-P4"
+        ]
+      },
+      "semantic_scope": "pair_and_category_only"
+    }
+  ]
+}

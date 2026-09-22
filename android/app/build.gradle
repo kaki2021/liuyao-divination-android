@@ -1,0 +1,32 @@
+plugins { id 'com.android.application'; id 'com.chaquo.python' }
+
+def separateInstall = providers.gradleProperty('separateInstall').orNull == 'true'
+
+android {
+    namespace 'cn.guanxiang.liuyao'
+    compileSdk 35
+    defaultConfig {
+        applicationId separateInstall ? 'cn.guanxiang.liuyao.study' : 'cn.guanxiang.liuyao'
+        manifestPlaceholders = [appLabel: separateInstall ? '观象研习' : '六爻占问']
+        minSdk 26
+        targetSdk 35
+        versionCode 6
+        versionName '1.0'
+        ndk { abiFilters 'arm64-v8a', 'x86_64' }
+        buildConfigField 'String', 'CONTENT_DIGEST', '"' + file('src/main/assets/content.sha256').text.trim() + '"'
+    }
+    buildFeatures { buildConfig true }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    signingConfigs {
+        release {
+            if (System.getenv('LIUYAO_KEYSTORE')) {
+                storeFile file(System.getenv('LIUYAO_KEYSTORE'))
+                storePassword System.getenv('LIUYAO_STORE_PASSWORD')
+                keyAlias System.getenv('LIUYAO_KEY_ALIAS') ?: 'liuyao'
+                keyPassword System.getenv('LIUYAO_KEY_PASSWORD') ?: System.getenv('LIUYAO_STORE_PASSWORD')
+            }
+        }
+    }
+    buildTypes { release { minifyEnabled false; signingConfig signingConfigs.release } }
+}
+chaquopy { defaultConfig { version '3.12'; pyc { src false } } }

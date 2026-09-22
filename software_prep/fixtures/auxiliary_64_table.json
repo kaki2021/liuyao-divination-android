@@ -1,0 +1,4047 @@
+{
+  "source_id": "SRC-ZYLYBG",
+  "source_sha256": "642705abcbd16fe433fe62c73c4ec321c305dc5962dc105bfc8fd43e02cb5c2f",
+  "source_role": "personal_auxiliary_reference",
+  "checked_fields": [
+    "64 unique names and 64 distinct six-line patterns",
+    "8 palaces x 8",
+    "all 384 branch elements and ordinary-mode six relatives",
+    "all 384 line symbols against named upper/lower trigrams",
+    "all 384 branches against core pure-trigram half-table method",
+    "all 64 palace sequences and all 128 世/应 markers"
+  ],
+  "records": [
+    {
+      "name": "乾为天",
+      "palace": "乾",
+      "palace_element": "土",
+      "palace_index": 0,
+      "location": "Table 1, row 2, columns 1-3",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "父母",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "天风姤",
+      "palace": "乾",
+      "palace_element": "土",
+      "palace_index": 1,
+      "location": "Table 1, row 2, columns 4-6",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "天山遁",
+      "palace": "乾",
+      "palace_element": "土",
+      "palace_index": 2,
+      "location": "Table 1, row 2, columns 7-9",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "父母",
+          "position": "世",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "父母",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "子孙",
+          "position": "应",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "天地否",
+      "palace": "乾",
+      "palace_element": "土",
+      "palace_index": 3,
+      "location": "Table 1, row 2, columns 10-12",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "巳",
+          "element": "火",
+          "relative": "父母",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "卯",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "世",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "父母",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "风地观",
+      "palace": "乾",
+      "palace_element": "土",
+      "palace_index": 4,
+      "location": "Table 1, row 9, columns 1-3",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "巳",
+          "element": "火",
+          "relative": "父母",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "卯",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "父母",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "山地剥",
+      "palace": "乾",
+      "palace_element": "土",
+      "palace_index": 5,
+      "location": "Table 1, row 9, columns 4-6",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "巳",
+          "element": "火",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "卯",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "火地晋",
+      "palace": "乾",
+      "palace_element": "土",
+      "palace_index": 6,
+      "location": "Table 1, row 9, columns 7-9",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "巳",
+          "element": "火",
+          "relative": "父母",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "卯",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "子孙",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "父母",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "火天大有",
+      "palace": "乾",
+      "palace_element": "土",
+      "palace_index": 7,
+      "location": "Table 1, row 9, columns 10-12",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "兑为泽",
+      "palace": "兑",
+      "palace_element": "金",
+      "palace_index": 0,
+      "location": "Table 1, row 2, columns 13-15",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "父母",
+          "position": "世",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "泽水困",
+      "palace": "兑",
+      "palace_element": "金",
+      "palace_index": 1,
+      "location": "Table 1, row 2, columns 16-18",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "子孙",
+          "position": "应",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "泽地萃",
+      "palace": "兑",
+      "palace_element": "金",
+      "palace_index": 2,
+      "location": "Table 1, row 2, columns 19-21",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "巳",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "世",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "卯",
+          "element": "木",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "泽山咸",
+      "palace": "兑",
+      "palace_element": "金",
+      "palace_index": 3,
+      "location": "Table 1, row 2, columns 22-24",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "水山蹇",
+      "palace": "兑",
+      "palace_element": "金",
+      "palace_index": 4,
+      "location": "Table 1, row 9, columns 13-15",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "地山谦",
+      "palace": "兑",
+      "palace_element": "金",
+      "palace_index": 5,
+      "location": "Table 1, row 9, columns 16-18",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "应",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "亥",
+          "element": "水",
+          "relative": "子孙",
+          "position": "世",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "酉",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "雷山小过",
+      "palace": "兑",
+      "palace_element": "金",
+      "palace_index": 6,
+      "location": "Table 1, row 9, columns 19-21",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "雷泽归妹",
+      "palace": "兑",
+      "palace_element": "金",
+      "palace_index": 7,
+      "location": "Table 1, row 9, columns 22-24",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "父母",
+          "position": "世",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "离为火",
+      "palace": "离",
+      "palace_element": "火",
+      "palace_index": 0,
+      "location": "Table 2, row 2, columns 1-3",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "父母",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "官鬼",
+          "position": "应",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "火山旅",
+      "palace": "离",
+      "palace_element": "火",
+      "palace_index": 1,
+      "location": "Table 2, row 2, columns 4-6",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "子孙",
+          "position": "世",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "火风鼎",
+      "palace": "离",
+      "palace_element": "火",
+      "palace_index": 2,
+      "location": "Table 2, row 2, columns 7-9",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "官鬼",
+          "position": "世",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "子孙",
+          "position": "应",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "火水未济",
+      "palace": "离",
+      "palace_element": "火",
+      "palace_index": 3,
+      "location": "Table 2, row 2, columns 10-12",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "父母",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "山水蒙",
+      "palace": "离",
+      "palace_element": "火",
+      "palace_index": 4,
+      "location": "Table 2, row 9, columns 1-3",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "子孙",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "父母",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "风水涣",
+      "palace": "离",
+      "palace_element": "火",
+      "palace_index": 5,
+      "location": "Table 2, row 9, columns 4-6",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "父母",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "子孙",
+          "position": "应",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "父母",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "天水讼",
+      "palace": "离",
+      "palace_element": "火",
+      "palace_index": 6,
+      "location": "Table 2, row 9, columns 7-9",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "天火同人",
+      "palace": "离",
+      "palace_element": "火",
+      "palace_index": 7,
+      "location": "Table 2, row 9, columns 10-12",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "父母",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "官鬼",
+          "position": "世",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "子孙",
+          "position": "应",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "震为雷",
+      "palace": "震",
+      "palace_element": "木",
+      "palace_index": 0,
+      "location": "Table 2, row 2, columns 13-15",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "雷地豫",
+      "palace": "震",
+      "palace_element": "木",
+      "palace_index": 1,
+      "location": "Table 2, row 2, columns 16-18",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "巳",
+          "element": "火",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "卯",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "子孙",
+          "position": "应",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "雷水解",
+      "palace": "震",
+      "palace_element": "木",
+      "palace_index": 2,
+      "location": "Table 2, row 2, columns 19-21",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "应",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "雷风恒",
+      "palace": "震",
+      "palace_element": "木",
+      "palace_index": 3,
+      "location": "Table 2, row 2, columns 22-24",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "世",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "地风升",
+      "palace": "震",
+      "palace_element": "木",
+      "palace_index": 4,
+      "location": "Table 2, row 9, columns 13-15",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "亥",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "酉",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "水风井",
+      "palace": "震",
+      "palace_element": "木",
+      "palace_index": 5,
+      "location": "Table 2, row 9, columns 16-18",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "泽风大过",
+      "palace": "震",
+      "palace_element": "木",
+      "palace_index": 6,
+      "location": "Table 2, row 9, columns 19-21",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "父母",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "泽雷随",
+      "palace": "震",
+      "palace_element": "木",
+      "palace_index": 7,
+      "location": "Table 2, row 9, columns 22-24",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "巽为风",
+      "palace": "巽",
+      "palace_element": "木",
+      "palace_index": 0,
+      "location": "Table 2, row 17, columns 1-3",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 23
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 22
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "应",
+          "source_row": 21
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 20
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 19
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 18
+        }
+      ]
+    },
+    {
+      "name": "风天小畜",
+      "palace": "巽",
+      "palace_element": "木",
+      "palace_index": 1,
+      "location": "Table 2, row 17, columns 4-6",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "父母",
+          "position": "世",
+          "source_row": 23
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 22
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 21
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 20
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 19
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 18
+        }
+      ]
+    },
+    {
+      "name": "风火家人",
+      "palace": "巽",
+      "palace_element": "木",
+      "palace_index": 2,
+      "location": "Table 2, row 17, columns 7-9",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 23
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 22
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 21
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 20
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "子孙",
+          "position": "应",
+          "source_row": 19
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 18
+        }
+      ]
+    },
+    {
+      "name": "风雷益",
+      "palace": "巽",
+      "palace_element": "木",
+      "palace_index": 3,
+      "location": "Table 2, row 17, columns 10-12",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 23
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 22
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 21
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 20
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 19
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 18
+        }
+      ]
+    },
+    {
+      "name": "天雷无妄",
+      "palace": "巽",
+      "palace_element": "木",
+      "palace_index": 4,
+      "location": "Table 2, row 24, columns 1-3",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 30
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 29
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 28
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "子孙",
+          "position": "世",
+          "source_row": 27
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 26
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 25
+        }
+      ]
+    },
+    {
+      "name": "火雷噬嗑",
+      "palace": "巽",
+      "palace_element": "木",
+      "palace_index": 5,
+      "location": "Table 2, row 24, columns 4-6",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 30
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 29
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 28
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 27
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 26
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 25
+        }
+      ]
+    },
+    {
+      "name": "山雷颐",
+      "palace": "巽",
+      "palace_element": "木",
+      "palace_index": 6,
+      "location": "Table 2, row 24, columns 7-9",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 30
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 29
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 28
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 27
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 26
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 25
+        }
+      ]
+    },
+    {
+      "name": "山风蛊",
+      "palace": "巽",
+      "palace_element": "木",
+      "palace_index": 7,
+      "location": "Table 2, row 24, columns 10-12",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 30
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 29
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "官鬼",
+          "position": "世",
+          "source_row": 28
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 27
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "父母",
+          "position": "",
+          "source_row": 26
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 25
+        }
+      ]
+    },
+    {
+      "name": "坎为水",
+      "palace": "坎",
+      "palace_element": "水",
+      "palace_index": 0,
+      "location": "Table 2, row 17, columns 13-15",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 23
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 22
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 21
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "父母",
+          "position": "",
+          "source_row": 20
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 19
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 18
+        }
+      ]
+    },
+    {
+      "name": "水泽节",
+      "palace": "坎",
+      "palace_element": "水",
+      "palace_index": 1,
+      "location": "Table 2, row 17, columns 16-18",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 23
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 22
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 21
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 20
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 19
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 18
+        }
+      ]
+    },
+    {
+      "name": "水雷屯",
+      "palace": "坎",
+      "palace_element": "水",
+      "palace_index": 2,
+      "location": "Table 2, row 17, columns 19-21",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 23
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "子孙",
+          "position": "世",
+          "source_row": 22
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 21
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "父母",
+          "position": "",
+          "source_row": 20
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "应",
+          "source_row": 19
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 18
+        }
+      ]
+    },
+    {
+      "name": "水火既济",
+      "palace": "坎",
+      "palace_element": "水",
+      "palace_index": 3,
+      "location": "Table 2, row 17, columns 22-24",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 23
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 22
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 21
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "父母",
+          "position": "",
+          "source_row": 20
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 19
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 18
+        }
+      ]
+    },
+    {
+      "name": "泽火革",
+      "palace": "坎",
+      "palace_element": "水",
+      "palace_index": 4,
+      "location": "Table 2, row 24, columns 13-15",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "子孙",
+          "position": "应",
+          "source_row": 30
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 29
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 28
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 27
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "父母",
+          "position": "",
+          "source_row": 26
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 25
+        }
+      ]
+    },
+    {
+      "name": "雷火丰",
+      "palace": "坎",
+      "palace_element": "水",
+      "palace_index": 5,
+      "location": "Table 2, row 24, columns 16-18",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 30
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "应",
+          "source_row": 29
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 28
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 27
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "父母",
+          "position": "世",
+          "source_row": 26
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 25
+        }
+      ]
+    },
+    {
+      "name": "地火明夷",
+      "palace": "坎",
+      "palace_element": "水",
+      "palace_index": 6,
+      "location": "Table 2, row 24, columns 19-21",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "子孙",
+          "position": "应",
+          "source_row": 30
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 29
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 28
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "世",
+          "source_row": 27
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "亥",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 26
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "酉",
+          "element": "金",
+          "relative": "父母",
+          "position": "",
+          "source_row": 25
+        }
+      ]
+    },
+    {
+      "name": "地水师",
+      "palace": "坎",
+      "palace_element": "水",
+      "palace_index": 7,
+      "location": "Table 2, row 24, columns 22-24",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 30
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 29
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 28
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 27
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "亥",
+          "element": "水",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 26
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "酉",
+          "element": "金",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 25
+        }
+      ]
+    },
+    {
+      "name": "艮为山",
+      "palace": "艮",
+      "palace_element": "金",
+      "palace_index": 0,
+      "location": "Table 3, row 2, columns 1-3",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "山火贲",
+      "palace": "艮",
+      "palace_element": "金",
+      "palace_index": 1,
+      "location": "Table 3, row 2, columns 4-6",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "父母",
+          "position": "应",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "山天大畜",
+      "palace": "艮",
+      "palace_element": "金",
+      "palace_index": 2,
+      "location": "Table 3, row 2, columns 7-9",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "子孙",
+          "position": "应",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "山泽损",
+      "palace": "艮",
+      "palace_element": "金",
+      "palace_index": 3,
+      "location": "Table 3, row 2, columns 10-12",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "父母",
+          "position": "世",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "火泽睽",
+      "palace": "艮",
+      "palace_element": "金",
+      "palace_index": 4,
+      "location": "Table 3, row 9, columns 1-3",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "天泽履",
+      "palace": "艮",
+      "palace_element": "金",
+      "palace_index": 5,
+      "location": "Table 3, row 9, columns 4-6",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "风泽中孚",
+      "palace": "艮",
+      "palace_element": "金",
+      "palace_index": 6,
+      "location": "Table 3, row 9, columns 7-9",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "父母",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "风山渐",
+      "palace": "艮",
+      "palace_element": "金",
+      "palace_index": 7,
+      "location": "Table 3, row 9, columns 10-12",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "午",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "申",
+          "element": "金",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "父母",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "坤为地",
+      "palace": "坤",
+      "palace_element": "土",
+      "palace_index": 0,
+      "location": "Table 3, row 2, columns 13-15",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "巳",
+          "element": "火",
+          "relative": "父母",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "卯",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "应",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "亥",
+          "element": "水",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "酉",
+          "element": "金",
+          "relative": "子孙",
+          "position": "世",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "地雷复",
+      "palace": "坤",
+      "palace_element": "土",
+      "palace_index": 1,
+      "location": "Table 3, row 2, columns 16-18",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "妻财",
+          "position": "世",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "寅",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "辰",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "应",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "亥",
+          "element": "水",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "酉",
+          "element": "金",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "地泽临",
+      "palace": "坤",
+      "palace_element": "土",
+      "palace_index": 2,
+      "location": "Table 3, row 2, columns 19-21",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "巳",
+          "element": "火",
+          "relative": "父母",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "卯",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "世",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "亥",
+          "element": "水",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "酉",
+          "element": "金",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "地天泰",
+      "palace": "坤",
+      "palace_element": "土",
+      "palace_index": 3,
+      "location": "Table 3, row 2, columns 22-24",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 8
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 7
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "世",
+          "source_row": 6
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "丑",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 5
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "亥",
+          "element": "水",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 4
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "酉",
+          "element": "金",
+          "relative": "子孙",
+          "position": "应",
+          "source_row": 3
+        }
+      ]
+    },
+    {
+      "name": "雷天大壮",
+      "palace": "坤",
+      "palace_element": "土",
+      "palace_index": 4,
+      "location": "Table 3, row 9, columns 13-15",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "午",
+          "element": "火",
+          "relative": "父母",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "戌",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "泽天夬",
+      "palace": "坤",
+      "palace_element": "土",
+      "palace_index": 5,
+      "location": "Table 3, row 9, columns 16-18",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "应",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 1,
+          "branch": "亥",
+          "element": "水",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "酉",
+          "element": "金",
+          "relative": "子孙",
+          "position": "世",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "水天需",
+      "palace": "坤",
+      "palace_element": "土",
+      "palace_index": 6,
+      "location": "Table 3, row 9, columns 19-21",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 1,
+          "branch": "子",
+          "element": "水",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 1,
+          "branch": "寅",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 1,
+          "branch": "辰",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "子孙",
+          "position": "世",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "妻财",
+          "position": "",
+          "source_row": 10
+        }
+      ]
+    },
+    {
+      "name": "水地比",
+      "palace": "坤",
+      "palace_element": "土",
+      "palace_index": 7,
+      "location": "Table 3, row 9, columns 22-24",
+      "lines": [
+        {
+          "line_index": 1,
+          "yin_yang": 0,
+          "branch": "未",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 15
+        },
+        {
+          "line_index": 2,
+          "yin_yang": 0,
+          "branch": "巳",
+          "element": "火",
+          "relative": "父母",
+          "position": "",
+          "source_row": 14
+        },
+        {
+          "line_index": 3,
+          "yin_yang": 0,
+          "branch": "卯",
+          "element": "木",
+          "relative": "官鬼",
+          "position": "世",
+          "source_row": 13
+        },
+        {
+          "line_index": 4,
+          "yin_yang": 0,
+          "branch": "申",
+          "element": "金",
+          "relative": "子孙",
+          "position": "",
+          "source_row": 12
+        },
+        {
+          "line_index": 5,
+          "yin_yang": 1,
+          "branch": "戌",
+          "element": "土",
+          "relative": "兄弟",
+          "position": "",
+          "source_row": 11
+        },
+        {
+          "line_index": 6,
+          "yin_yang": 0,
+          "branch": "子",
+          "element": "水",
+          "relative": "妻财",
+          "position": "应",
+          "source_row": 10
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "scope": "SQLite service accumulation and minimal input checks; no app/API/auth-provider/model/outcome-accuracy validation",
+  "tests_run": 21,
+  "passed": 21,
+  "failed": 0,
+  "tests": [
+    {
+      "test_id": "test_01_minimal_entry_and_line_transform",
+      "title": "CASE-01 两字段入口可创建，第三四爻动变正确",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_01_minimal_entry_and_line_transform"
+    },
+    {
+      "test_id": "test_02_unknown_cast_time_not_recorded_time",
+      "title": "CASE-02 录入时间来自服务器，实际时间未知保持空",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_02_unknown_cast_time_not_recorded_time"
+    },
+    {
+      "test_id": "test_03_known_time_provenance",
+      "title": "CASE-03 已知起卦时间与录入时间分别保存",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_03_known_time_provenance"
+    },
+    {
+      "test_id": "test_04_intake_failure_auto_retained_without_unrelated_values",
+      "title": "CASE-04 无效请求也留服务错误，剔除额外字段值",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_04_intake_failure_auto_retained_without_unrelated_values"
+    },
+    {
+      "test_id": "test_05_input_rejects_metadata_and_missing_movement",
+      "title": "CASE-05 卦名和仅阴阳不可代替四象，客户端不写元数据",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_05_input_rejects_metadata_and_missing_movement"
+    },
+    {
+      "test_id": "test_06_create_idempotency_and_conflict",
+      "title": "CASE-06 相同幂等键重试不重复，不同内容冲突",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_06_create_idempotency_and_conflict"
+    },
+    {
+      "test_id": "test_07_owner_boundary",
+      "title": "CASE-07 不同owner不能读、改或追加他人案例",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_07_owner_boundary"
+    },
+    {
+      "test_id": "test_08_question_correction_preserves_original_and_run_snapshot",
+      "title": "CASE-08 改题追加revision，原问题和旧运行快照不变",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_08_question_correction_preserves_original_and_run_snapshot"
+    },
+    {
+      "test_id": "test_09_context_snapshot_not_retroactively_changed",
+      "title": "CASE-09 澄清和背景追加后仅新运行取得新事实",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_09_context_snapshot_not_retroactively_changed"
+    },
+    {
+      "test_id": "test_10_ai_failures_and_adopted_output_retained",
+      "title": "CASE-10 无效AI输出与有效采纳输出均累计保留",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_10_ai_failures_and_adopted_output_retained"
+    },
+    {
+      "test_id": "test_11_partial_unresolved_failed_are_terminal_records",
+      "title": "CASE-11 部分、未决、失败均生成终态记录而非遗漏",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_11_partial_unresolved_failed_are_terminal_records"
+    },
+    {
+      "test_id": "test_12_report_snapshot_and_feedback_do_not_overwrite",
+      "title": "CASE-12 结果反馈追加，原报告及当时依据不被覆盖",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_12_report_snapshot_and_feedback_do_not_overwrite"
+    },
+    {
+      "test_id": "test_13_feedback_corrections_and_verification",
+      "title": "CASE-13 反馈更正保留旧记录，发生时间与核实程度分别保存",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_13_feedback_corrections_and_verification"
+    },
+    {
+      "test_id": "test_14_no_feedback_is_not_failure_or_success",
+      "title": "CASE-14 无反馈不会产生结果标签或准确率",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_14_no_feedback_is_not_failure_or_success"
+    },
+    {
+      "test_id": "test_15_cross_case_run_and_feedback_references_rejected",
+      "title": "CASE-15 同一owner也不能把运行或反馈跨案例错接",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_15_cross_case_run_and_feedback_references_rejected"
+    },
+    {
+      "test_id": "test_16_sql_history_update_and_delete_blocked",
+      "title": "CASE-16 基础数据库阻止意外覆盖和直接删除历史",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_16_sql_history_update_and_delete_blocked"
+    },
+    {
+      "test_id": "test_17_failed_write_rolls_back",
+      "title": "CASE-17 越权写入失败后事务回滚，不污染正常重试",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_17_failed_write_rolls_back"
+    },
+    {
+      "test_id": "test_18_private_service_archive_not_training_or_public",
+      "title": "CASE-18 服务记录自动积累但公开和训练用途默认关闭",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_18_private_service_archive_not_training_or_public"
+    },
+    {
+      "test_id": "test_19_digests_and_expected_revision_required_context",
+      "title": "CASE-19 溯源摘要保留，过期revision不生成新解读",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_19_digests_and_expected_revision_required_context"
+    },
+    {
+      "test_id": "test_20_feedback_retry_is_idempotent",
+      "title": "CASE-20 重复回传同一反馈不会重复计案例数据",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_20_feedback_retry_is_idempotent"
+    },
+    {
+      "test_id": "test_21_partial_date_remains_date_fact",
+      "title": "CASE-21 只知日期作为相关事实保存，不伪造午夜",
+      "status": "passed",
+      "evidence": "test_case_store.py:test_21_partial_date_remains_date_fact"
+    }
+  ]
+}

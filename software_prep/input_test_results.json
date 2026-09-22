@@ -1,0 +1,209 @@
+{
+  "scope": "Current input validation and four-state conversion; no model or prediction validation",
+  "tests_run": 19,
+  "passed": 19,
+  "failed": 0,
+  "tests": [
+    {
+      "test_id": "INPUT-01",
+      "title": "问题与六项四象即可接受",
+      "status": "passed",
+      "expected_valid": true,
+      "actual_valid": true,
+      "evidence": "test_input.py:INPUT-01",
+      "error_codes": []
+    },
+    {
+      "test_id": "INPUT-02",
+      "title": "已知实际起卦时间可选附加",
+      "status": "passed",
+      "expected_valid": true,
+      "actual_valid": true,
+      "evidence": "test_input.py:INPUT-02",
+      "error_codes": []
+    },
+    {
+      "test_id": "INPUT-03",
+      "title": "实际时间未知可显式null",
+      "status": "passed",
+      "expected_valid": true,
+      "actual_valid": true,
+      "evidence": "test_input.py:INPUT-03",
+      "error_codes": []
+    },
+    {
+      "test_id": "INPUT-04",
+      "title": "六爻全同合法，不误判重复",
+      "status": "passed",
+      "expected_valid": true,
+      "actual_valid": true,
+      "evidence": "test_input.py:INPUT-04",
+      "error_codes": []
+    },
+    {
+      "test_id": "INPUT-05",
+      "title": "五项四象应拒绝",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-05",
+      "error_codes": [
+        "SIX_LINES_REQUIRED"
+      ]
+    },
+    {
+      "test_id": "INPUT-06",
+      "title": "七项四象应拒绝",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-06",
+      "error_codes": [
+        "SIX_LINES_REQUIRED"
+      ]
+    },
+    {
+      "test_id": "INPUT-07",
+      "title": "卦名不能代替六项四象",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-07",
+      "error_codes": [
+        "SIX_LINES_REQUIRED"
+      ]
+    },
+    {
+      "test_id": "INPUT-08",
+      "title": "仅阴阳不能保存动静",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-08",
+      "error_codes": [
+        "INVALID_FOUR_STATE",
+        "INVALID_FOUR_STATE",
+        "INVALID_FOUR_STATE",
+        "INVALID_FOUR_STATE",
+        "INVALID_FOUR_STATE",
+        "INVALID_FOUR_STATE"
+      ]
+    },
+    {
+      "test_id": "INPUT-09",
+      "title": "布尔值不是四象枚举",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-09",
+      "error_codes": [
+        "INVALID_FOUR_STATE"
+      ]
+    },
+    {
+      "test_id": "INPUT-10",
+      "title": "空白问题应拒绝",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-10",
+      "error_codes": [
+        "INVALID_QUESTION"
+      ]
+    },
+    {
+      "test_id": "INPUT-11",
+      "title": "年龄不成为通用入口字段",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-11",
+      "error_codes": [
+        "UNEXPECTED_FIELD"
+      ]
+    },
+    {
+      "test_id": "INPUT-12",
+      "title": "入口不接收三丸原始值",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-12",
+      "error_codes": [
+        "UNEXPECTED_FIELD"
+      ]
+    },
+    {
+      "test_id": "INPUT-13",
+      "title": "起卦方法不成为输入字段",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-13",
+      "error_codes": [
+        "UNEXPECTED_FIELD"
+      ]
+    },
+    {
+      "test_id": "INPUT-14",
+      "title": "登记时间由服务器生成",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-14",
+      "error_codes": [
+        "UNEXPECTED_FIELD"
+      ]
+    },
+    {
+      "test_id": "INPUT-15",
+      "title": "引擎配置不能从客户端注入",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-15",
+      "error_codes": [
+        "UNEXPECTED_FIELD"
+      ]
+    },
+    {
+      "test_id": "INPUT-16",
+      "title": "不存在的实际日期应拒绝",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-16",
+      "error_codes": [
+        "INVALID_ACTUAL_CAST_TIME"
+      ]
+    },
+    {
+      "test_id": "INPUT-17",
+      "title": "完整时刻缺时区不默猜",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-17",
+      "error_codes": [
+        "INVALID_ACTUAL_CAST_TIME"
+      ]
+    },
+    {
+      "test_id": "INPUT-18",
+      "title": "未知时间偏移不能冒充已知时刻",
+      "status": "passed",
+      "expected_valid": false,
+      "actual_valid": false,
+      "evidence": "test_input.py:INPUT-18",
+      "error_codes": [
+        "INVALID_ACTUAL_CAST_TIME"
+      ]
+    },
+    {
+      "test_id": "INPUT-19",
+      "title": "第三四爻动变正确，未知时间仍为null",
+      "status": "passed",
+      "evidence": "test_input.py:INPUT-19"
+    }
+  ]
+}

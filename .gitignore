@@ -1,0 +1,59 @@
+# Secrets and machine-local configuration
+.env
+.env.*
+!.env.example
+local.properties
+**/local.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+
+# Android / Gradle
+.gradle/
+**/.gradle/
+android/build/
+android/app/build/
+*.apk
+*.aab
+
+# IDEs and operating systems
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+android/node_modules/
+npm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+tmp*/
+
+# User data and exports
+data/
+exports/
+*.db
+*.sqlite
+*.sqlite3
+*.lyrules
+
+# Private rule payloads are distributed separately
+knowledge_base/compiled_rules.json
+knowledge_base/rules.xlsx
+knowledge_base/rules.xlsx.inspect.ndjson
+knowledge_base/versions/
+
+# Internal packaging and raw verification artifacts
+source_manifest.json
+verification/

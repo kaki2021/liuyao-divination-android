@@ -1,0 +1,60 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{spawn}=require('node:child_process');
+const {chromium}=require('playwright');
+const output=path.resolve(process.env.LIUYAO_TEST_OUTPUT||'test-results');fs.mkdirSync(output,{recursive:true});
+const checks=[],errors=[];let server,browser;
+const check=(name,condition)=>{assert.ok(condition,name);checks.push(name);console.log('PASS',name);};
+(async()=>{
+ server=spawn(process.env.PYTHON||'python3',[path.join(__dirname,'buttons_server.py')],{stdio:['ignore','pipe','inherit']});
+ const url=await new Promise((resolve,reject)=>{server.stdout.once('data',x=>resolve(x.toString().trim()));server.once('error',reject);server.once('exit',c=>reject(Error('server '+c)));});
+ browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined,headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+ const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true,locale:'zh-CN'});page.on('pageerror',e=>errors.push(String(e)));
+ await page.addInitScript(()=>{for(const p of [Element.prototype,Document.prototype,DocumentFragment.prototype])delete p.replaceChildren;delete Crypto.prototype.randomUUID;delete Array.prototype.at;delete Object.hasOwn;delete Object.fromEntries;window.LiuyaoAndroid={readPreference:()=>null,savePreference:()=>{},readDraft:()=>null,saveDraft:()=>{},configureModel:()=>{},exportFile:()=>{},analysisState:()=>{}};});
+ await page.route(url+'/',r=>r.continue({headers:{...r.request().headers(),'X-Liuyao-Bootstrap':'button-test'}}));
+ await page.goto(url);await page.waitForFunction(()=>Boolean(window.MobileUI&&window.RuleGuideUI));
+ const q='我计划使用 A 房，想判断现有安排是否适合我。';await page.locator('#question').fill(q);
+ await page.locator('#question-guidance summary').click();
+ check('提问引导区分先谋与诊断',(await page.locator('#question-guidance').textContent()).includes('诊断前不必编造整改方案'));
+ await page.locator('#question-guidance button').click();await page.waitForFunction(()=>document.querySelector('#usage-panel').dataset.loaded==='true');
+ check('使用方法打开独立规则页面',await page.locator('#usage-panel').isVisible());
+ check('九条原理有原文短引及核对范围',await page.locator('#usage-panel>.guide-details').count()===10&&(await page.locator('#usage-panel').textContent()).includes('已于 2026-09-20 核对'));
+ await page.locator('#usage-panel>.guide-details').filter({hasText:'先认真谋划，再卜疑处'}).locator('summary').first().click();
+ check('短引与软件采用方式分开显示',await page.locator('#usage-panel blockquote').count()===9&&(await page.locator('#usage-panel').textContent()).includes('软件怎样采用'));
+ await page.screenshot({path:path.join(output,'source-guide.png')});
+ await page.locator('#rules-back').click();check('阅读引导不改写问题',await page.locator('#question').inputValue()===q);
+ await page.locator('#buzhai-details summary').first().click();await page.locator('#buzhai-enabled').check();
+ for(const stage of ['site_choice','scope_check','diagnosis','remedy_check']){
+  await page.locator('#buzhai-stage').selectOption(stage);
+  const help=await page.locator('#buzhai-stage-help').textContent();check('卜宅 '+stage+' 有场景、主问及例子',help.includes('适合在什么情况下选')&&help.includes('这次回答什么')&&help.includes('不会自动填入案例'));
+  check('卜宅 '+stage+' 有针对性填写提示',(await page.locator('#buzhai-proposal').getAttribute('placeholder')).length>10);
+ }
+ await page.locator('#buzhai-choice-guide summary').click();check('四项不是四卦必做，治理保留三步顺序',(await page.locator('#buzhai-choice-guide').textContent()).includes('不要求每次走完四项')&&(await page.locator('#buzhai-choice-guide').textContent()).includes('依次核对范围'));
+ await page.locator('#buzhai-beneficiary').fill('我');await page.locator('#buzhai-site').fill('A 房');await page.locator('#buzhai-proposal').fill('保留已填写的真实方案');
+ await page.locator('#buzhai-stage').selectOption('diagnosis');check('切换阶段保留用户输入',await page.locator('#buzhai-proposal').inputValue()==='保留已填写的真实方案');
+ await page.locator('#mobile-next').click();await page.locator('input[name="casting-method"][value="direct"]').check();
+ for(let i=1;i<=6;i++)await page.locator(`input[name="line-${i}"][value="${i===5?'old_yin':i===2||i===3?'young_yin':'young_yang'}"]`).check();
+ await page.locator('#time-details').evaluate(x=>x.open=true);await page.locator('#cast-time').fill('2026-09-18T12:00');await page.locator('#save-case').click();await page.waitForFunction(()=>document.body.dataset.view==='results');
+ const detail=await(await page.request.get(url+'/api/cases')).json();const cid=detail.cases[0].case_id;
+ const saved=await(await page.request.get(url+'/api/cases/'+cid)).json();
+ check('卜宅阶段及真实方案随案例保存',saved.case.revisions.at(-1).input.buzhai.stage==='diagnosis'&&saved.case.revisions.at(-1).input.buzhai.proposal==='保留已填写的真实方案');
+ check('教学例子未混入案例',!JSON.stringify(saved.case).includes('不会自动填入案例'));
+ await page.locator('#mobile-rules').click();await page.getByRole('button',{name:'评分参数',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#rule-detail').textContent.includes('共同起点'));
+ check('基础分明确给六个爻分别计分',(await page.locator('#rule-detail').textContent()).includes('六个爻分别'));
+ await page.getByRole('button',{name:'为什么初始是 5 分？',exact:true}).click();check('说明5分是人为中点及缺少校准',(await page.locator('#score-overview').textContent()).includes('尚无案例校准证明'));
+ await page.locator('#rule-kind').selectOption('threshold');check('可按标签分界筛选',await page.locator('#rule-list .rule-item').count()===2);
+ await page.locator('#rule-kind').selectOption('');await page.locator('#rule-search').fill('BASE_SCORE');await page.locator('#rule-list button').first().click();
+ await page.locator('#rule-calculation>summary').click();await page.waitForFunction(()=>document.querySelector('#rule-calculation .score-ledger'));
+ check('账单使用当前卦而非偷偷用示例',(await page.locator('#rule-calculation').textContent()).includes('当前显示卦盘'));
+ check('实际账单逐步展示起点自身作用合计',(await page.locator('#rule-calculation').textContent()).includes('③ 其他来源对本爻的作用')&&(await page.locator('#rule-calculation').textContent()).includes('④ 合成最终强度'));
+ for(let p=1;p<=6;p++){await page.locator('#rule-calculation select').selectOption(String(p));check('可以逐爻切换账单 '+p,(await page.locator('#rule-calculation .score-ledger').textContent()).includes(`只计算第 ${p} 爻`));}
+ await page.locator('#rule-calculation select').selectOption('5');await page.locator('#rule-detail').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,'score-ledger.png')});
+ const before=await(await page.request.get(url+'/api/rules')).json();await page.locator('#trial-value').fill('4');await page.locator('.rule-trial button').click();await page.waitForFunction(()=>document.querySelector('#rule-trial-result .trial-table'));
+ const after=await(await page.request.get(url+'/api/rules')).json();check('试调未保存模型参数',before.digest===after.digest);
+ check('试调给出六爻对比及前后完整账单',await page.locator('#rule-trial-result table tr').count()===7&&(await page.locator('#rule-trial-result').textContent()).includes('调整后完整账单'));
+ await page.locator('#rule-search').fill('ENABLE_TRIPLE_COMBINE');await page.locator('#rule-list button').first().click();check('识别开关不允许用数值加减',await page.locator('#trial-value').isDisabled());await page.locator('#trial-enabled').uncheck();await page.locator('.rule-trial button').click();await page.waitForFunction(()=>document.querySelector('#rule-trial-result').textContent.includes('比较结构识别'));
+ check('结构参数试算显示结构差异入口',(await page.locator('#rule-trial-result').textContent()).includes('比较结构识别与动变标记'));
+ for(const width of [320,360,390,412]){await page.setViewportSize({width,height:844});check('评分说明无横向溢出 '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.locator('#usage-tab').click();check('使用原理无横向溢出 '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.getByRole('button',{name:'评分参数',exact:true}).click();}
+ await page.setViewportSize({width:390,height:844});await page.locator('#rules-back').click();await page.locator('#edit-case-input').click();await page.locator('.mobile-step-back').click();await page.locator('#buzhai-details').evaluate(x=>x.open=true);await page.locator('#buzhai-stage-help').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,'buzhai-guide.png')});
+ check('阅读与试算没有前端异常',errors.length===0);
+ fs.writeFileSync(path.join(output,'browser_results.json'),JSON.stringify({status:'passed',checks,errors,live_api_calls:0,fixture:'真实打包资源，本地HTTP，浏览器原生桥接替身'},null,2));console.log(JSON.stringify({status:'passed',checks:checks.length}));
+})().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{await browser?.close();server?.kill();});

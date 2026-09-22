@@ -1,0 +1,46 @@
+{
+  "target": "chrome58",
+  "tool": "esbuild 0.25.10",
+  "files": {
+    "analysis-status.js": {
+      "source": "ecb228dc752fed6a14625c48f63451f99952d2a140a45fc7732a23be6e6ebfff",
+      "output": "9865b6db54263a0eb588e8fa55d826972d6b7b7468f992dfd4362c46ef1a4077"
+    },
+    "app.js": {
+      "source": "9d2a7c747b71c5f440236fa39241feeca4941fa55a604c945de3f9d19f78ff00",
+      "output": "d2b7e75264b7df1c116363848e38993c85eaaecdc2034dc717d42bf2e9ab0222"
+    },
+    "buzhai.js": {
+      "source": "ef42fbe76a3e4b23e12d865bd823ae0ddc0a6961f800c1cf4747e68f53740e85",
+      "output": "a0929abdd63ab1e5a509d2a23369b49365e56ca0fb0f92ec7e5825752d21cb0e"
+    },
+    "chart-display.js": {
+      "source": "83f0d51b013ce2b83e48394f3e628a857a8ee0c383c0fa925ce72686a77d858c",
+      "output": "4d122d2d179f90d82426a7a93798b7213d6799423bc8b7de41966b06c1f97c33"
+    },
+    "compat.js": {
+      "source": "62878ff940383a4845d3f439666a3eb793d3f864368f7a1de1ce27260f81857f",
+      "output": "1a856f304db44f218492cc8b70e83b9e1c2cc8ec8ba9be4aa8b6b39f43502bf9"
+    },
+    "guidance.js": {
+      "source": "5e981248e33d8acb2dab503e7bc6ba9b9ed348cf9730926e433cf49e10eca0fd",
+      "output": "6d063108298982bd5695fe2349adf80c8ee24bc21e56ec788a3aafd560756f1a"
+    },
+    "mobile.js": {
+      "source": "32ee2e24f32767375cfedf7b399e99acd579e721a02936a9eb19088ce9365201",
+      "output": "2104677d68634a710db91f41a056da12af5f85672d2fc16e3b5d63c644a632eb"
+    },
+    "phone-chart.js": {
+      "source": "8a81c78a10ead8bbfe77f50942e9d4231a6b39df9b43a614c3148bad9546fa83",
+      "output": "8c65225629e66f14ea1f4376a50475f6f9082307e566568505e5cc62bc87df6d"
+    },
+    "report-views.js": {
+      "source": "d5e7ef1b2c768c442af87fd8f97c652ef4cb0789d47d82c1472712ac4429fadd",
+      "output": "cf78c1251609d55e495eb0e09850a2deb56250e1a9df0dd7264bf590a60b5e94"
+    },
+    "v5-features.js": {
+      "source": "1b6b9599664a04a4fedd6a25409b1f6675b1d3e0454d4f90a73f5b3998ebd539",
+      "output": "3e86f79ff5c983f78f2debacea1e0cf24606a870fe0a5af5b42eb6e6ea23385e"
+    }
+  }
+}

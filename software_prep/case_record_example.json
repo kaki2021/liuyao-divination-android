@@ -1,0 +1,104 @@
+{
+  "case_id": "case_70a993225cba4eda981be09ad19d439a",
+  "owner_id": "engineering-example-owner",
+  "session_id": "engineering-example-session",
+  "recorded_at": "2026-09-17T12:00:01Z",
+  "original_input": {
+    "lines": [
+      "young_yang",
+      "young_yin",
+      "old_yang",
+      "old_yin",
+      "young_yang",
+      "young_yin"
+    ],
+    "question": "这辆车能否满足日常出行需要？"
+  },
+  "revisions": [
+    {
+      "case_id": "case_70a993225cba4eda981be09ad19d439a",
+      "revision_seq": 1,
+      "revision_id": "revision_3be5da0d84a94b1fa2cee0d17fc59178",
+      "recorded_at": "2026-09-17T12:00:01Z",
+      "kind": "initial",
+      "reason": "用户首次提交",
+      "input": {
+        "lines": [
+          "young_yang",
+          "young_yin",
+          "old_yang",
+          "old_yin",
+          "young_yang",
+          "young_yin"
+        ],
+        "question": "这辆车能否满足日常出行需要？"
+      },
+      "time_context": {
+        "actual_cast_time": null,
+        "precision": "unknown",
+        "provenance": "unknown"
+      }
+    }
+  ],
+  "context_events": [],
+  "analysis_runs": [
+    {
+      "analysis_run_id": "analysis_7c3f22b2d18b4c25a7eb0ddecee6114f",
+      "case_id": "case_70a993225cba4eda981be09ad19d439a",
+      "revision_seq": 1,
+      "parent_run_id": null,
+      "analyzed_at": "2026-09-17T12:00:02Z",
+      "input_snapshot_id": "4edc070d5ae428e81c5f5b4ec24005dff07fd6fc2996f4a6a60c9bd95306337e",
+      "source_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rules_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "prompt_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "engine_build": "test-fixture-only",
+      "input_snapshot": {
+        "case_id": "case_70a993225cba4eda981be09ad19d439a",
+        "context_events": [],
+        "input": {
+          "lines": [
+            "young_yang",
+            "young_yin",
+            "old_yang",
+            "old_yin",
+            "young_yang",
+            "young_yin"
+          ],
+          "question": "这辆车能否满足日常出行需要？"
+        },
+        "revision_seq": 1,
+        "time_context": {
+          "actual_cast_time": null,
+          "precision": "unknown",
+          "provenance": "unknown"
+        }
+      },
+      "outcome": {
+        "analysis_run_id": "analysis_7c3f22b2d18b4c25a7eb0ddecee6114f",
+        "recorded_at": "2026-09-17T12:00:03Z",
+        "status": "unresolved",
+        "result_digest": "d97c1aa922d95c90e32a1d794cc68b1f4fd055860807702344c94c3d8d0a5cf7",
+        "result": {
+          "chart_snapshot": null,
+          "error": null,
+          "evidence": [],
+          "report": null,
+          "status": "unresolved",
+          "unresolved": [
+            "工程示例，没有执行完整领域判断"
+          ],
+          "validation": {}
+        }
+      },
+      "status": "unresolved",
+      "ai_events": []
+    }
+  ],
+  "feedback": [],
+  "usage_policy": {
+    "service_case_archive": true,
+    "public_use": false,
+    "training_use": false
+  }
+}

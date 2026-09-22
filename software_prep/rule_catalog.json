@@ -1,0 +1,2622 @@
+{
+  "catalog_purpose": "本体系可追溯规则目录；规则定义状态与程序状态分开，禁止将测试通过解释为占断准确",
+  "status_semantics": {
+    "defined": "原理或限定算法明确；不自动表示已实现",
+    "research": "仍有作用域、算法条件或证据需要确定，不作自动确定判断"
+  },
+  "implementation_status_semantics": {
+    "not_implemented": "本目录未登记实际实现与验证证据",
+    "implemented": "有程序实现但未完成所需验证",
+    "tested": "附实际代码与测试证据，仅限标明范围"
+  },
+  "sources": [
+    {
+      "source_id": "SRC-BSZS",
+      "title": "卜筮正术",
+      "authority": "core",
+      "sha256": "978d6672998c7dd259a2675bfe20387aba80ffffbf9326f15d785a4780ba6d54",
+      "anchor_convention": "DOCX word/document.xml body 一基块编号；B编号含表格和图片所在块，不是印刷页码"
+    },
+    {
+      "source_id": "SRC-BSZS-SUPP",
+      "title": "卜筮正术补充",
+      "authority": "core_supplement",
+      "sha256": "4a25d9f65057b16e6208d1fbe021eb4b93fc899712e56ea1030949c1524180af",
+      "anchor_convention": "PDF-P1至PDF-P6为上传PDF顺序，不是原书印刷页码；内容摘录第56至58节",
+      "transcription_path": "../source_materials/text_index/卜筮正术补充_逐页转写.md",
+      "authority_note": "用户已明确也是原理性文件，与原核心共同作为原理依据；不默认所有补充内容覆盖原核心"
+    },
+    {
+      "source_id": "SRC-GSK",
+      "title": "《周易古筮考》纳甲法通解",
+      "authority": "supplement",
+      "sha256": "839e086e3888d8a5bdee84f7b9625950ec30179d9cd3150bce09f5c6552a13bc"
+    },
+    {
+      "source_id": "SRC-ZYLYBG",
+      "title": "周易六爻八卦",
+      "authority": "personal_reference",
+      "sha256": "642705abcbd16fe433fe62c73c4ec321c305dc5962dc105bfc8fd43e02cb5c2f"
+    },
+    {
+      "source_id": "SRC-OUTLINE",
+      "title": "六爻取用神实战纲要（用户所提供正文）",
+      "authority": "personal_reference",
+      "sha256": "35b3b027f3906abaa51834a93a0f67b4d10e2915f09259c110ba5025fc642eca",
+      "coverage": "起卦方法及九类场景；不宣称用户提供了完整十六类"
+    },
+    {
+      "source_id": "USER-REQUIREMENTS",
+      "title": "用户已确认的来源顺序、输入范围和全量案例需求",
+      "authority": "product_requirement",
+      "local_decision_record": "working_docs/shared_decisions.md"
+    },
+    {
+      "source_id": "SRC-BUZHAI",
+      "title": "卜筮正术补充卜宅",
+      "authority": "core_supplement",
+      "sha256": "45a88bb580302e2c2ab387bb209dca2e6cc7e619b0a28c8c4be056c4ee163a8c",
+      "anchor_convention": "P为DOCX正文段落顺序；043、044为原文课次；保留原文文本索引。",
+      "authority_note": "用户本次指定为新增原理文件，限定在所述卜宅场景，不全面覆盖核心。"
+    },
+    {
+      "source_id": "SRC-TAIBU",
+      "title": "太卜风水术",
+      "authority": "core_supplement",
+      "sha256": "d32640f60057e9e7702078839574a075ecaa7e2bfe8acd7dea5a43728ef64712",
+      "pages": 173,
+      "anchor_convention": "PDF-P是上传文件一基页序；例如PDF-P149为书内147页，不是同一个页码。",
+      "authority_note": "用户指定为新增原理文件；扫描全文OCR用于检索，编码条目已对照原页图片核读；书中历史或科学性主张不作为已验证事实。"
+    }
+  ],
+  "rules": [
+    {
+      "rule_id": "governance.source_authority",
+      "title": "核心与辅助来源的使用顺序",
+      "status": "defined",
+      "scope": "全部知识检索和规则引入",
+      "statement": "卜筮正术为最高核心，卜筮正术补充为用户认可的核心原理补充，两者共同作为原理依据；不默认补充全面覆盖原核心。通解为课外补充，个人卦表和纲要不能覆盖核心。 本次新增卜筮正术补充卜宅、太卜风水术为用户指定的原理资料，按各自场景补充，不自动全局覆盖。",
+      "source_id": "USER-REQUIREMENTS",
+      "anchors": [
+        "shared_decisions"
+      ],
+      "evidence_type": "user_product_decision",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "shared_decisions"
+    },
+    {
+      "rule_id": "governance.evidence_separation",
+      "title": "区分定义、例证、推论和工程决定",
+      "status": "defined",
+      "scope": "规则收录与解释",
+      "statement": "介绍通行方法、引用古说、作者明确定义及作者案例不具有相同资格；保留原文语境，例证不能自动升为无条件通则。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1218",
+        "B1221",
+        "B1621",
+        "B1634"
+      ],
+      "evidence_type": "formalized_from_core",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "B1218、B1221、B1621、B1634"
+    },
+    {
+      "rule_id": "intent.plan_before_cast",
+      "title": "谋而后卜",
+      "status": "defined",
+      "scope": "问题理解",
+      "statement": "谋事先认真考虑现实条件并形成可讨论的计划，再占其中未拿准的部分；占后用于检视计划，判断不利时查漏补缺。不能把泛泛一生财运或无具体所指的财运问法补造成行动方案。诊断问题须明确待查对象与范围，不预先编造尚未形成的治理方案。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0170",
+        "B0171",
+        "B0178"
+      ],
+      "evidence_type": "formalized_from_core",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "谋事与诊断阶段分别引导；不把“明确所问”替代认真谋划，也不强制所有问题预先具有完整行动方案。",
+        "具体行动、对象或目的已明确时不重复追问；仅在缺口会改变主问时补问一个现实问题。"
+      ],
+      "research_questions": [],
+      "source_locator": "001 序言：三、巫术与道术的融合（原索引 B0170、B0171、B0178）"
+    },
+    {
+      "rule_id": "intent.true_concern",
+      "title": "真念先于功能取用",
+      "status": "defined",
+      "scope": "自然语言理解",
+      "statement": "保留原始问题，识别真实关切、用途和关系，再形成取用候选；已明确的问题直接分析。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1532",
+        "B1533",
+        "B1534",
+        "B1535",
+        "B1536",
+        "B1537",
+        "B1538"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "B1532、B1533、B1534、B1535、B1536、B1537、B1538"
+    },
+    {
+      "rule_id": "intent.neutral_clarification",
+      "title": "异象可引出核实，不能替用户猜定",
+      "status": "defined",
+      "scope": "澄清与意图修订",
+      "statement": "有影响取用的歧义时中性补问；原典允许依异象反问并质证，软件保留原意图和用户修订，不用结果反向制造真念。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1620",
+        "B1621",
+        "B1622",
+        "B1634"
+      ],
+      "evidence_type": "formalized_from_core",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "B1620、B1621、B1622、B1634"
+    },
+    {
+      "rule_id": "intent.main_question",
+      "title": "一卦的主问边界",
+      "status": "defined",
+      "scope": "问题拆分",
+      "statement": "围绕同一主体、事体和关注焦点分析；得失与成败可为同一问题的相关维度；不固定要求合作三卦或婚姻两卦。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0171",
+        "B1479",
+        "B1480",
+        "B1574"
+      ],
+      "evidence_type": "formalized_from_core",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "具体拆分由问题结构决定，不编造原典不存在的场景次数公式"
+      ],
+      "research_questions": [],
+      "source_locator": "B0171、B1479、B1480、B1574"
+    },
+    {
+      "rule_id": "input.current_scope",
+      "title": "问题与三种起卦结果入口",
+      "status": "defined",
+      "scope": "普通用户输入",
+      "statement": "question必需；支持枚卜meibu三次、太极taiji六次组合或direct直接六项四象。器具入口保存casting={method:meibu|taiji,results:[str]}与标准化lines，API可仅给casting；两者同给须逐项一致。direct只传lines。actual_cast_time可选；不采集三丸身份或空间顺序，不启用或反推六峜。",
+      "source_id": "USER-REQUIREMENTS",
+      "anchors": [
+        "shared_decisions"
+      ],
+      "evidence_type": "user_product_decision",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "两种器具录入是用户已确认的产品要求",
+        "保存原始器具记录不等于启动六峜模块",
+        "不包含随机起卦器",
+        "Windows内置Python本机包的实测状态另按交付证据登记"
+      ],
+      "research_questions": [],
+      "source_locator": "shared_decisions"
+    },
+    {
+      "rule_id": "input.time_identity",
+      "title": "时间身份分离",
+      "status": "defined",
+      "scope": "案例时间",
+      "statement": "实际起卦、录入、解读、反馈事件与反馈提交时间分别保存；未知起卦时间不能用服务器当前时间填充。",
+      "source_id": "USER-REQUIREMENTS",
+      "anchors": [
+        "shared_decisions"
+      ],
+      "evidence_type": "user_product_decision",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "shared_decisions"
+    },
+    {
+      "rule_id": "casting.four_states",
+      "title": "四象转主卦、动爻和变卦",
+      "status": "defined",
+      "scope": "六个自下而上四象",
+      "statement": "old_yin为阴动变阳；young_yang为阳静；young_yin为阴静；old_yang为阳动变阴。前3爻为下卦，后3爻为上卦；仅老阴老阳翻转。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1390",
+        "B1391",
+        "B1392",
+        "B1393",
+        "B1394",
+        "B1424",
+        "B1425"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [
+        "静卦变后结构同主卦，程序可用changed=null表示无独立变卦，不凭空添加变化",
+        "不含随机起卦器"
+      ],
+      "research_questions": [],
+      "code_refs": [
+        "software_prep/base_chart.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/base_chart_test_results.json",
+          "test_ids": [
+            "CHART-CORE-CHANGE",
+            "CHART-ALL-MOVING",
+            "CHART-INPUT-01",
+            "CHART-INPUT-02",
+            "CHART-INPUT-03",
+            "CHART-INPUT-04",
+            "CHART-INPUT-05",
+            "CHART-INPUT-06"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "验证符合已定义的排盘算法，不验证预测效果",
+        "不包含干支历法自动转换",
+        "不包含变卦六亲自动生成"
+      ],
+      "source_locator": "B1390、B1391、B1392、B1393、B1394、B1424、B1425"
+    },
+    {
+      "rule_id": "casting.taiji_teaching",
+      "title": "太极丸四象教学",
+      "status": "defined",
+      "scope": "教学知识",
+      "statement": "二为阴三为阳；222老阴，223及排列少阳，233及排列少阴，333老阳，依弃数看象理解。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0299",
+        "B0303",
+        "B0304",
+        "B0305",
+        "B0306",
+        "B0307"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "当前器具入口收六次组合222/223/233/333，不记录三丸身份或空间顺序",
+        "六峜知识不代表当前功能启用"
+      ],
+      "research_questions": [],
+      "source_locator": "B0299、B0303、B0304、B0305、B0306、B0307"
+    },
+    {
+      "rule_id": "casting.meibu_teaching",
+      "title": "枚卜丸三次法教学",
+      "status": "defined",
+      "scope": "教学知识",
+      "statement": "先下卦再上卦第三次定动；1震2兑3坎4艮5离6巽，圆乾方坤；第三次数字单爻动，坤全静，乾全动。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0370",
+        "B0372",
+        "B0390",
+        "B0430",
+        "B0431",
+        "B0432",
+        "B0459",
+        "B0461",
+        "B0462",
+        "B0466"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "用户选择枚卜入口时保存三次原始记录；direct不强制提供器具记录",
+        "B0468概括须结合B0461—B0462已定义的全静及全动情形理解"
+      ],
+      "research_questions": [],
+      "source_locator": "B0370、B0372、B0390、B0430、B0431、B0432、B0459、B0461、B0462、B0466"
+    },
+    {
+      "rule_id": "casting.meibu_conversion",
+      "title": "枚卜丸三次结果标准化",
+      "scope": "用户已选择枚卜丸入口的下卦、上卦、动爻三次结果",
+      "statement": "casting.method=meibu，results为恰好三项字符串。前两项circle乾、square坤、1震、2兑、3坎、4艮、5离、6巽，依次组成下卦和上卦。第三项circle使六爻全动、square全静、数字使对应一至六爻单动；按各爻阴阳及动静生成六项标准四象。原始casting与lines共同保存。",
+      "anchors": [
+        "B0371",
+        "B0372",
+        "B0390",
+        "B0430",
+        "B0431",
+        "B0432",
+        "B0433",
+        "B0459",
+        "B0461",
+        "B0462"
+      ],
+      "limitations": [
+        "不得用乾变坤数字顺序替代起卦用坤变乾顺序",
+        "B0468概括不覆盖B0461—B0462全静全动的具体规则",
+        "不生成六峜或随机结果"
+      ],
+      "status": "defined",
+      "source_id": "SRC-BSZS",
+      "evidence_type": "explicit_definition_with_user_product_scope",
+      "implementation_status": "tested",
+      "research_questions": [],
+      "supporting_sources": [
+        {
+          "source_id": "USER-REQUIREMENTS",
+          "anchors": [
+            "shared_decisions"
+          ]
+        }
+      ],
+      "source_locator": "B0371、B0372、B0390、B0430、B0431、B0432、B0433、B0459、B0461、B0462",
+      "code_refs": [
+        "software_prep/casting_input.py",
+        "software_prep/validate_input.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/casting_input_test_results.json",
+          "test_ids": [
+            "CAST-001",
+            "CAST-002",
+            "CAST-003",
+            "CAST-004",
+            "CAST-006",
+            "CAST-007",
+            "CAST-008",
+            "CAST-010",
+            "CAST-011"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "实际测试只验证输入转换、一致性和原始记录保留，不验证占断效果",
+        "不代表Windows本机包已实测",
+        "不包含空间顺序、六峜或随机起卦"
+      ]
+    },
+    {
+      "rule_id": "casting.taiji_conversion",
+      "title": "太极丸六次组合标准化",
+      "scope": "用户已选择太极丸入口的六次组合；不包含空间信息",
+      "statement": "casting.method=taiji，results为恰好六项字符串，自初爻至上爻依次录入。界面提供222、223、233、333四类组合，分别转old_yin、young_yang、young_yin、old_yang；API兼容三个2或3的八种排列，只按数量归类并保留原串。单次字符串顺序不是三丸空间位置。原始casting与标准化lines共同保存。",
+      "anchors": [
+        "B0303",
+        "B0304",
+        "B0305",
+        "B0306",
+        "B1390",
+        "B1391",
+        "B1392",
+        "B1393",
+        "B1394"
+      ],
+      "limitations": [
+        "八种排列仅是四类组合的兼容表达，不启动空间记录",
+        "不反推六峜，不生成随机结果"
+      ],
+      "status": "defined",
+      "source_id": "SRC-BSZS",
+      "evidence_type": "explicit_definition_with_user_product_scope",
+      "implementation_status": "tested",
+      "research_questions": [],
+      "supporting_sources": [
+        {
+          "source_id": "USER-REQUIREMENTS",
+          "anchors": [
+            "shared_decisions"
+          ]
+        }
+      ],
+      "source_locator": "B0303、B0304、B0305、B0306、B1390、B1391、B1392、B1393、B1394",
+      "code_refs": [
+        "software_prep/casting_input.py",
+        "software_prep/validate_input.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/casting_input_test_results.json",
+          "test_ids": [
+            "CAST-002",
+            "CAST-004",
+            "CAST-005",
+            "CAST-006",
+            "CAST-007",
+            "CAST-008",
+            "CAST-009",
+            "CAST-011",
+            "CAST-012"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "实际测试只验证输入转换、一致性和原始记录保留，不验证占断效果",
+        "不代表Windows本机包已实测",
+        "不包含空间顺序、六峜或随机起卦"
+      ]
+    },
+    {
+      "rule_id": "chart.palace_elements",
+      "title": "八宫五行",
+      "status": "defined",
+      "scope": "本体系宫常量",
+      "statement": "乾坤土、震巽木、艮兑金、坎水、离火；不能用通行乾金艮土覆盖。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1218",
+        "B1221",
+        "B1226"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [],
+      "research_questions": [],
+      "code_refs": [
+        "software_prep/base_chart.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/base_chart_test_results.json",
+          "test_ids": [
+            "CHART-001",
+            "CHART-049",
+            "CHART-057",
+            "CHART-GEN-METAL"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "验证符合已定义的排盘算法，不验证预测效果",
+        "不包含干支历法自动转换",
+        "不包含变卦六亲自动生成"
+      ],
+      "source_locator": "B1218、B1221、B1226"
+    },
+    {
+      "rule_id": "chart.branch_elements",
+      "title": "十二地支五行",
+      "status": "defined",
+      "scope": "地支属性",
+      "statement": "亥子水、寅卯木、巳午火、申酉金、辰戌丑未土。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0941"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [],
+      "research_questions": [],
+      "code_refs": [
+        "software_prep/base_chart.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/base_chart_test_results.json",
+          "test_ids": [
+            "CHART-001..CHART-064"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "验证符合已定义的排盘算法，不验证预测效果",
+        "不包含干支历法自动转换",
+        "不包含变卦六亲自动生成"
+      ],
+      "source_locator": "B0941"
+    },
+    {
+      "rule_id": "chart.palace_sequence",
+      "title": "八宫卦序与归宫",
+      "status": "defined",
+      "scope": "六爻阴阳结构",
+      "statement": "每宫顺序为本宫、一世、二世、三世、四世、五世、游魂、归魂，按核心完整64卦序归宫；卦名上卦不能代替宫归属。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0830",
+        "B0832",
+        "B0838",
+        "B0839",
+        "B0840",
+        "B0841",
+        "B0842",
+        "B0843",
+        "B0844",
+        "B0845",
+        "B0846"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [],
+      "research_questions": [],
+      "code_refs": [
+        "software_prep/base_chart.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/base_chart_test_results.json",
+          "test_ids": [
+            "CHART-001..CHART-064"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "验证符合已定义的排盘算法，不验证预测效果",
+        "不包含干支历法自动转换",
+        "不包含变卦六亲自动生成"
+      ],
+      "source_locator": "B0830、B0832、B0838、B0839、B0840、B0841、B0842、B0843、B0844、B0845、B0846"
+    },
+    {
+      "rule_id": "chart.branch_assignment",
+      "title": "上下经卦纳支",
+      "status": "defined",
+      "scope": "主卦及变卦地支",
+      "statement": "乾子寅辰/午申戌；坤未巳卯/丑亥酉；震同乾；巽丑亥酉/未巳卯；坎寅辰午/申戌子；离卯丑亥/酉未巳；艮辰午申/戌子寅；兑巳卯丑/亥酉未。下卦取前三、上卦取后三；变卦按新经卦重新纳支。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1058",
+        "B1059",
+        "B1060",
+        "B1061",
+        "B1062",
+        "B1063",
+        "B1064",
+        "B1065",
+        "B1421",
+        "B1426",
+        "B1436"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [
+        "不是只改动爻一处地支",
+        "不包含尚未统一的乾坤特殊天干纳甲"
+      ],
+      "research_questions": [],
+      "code_refs": [
+        "software_prep/base_chart.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/base_chart_test_results.json",
+          "test_ids": [
+            "CHART-001..CHART-064",
+            "CHART-CORE-CHANGE"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "验证符合已定义的排盘算法，不验证预测效果",
+        "不包含干支历法自动转换",
+        "不包含变卦六亲自动生成"
+      ],
+      "source_locator": "B1058、B1059、B1060、B1061、B1062、B1063、B1064、B1065、B1421、B1426、B1436"
+    },
+    {
+      "rule_id": "relation.ordinary_wuxing",
+      "title": "凡五行生克表",
+      "status": "defined",
+      "scope": "普通地支关系",
+      "statement": "相生土金水木火土；相克土水火金木土；必须保留谁生谁、谁克谁的方向。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0918",
+        "B0919"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "B0918、B0919",
+      "code_refs": [
+        "liuyao_app/interpretation_evidence.py"
+      ],
+      "test_refs": [
+        {
+          "path": "liuyao_app/test_interpretation_evidence.py",
+          "test_ids": [
+            "test_all_twenty_five_directed_relations",
+            "test_invalid_elements_are_rejected",
+            "test_qian_structure_and_absent_gua_body",
+            "test_sixty_four_base_charts_have_exactly_thirty_directed_pairs",
+            "test_preserves_input_and_does_not_infer_changed_roles",
+            "test_computed_calendar_adds_twelve_directed_day_month_relations",
+            "test_incomplete_calendar_does_not_invent_day_or_month",
+            "test_invalid_chart_or_computed_calendar_is_rejected"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "仅计算有方向普通五行关系，不由相生相克直接确定作用有效性、旺衰或成败。"
+      ]
+    },
+    {
+      "rule_id": "relation.true_wuxing_matrix",
+      "title": "真五行生克表",
+      "status": "defined",
+      "scope": "真五行知识定义",
+      "statement": "相生土火木水金土；相克土木金火水土；关系表明确，不代表其所有输入与应用边界已明确。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0921",
+        "B0922"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不得作为按年龄或风水关键词切换全部运算的全局开关"
+      ],
+      "research_questions": [],
+      "source_locator": "B0921、B0922"
+    },
+    {
+      "rule_id": "relation.true_wuxing_scope",
+      "title": "真五行纳气作用层与场景边界",
+      "status": "research",
+      "scope": "纳气、儿童、风水专题",
+      "statement": "核心提及十二岁前儿童及风水纳气；尚不能确定替换全部地支生克或六亲显示的通用算法。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1097",
+        "B1098",
+        "B1099",
+        "B1100"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不简单强制全盘反转",
+        "相关判断不默默退回凡五行"
+      ],
+      "research_questions": [
+        "年龄按被测者还是问卦者",
+        "恰好十二岁与年龄口径",
+        "纳气属性来源及与地支层并行方式",
+        "真五行六亲标签与旺衰组合"
+      ],
+      "source_locator": "B1097、B1098、B1099、B1100"
+    },
+    {
+      "rule_id": "relation.ordinary_kinship",
+      "title": "以主卦宫和地支生成普通六亲",
+      "status": "defined",
+      "scope": "主卦普通地支层",
+      "statement": "以主卦所属宫五行为我，只看爻地支：生我父母、同我兄弟、我生子孙、我克妻财、克我官鬼。天干和纳音不代替地支。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1443",
+        "B1444",
+        "B1447",
+        "B1448",
+        "B1451",
+        "B1452",
+        "B1453",
+        "B1454",
+        "B1455",
+        "B1456"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [],
+      "research_questions": [],
+      "code_refs": [
+        "software_prep/base_chart.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/base_chart_test_results.json",
+          "test_ids": [
+            "CHART-001..CHART-064",
+            "CHART-GEN-METAL"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "验证符合已定义的排盘算法，不验证预测效果",
+        "不包含干支历法自动转换",
+        "不包含变卦六亲自动生成"
+      ],
+      "source_locator": "B1443、B1444、B1447、B1448、B1451、B1452、B1453、B1454、B1455、B1456"
+    },
+    {
+      "rule_id": "relation.changed_kinship_reference",
+      "title": "变卦六亲沿用主卦宫的多例证据",
+      "status": "research",
+      "scope": "普通变卦标签参考",
+      "statement": "B1444主卦参照定义与旅之小过、离之大有、大过之鼎图例共同支持沿用主卦宫；保留为强证据候选，完整边界形式化前不自动生成变卦六亲。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1444",
+        "B1409",
+        "B1644",
+        "B1657"
+      ],
+      "evidence_type": "example_supported",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "变卦宫归属与六亲参照宫分字段",
+        "当前程序只输出变卦结构和纳支"
+      ],
+      "research_questions": [
+        "形成明确可执行的适用边界",
+        "与真五行纳气标签分离"
+      ],
+      "source_locator": "B1444、B1409、B1644、B1657"
+    },
+    {
+      "rule_id": "relation.kinship_cycles",
+      "title": "普通六亲生克循环",
+      "status": "defined",
+      "scope": "凡五行标签",
+      "statement": "父生兄、兄生子、子生财、财生官、官生父；父克子、子克官、官克兄、兄克财、财克父。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1461",
+        "B1462"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不直接决定任何爻吉凶",
+        "不得因现实病虫害伤作物而反写成官克子"
+      ],
+      "research_questions": [],
+      "source_locator": "B1461、B1462"
+    },
+    {
+      "rule_id": "interpretation.functional_role",
+      "title": "真念中的关系功能决定取用",
+      "status": "defined",
+      "scope": "取用神候选",
+      "statement": "对象不是固定六亲；马可因繁育、倒卖、交通、妨主或协同作战分别取子孙、财、父母、官鬼或兄弟。先查用途与关切，再选择候选。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1532",
+        "B1533",
+        "B1534",
+        "B1535",
+        "B1536",
+        "B1537",
+        "B1538"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "改变取用不改变已排好的爻六亲",
+        "不能为追求较好结论更换候选"
+      ],
+      "research_questions": [],
+      "source_locator": "B1532、B1533、B1534、B1535、B1536、B1537、B1538"
+    },
+    {
+      "rule_id": "interpretation.no_intrinsic_omen",
+      "title": "爻和六亲无脱离对象的吉凶",
+      "status": "defined",
+      "scope": "一切断语",
+      "statement": "一个卦爻本身没有吉凶，需看所占对象与关系作用；兄弟、官鬼不固定为凶，财、子孙不固定为吉。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1483",
+        "B1492",
+        "B1495",
+        "B1496"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "B1483、B1492、B1495、B1496"
+    },
+    {
+      "rule_id": "interpretation.single_target",
+      "title": "某爻生克目标唯一",
+      "status": "defined",
+      "scope": "实际采用的关系作用",
+      "statement": "核心禁止同一父母爻一边生兄断兄弟平安，一边克子扩断子孙灾；不得用任意拆链编号绕过唯一目标。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1479",
+        "B1480"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "形式关系边可以列全，但被采纳的作用须明确目标",
+        "多目标仅作竞争解释，跨阶段等边界另研究"
+      ],
+      "research_questions": [],
+      "source_locator": "B1479、B1480"
+    },
+    {
+      "rule_id": "interpretation.single_target_boundaries",
+      "title": "唯一目标的跨层和跨阶段边界",
+      "status": "research",
+      "scope": "复杂作用图",
+      "statement": "尚未形成同爻跨阶段、跨主体尺度或间接传递是否可并行的完备规则。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1479",
+        "B1480",
+        "B1574"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [
+        "得失与成败两层如何共同遵守单目标",
+        "作用对象变化的时间条件",
+        "间接传递与直接作用的区分"
+      ],
+      "source_locator": "B1479、B1480、B1574"
+    },
+    {
+      "rule_id": "interpretation.wealth_controls_self",
+      "title": "财克世的得财与主体代价",
+      "status": "defined",
+      "scope": "讨债及可类比的明确主问",
+      "statement": "核心例说明财克世可能得财而损名，作者一般建议暂缓、衡量得失；不可简化成只要得财即吉或旺也一概不碰。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1511",
+        "B1512"
+      ],
+      "evidence_type": "example_supported",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不得跳过实际主问及世临何种关系",
+        "不自动生成投资动作"
+      ],
+      "research_questions": [],
+      "source_locator": "B1511、B1512"
+    },
+    {
+      "rule_id": "interpretation.gains_before_success",
+      "title": "先得失后成败",
+      "status": "defined",
+      "scope": "判断关注次序",
+      "statement": "在相应主体尺度下，应生扶世可解释为主体受益、值得尝试的方向，应冲克世可解释为主体可能受损、须权衡；位生扶身与位冲克身具有类似的圆满或缺憾意义。先看主体得失，再看目标成败；单独世应或身位生克不能证明目标最终成败。结构关系的现实有效程度仍须结合本案条件。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1573",
+        "B1574",
+        "B1602",
+        "B1603"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "B1573、B1574、B1602、B1603"
+    },
+    {
+      "rule_id": "interpretation.three_self_references",
+      "title": "宫、世与身的参照区别",
+      "status": "defined",
+      "scope": "主体模型",
+      "statement": "宫五行是六亲计算参照；世爻是社会角色主体；世身是个人本身；应与位为相应面对的一端。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1444",
+        "B1447",
+        "B1570",
+        "B1571",
+        "B1578",
+        "B1583",
+        "B1584"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "B1444、B1447、B1570、B1571、B1578、B1583、B1584"
+    },
+    {
+      "rule_id": "chart.shi_ying",
+      "title": "世应位置",
+      "status": "defined",
+      "scope": "宫内八卦序",
+      "statement": "本宫至归魂的世位依次6、1、2、3、4、5、4、3；应位与世位相差3。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1559",
+        "B1560",
+        "B1561"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [],
+      "research_questions": [],
+      "code_refs": [
+        "software_prep/base_chart.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/base_chart_test_results.json",
+          "test_ids": [
+            "CHART-001..CHART-064"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "验证符合已定义的排盘算法，不验证预测效果",
+        "不包含干支历法自动转换",
+        "不包含变卦六亲自动生成"
+      ],
+      "source_locator": "B1559、B1560、B1561"
+    },
+    {
+      "rule_id": "chart.shi_body",
+      "title": "世身位置",
+      "status": "defined",
+      "scope": "主卦世爻地支",
+      "statement": "世支子午身初；丑未身二；寅申身三；卯酉身四；辰戌身五；巳亥身上。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1587",
+        "B1588"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [],
+      "research_questions": [],
+      "code_refs": [
+        "software_prep/base_chart.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/base_chart_test_results.json",
+          "test_ids": [
+            "CHART-QIAN-BODY",
+            "CHART-KUN-BODY"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "验证符合已定义的排盘算法，不验证预测效果",
+        "不包含干支历法自动转换",
+        "不包含变卦六亲自动生成"
+      ],
+      "source_locator": "B1587、B1588"
+    },
+    {
+      "rule_id": "chart.gua_body",
+      "title": "卦身地支及匹配",
+      "status": "defined",
+      "scope": "主卦世爻阴阳与世位",
+      "statement": "阳世初起子、阴世初起午，逐位顺数至世位；保存得到的地支及主卦全部匹配位置，无匹配保留空列表，不能删除卦身地支。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1590",
+        "B1591",
+        "B1594",
+        "B1595",
+        "B1598",
+        "B1599",
+        "B1600"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [
+        "多个匹配如何解释和卦外作用不是此计算规则的输出"
+      ],
+      "research_questions": [],
+      "code_refs": [
+        "software_prep/base_chart.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/base_chart_test_results.json",
+          "test_ids": [
+            "CHART-QIAN-BODY",
+            "CHART-KUN-BODY"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "验证符合已定义的排盘算法，不验证预测效果",
+        "不包含干支历法自动转换",
+        "不包含变卦六亲自动生成"
+      ],
+      "source_locator": "B1590、B1591、B1594、B1595、B1598、B1599、B1600"
+    },
+    {
+      "rule_id": "interpretation.analysis_scale",
+      "title": "世应与身位的尺度",
+      "status": "defined",
+      "scope": "取用主体尺度",
+      "statement": "身份、职位和资源有关的问题重世应；疾病、风水等个人尺度重身位；官差便装执行任务仍属于社会角色。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1583",
+        "B1584",
+        "B1606"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "可分别说明两层，但不能规避单目标约束"
+      ],
+      "research_questions": [],
+      "source_locator": "B1583、B1584、B1606"
+    },
+    {
+      "rule_id": "interpretation.body_overlap",
+      "title": "身位与世应重合的单向检查",
+      "status": "defined",
+      "scope": "使用身位时",
+      "statement": "以身位分析须查看是否与世应重合；只以世应分析不强制反向引入身位。重合提示特别关切或影响，不自动等于生命危险。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1629",
+        "B1630"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "重合事实和解释轻重分开"
+      ],
+      "research_questions": [],
+      "source_locator": "B1629、B1630"
+    },
+    {
+      "rule_id": "interpretation.body_missing_multiple",
+      "title": "卦身缺位与多现解释",
+      "status": "research",
+      "scope": "卦身匹配结果",
+      "statement": "卦身不出现的例子可说明事项未显现；多个匹配的选择和卦外地支作用仍需定义。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1598",
+        "B1599",
+        "B1600"
+      ],
+      "evidence_type": "example_supported",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不将匹配为空等同整卦无效"
+      ],
+      "research_questions": [
+        "卦外位可参与哪些作用",
+        "多现如何选择或共同解释"
+      ],
+      "source_locator": "B1598、B1599、B1600"
+    },
+    {
+      "rule_id": "time.no_hour_strength",
+      "title": "保存时刻与时辰作用分开",
+      "status": "defined",
+      "scope": "时间信息",
+      "statement": "核心以年月日为重要条件，一般不把时辰作为作用力量；记录精确时间不等于启用时辰吉凶权重。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0927",
+        "B0936",
+        "B0938"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "B0927、B0936、B0938"
+    },
+    {
+      "rule_id": "time.calendar_boundaries",
+      "title": "干支历法转换边界",
+      "status": "research",
+      "scope": "日期时间到年月日干支",
+      "statement": "原典尚未完整裁定所有历法边界；当前软件为四柱展示采用明确工程口径：固定北京时间、立春交节换年、节令交节换月、日柱零点换日、23时晚子时时柱按次日子时。该口径不提升为原典定论。未知起卦时间不由分析时刻代替。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0927",
+        "B0936",
+        "B0938"
+      ],
+      "evidence_type": "engineering_constraint",
+      "implementation_status": "tested",
+      "limitations": [
+        "工程历法口径仅服务排盘展示与基础关系输入，不自动核定综合旺衰、精确应期或小时权重。",
+        "1900至2100年，不校正真太阳时或历史夏令时。"
+      ],
+      "research_questions": [
+        "与核心体系最终采用的历法口径逐条核定",
+        "是否开放其他时区或换日约定"
+      ],
+      "source_locator": "B0927、B0936、B0938",
+      "code_refs": [
+        "liuyao_app/calendar_context.py"
+      ],
+      "test_refs": [
+        {
+          "path": "liuyao_app/test_calendar_context.py",
+          "test_ids": [
+            "test_upstream_four_pillar_fixtures",
+            "test_no_time_is_not_substituted_by_entry_time",
+            "test_malformed_input_never_invents_pillars",
+            "test_equal_instants_convert_to_same_beijing_chart",
+            "test_utc_rollover_uses_converted_calendar_day",
+            "test_late_zi_keeps_day_but_hour_uses_next_day",
+            "test_six_spirits_follow_displayed_day_not_late_zi_hour_day",
+            "test_upstream_exact_month_fixture",
+            "test_upstream_term_second_boundary",
+            "test_lichun_changes_year_and_month_at_same_second",
+            "test_supported_range_is_checked_after_conversion",
+            "test_fractional_input_and_policy_are_frozen_without_mutating_input"
+          ]
+        },
+        {
+          "path": "liuyao_app/test_calendar_flow.py",
+          "test_ids": [
+            "test_save_and_reopen_return_calendar_and_six_spirits",
+            "test_demo_freezes_actual_instant_policy_and_calendar",
+            "test_time_correction_changes_current_chart_but_not_old_analysis",
+            "test_missing_time_remains_missing_in_http_and_demo_snapshot"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "relation.ordinary_month_strength",
+      "title": "凡五行月令五类",
+      "status": "defined",
+      "scope": "仅单一核定月令对爻五行",
+      "statement": "与月同类旺；月生爻相；爻生月休；爻克月囚；月克爻死。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1107",
+        "B1108",
+        "B1109",
+        "B1110",
+        "B1111",
+        "B1112",
+        "B1113",
+        "B1114"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [
+        "不是综合旺衰评分",
+        "死为分类名称，不能当人物死亡",
+        "不含日月冲突或空破墓绝"
+      ],
+      "research_questions": [],
+      "code_refs": [
+        "software_prep/base_chart.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/base_chart_test_results.json",
+          "test_ids": [
+            "CHART-MONTH"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "验证符合已定义的排盘算法，不验证预测效果",
+        "不包含干支历法自动转换",
+        "不包含变卦六亲自动生成"
+      ],
+      "source_locator": "B1107、B1108、B1109、B1110、B1111、B1112、B1113、B1114"
+    },
+    {
+      "rule_id": "relation.true_month_strength",
+      "title": "真五行旺衰专题",
+      "status": "research",
+      "scope": "纳气旺衰",
+      "statement": "核心火月例为火相、木旺、土废、水休、金囚；不能反转普通生克后沿用同一类序评分。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1115",
+        "B1116",
+        "B1117",
+        "B1118",
+        "B1119",
+        "B1120",
+        "B1121",
+        "B1122",
+        "B1123",
+        "B1124",
+        "B1125",
+        "B1126"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [
+        "纳气输入与关系表完整对应",
+        "各月推广条件",
+        "与其它力量的合成"
+      ],
+      "source_locator": "B1115、B1116、B1117、B1118、B1119、B1120、B1121、B1122、B1123、B1124、B1125、B1126"
+    },
+    {
+      "rule_id": "chart.six_spirits",
+      "title": "六神按日干定位",
+      "status": "defined",
+      "scope": "核定日干后的六爻",
+      "statement": "甲乙青龙、丙丁朱雀、戊勾陈、己腾蛇、庚辛白虎、壬癸玄武起初爻，按青龙朱雀勾陈腾蛇白虎玄武循环至上爻。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1541",
+        "B1542",
+        "B1543",
+        "B1544",
+        "B1545",
+        "B1546",
+        "B1547",
+        "B1548",
+        "B1549",
+        "B1550",
+        "B1551",
+        "B1552",
+        "B1553",
+        "B1554"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [
+        "不含日干历法转换",
+        "定位不等于六神必然吉凶"
+      ],
+      "research_questions": [],
+      "code_refs": [
+        "software_prep/base_chart.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/base_chart_test_results.json",
+          "test_ids": [
+            "CHART-SPIRITS"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "验证符合已定义的排盘算法，不验证预测效果",
+        "不包含干支历法自动转换",
+        "不包含变卦六亲自动生成"
+      ],
+      "source_locator": "B1541、B1542、B1543、B1544、B1545、B1546、B1547、B1548、B1549、B1550、B1551、B1552、B1553、B1554"
+    },
+    {
+      "rule_id": "interpretation.six_spirit_effects",
+      "title": "六神具体效力",
+      "status": "research",
+      "scope": "六神、动变与现实象义",
+      "statement": "六神定位明确，白虎动必延期、玄武必欺诈等确定断语没有相应通用条件。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1492",
+        "B1541",
+        "B1554"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [
+        "各象义的成立条件",
+        "与动变及主用神关系",
+        "冲突和例外"
+      ],
+      "source_locator": "B1492、B1541、B1554"
+    },
+    {
+      "rule_id": "interpretation.changed_line_role",
+      "title": "变爻解释角色",
+      "status": "research",
+      "scope": "动变解释",
+      "statement": "核心说明变爻很多时候表示动爻性质，不能一律解释为未来结果；具体自动选取性质、结果等角色条件尚未完整。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1639",
+        "B1640",
+        "B1648"
+      ],
+      "evidence_type": "example_supported",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "补充书的来源、替身等角色不能自动成为核心通则"
+      ],
+      "research_questions": [
+        "性质与结果角色选择",
+        "多角色并用条件"
+      ],
+      "source_locator": "B1639、B1640、B1648"
+    },
+    {
+      "rule_id": "relation.six_combination_pairs",
+      "title": "六合配对及名义化行",
+      "status": "defined",
+      "scope": "配对知识",
+      "statement": "子丑土、寅亥木、卯戌火、辰酉金、巳申水、午未土可存为配对表；不自动认定已成化。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1066",
+        "B1278",
+        "B1279"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [
+        "不改写原始地支元素",
+        "成化与解除条件另研究"
+      ],
+      "research_questions": [],
+      "source_locator": "B1066、B1278–B1279"
+    },
+    {
+      "rule_id": "relation.combination_effects",
+      "title": "合冲刑害墓绝效力",
+      "status": "research",
+      "scope": "综合关系",
+      "statement": "六合配对、三形六对及类别、六害六对及恩间害间已有明确结构；生效、成化、解除与关系冲突优先级仍未形成完整通则，不能一并启用墓绝等其他专题。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1066"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "三形六害结构已另立明确条目，本条待研究仅指综合生效条件",
+        "不因新增补充自动升格空破、暗动、墓绝或综合旺衰"
+      ],
+      "research_questions": [
+        "何种条件成化",
+        "与冲克及空破覆盖关系",
+        "多关系同现优先级"
+      ],
+      "source_locator": "B1066",
+      "supporting_sources": [
+        {
+          "source_id": "SRC-BSZS-SUPP",
+          "anchors": [
+            "PDF-P2",
+            "PDF-P3",
+            "PDF-P4",
+            "PDF-P5",
+            "PDF-P6"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "relation.composite_strength",
+      "title": "综合旺衰与空破暗动",
+      "status": "research",
+      "scope": "时空与动变强弱",
+      "statement": "普通月令分类可以独立计算；年月日合成、旬空、月破、日冲、暗动等不能仅凭术语形成统一评分或吉凶。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1107",
+        "B1114",
+        "B1644",
+        "B1657"
+      ],
+      "evidence_type": "formalized_from_core",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [
+        "分别列明算法触发、例外和作用能力",
+        "日月冲突与动静优先级",
+        "缺少占时的处理"
+      ],
+      "source_locator": "B1107、B1114、B1644、B1657"
+    },
+    {
+      "rule_id": "chart.special_stems",
+      "title": "乾坤特殊天干纳甲",
+      "status": "research",
+      "scope": "天干纳甲与纳气",
+      "statement": "核心提供不同日型方案，但全阳全阴及阴阳日的多个判定口径尚需统一，不得用通行表掩盖。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1076",
+        "B1077",
+        "B1078",
+        "B1079",
+        "B1080",
+        "B1081",
+        "B1082",
+        "B1083",
+        "B1084",
+        "B1085",
+        "B1086",
+        "B1087",
+        "B1088"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不阻塞独立的地支纳支"
+      ],
+      "research_questions": [
+        "日型判定条件",
+        "各口径何时采用",
+        "与干支阴阳的关系"
+      ],
+      "source_locator": "B1076、B1077、B1078、B1079、B1080、B1081、B1082、B1083、B1084、B1085、B1086、B1087、B1088"
+    },
+    {
+      "rule_id": "interpretation.object_functions",
+      "title": "物品用途候选",
+      "status": "defined",
+      "scope": "车、土地、粮食、首饰",
+      "statement": "车辆承载父母、交易价值财；土地交易财而耕种承载父母；粮食交易财、自食父母、留种子孙；不能按私家或营运永久取用。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1472",
+        "B1508",
+        "B1509",
+        "B1510",
+        "B1534",
+        "B1535"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "仅形成场景候选，仍需主问"
+      ],
+      "research_questions": [],
+      "source_locator": "B1472、B1508、B1509、B1510、B1534、B1535"
+    },
+    {
+      "rule_id": "interpretation.leader_documents",
+      "title": "职位领导与文书候选",
+      "status": "defined",
+      "scope": "就业与事务",
+      "statement": "职位权责可取官，合同和身份文书可取父母；领导若为庇护提携角色可取父母，不能永远取官。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1467",
+        "B1473",
+        "B1495",
+        "B1496",
+        "B1497",
+        "B1498"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "父旺生合世不自动保证合同必签",
+        "空亡条件未定时不判调动绝无希望"
+      ],
+      "research_questions": [],
+      "source_locator": "B1467、B1473、B1495、B1496、B1497、B1498"
+    },
+    {
+      "rule_id": "interpretation.producing_wealth",
+      "title": "生财功能与资源交易区别",
+      "status": "defined",
+      "scope": "基金债券股票等具体主问",
+      "statement": "核心B1520明列买基金、债券、股票测能否挣钱取子孙；B1534另举转卖马获利取财。保留各自语境，不推导为全部金融产品按持有期限或持续生财与倒手买卖自动分流的硬规则。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1520",
+        "B1533",
+        "B1534"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "具体适用边界按真念及原文语境核对，不建立未获证实的金融产品硬分类",
+        "不可替换成金融收益保证",
+        "取用不是买卖决策规则"
+      ],
+      "research_questions": [],
+      "source_locator": "B1520、B1533、B1534"
+    },
+    {
+      "rule_id": "interpretation.relationship_roles",
+      "title": "感情关系取用的语境",
+      "status": "defined",
+      "scope": "婚恋与家庭",
+      "statement": "核心指出男财女官有礼俗背景，现代关系需重新定位；不能只用性别硬编码取用。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1499",
+        "B1500",
+        "B1501"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不固定要求两卦",
+        "不从未定义胎爻算法断着床安全"
+      ],
+      "research_questions": [],
+      "source_locator": "B1499、B1500、B1501"
+    },
+    {
+      "rule_id": "interpretation.treatment_roles",
+      "title": "医药方案与身位",
+      "status": "defined",
+      "scope": "疾病类解释",
+      "statement": "个人状态重身位；解忧的药物可取子孙，医生、理疗方案等可在具体语境取父母，核心要求具体取用具体分析。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1522",
+        "B1584",
+        "B1623",
+        "B1624",
+        "B1625",
+        "B1631",
+        "B1636",
+        "B1637"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不以世永远是身体覆盖身位",
+        "古例药物解释不自动成为医学事实"
+      ],
+      "research_questions": [],
+      "source_locator": "B1522、B1584、B1623、B1624、B1625、B1631、B1636、B1637"
+    },
+    {
+      "rule_id": "interpretation.judge_role",
+      "title": "法官随当事关系取用",
+      "status": "defined",
+      "scope": "纠纷类候选",
+      "statement": "面对制裁的被告可视法官为官鬼，求解除冤屈的原告可视法官为子孙；法律身份名称不能单独定六亲。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1522",
+        "B1523"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "官生世不自动等于胜诉",
+        "应生世不自动等于必和解"
+      ],
+      "research_questions": [],
+      "source_locator": "B1522、B1523"
+    },
+    {
+      "rule_id": "interpretation.travel_roles",
+      "title": "出行角色与归魂边界",
+      "status": "defined",
+      "scope": "出行问题",
+      "statement": "依社会职务还是私人状态选择世应或身位；归魂出行例仍需具体爻变，不能单凭卦名决定去留。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0855",
+        "B1606"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不采用白虎动必延期或化鬼必有去无回通则"
+      ],
+      "research_questions": [],
+      "source_locator": "B0855、B1606"
+    },
+    {
+      "rule_id": "interpretation.study_roles",
+      "title": "学习考试类候选",
+      "status": "defined",
+      "scope": "学业与考试",
+      "statement": "文章、学问、技术、考试和成绩可取父母候选，仍需具体关注；不能按旺衰直接换算分数或保证录取。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1473",
+        "B1474",
+        "B1475",
+        "B1476",
+        "B1477",
+        "B1492"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "B1473、B1474、B1475、B1476、B1477、B1492"
+    },
+    {
+      "rule_id": "interpretation.weather_roles",
+      "title": "天气象义候选",
+      "status": "defined",
+      "scope": "天气与农耕",
+      "statement": "父母雨、官鬼雷电、兄弟风云、子孙晴天、财有风云的晴天是象义方向，不等于触发即应验的完整气象程序。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1492",
+        "B1502",
+        "B1524"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "病虫害象义不改变普通子克官方向",
+        "无条件大涝冰雹虫灾断语不自动采用"
+      ],
+      "research_questions": [],
+      "source_locator": "B1492、B1502、B1524"
+    },
+    {
+      "rule_id": "interpretation.past_not_archive",
+      "title": "背景需核实而不能据卦捏造",
+      "status": "defined",
+      "scope": "过去事实",
+      "statement": "卦不是历史档案；可以据异象提出待核实的问题，不能将卦内猜测当作已发生事实。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1634"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "B1634"
+    },
+    {
+      "rule_id": "interpretation.report_uncertainty",
+      "title": "分项说明依据和未确定条件",
+      "status": "defined",
+      "scope": "报告",
+      "statement": "分别说明主问、取用、主体得失、目标成败、代价、可调整因素和不确定性；缺一模块保留其余有据部分，不填伪造概率。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1492",
+        "B1511",
+        "B1512",
+        "B1574",
+        "B1634"
+      ],
+      "evidence_type": "engineering_constraint",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "统计概率需实际数据与明确方法支持"
+      ],
+      "research_questions": [],
+      "source_locator": "B1492、B1511、B1512、B1574、B1634"
+    },
+    {
+      "rule_id": "case.all_online",
+      "title": "所有线上案例随服务积累",
+      "status": "defined",
+      "scope": "案例生命周期",
+      "statement": "保留成功、部分完成、失败、歧义、无法判断和用户更正的案例，不只收命中故事；保存输入、澄清、快照、规则引用、AI输出与反馈。",
+      "source_id": "USER-REQUIREMENTS",
+      "anchors": [
+        "shared_decisions"
+      ],
+      "evidence_type": "user_product_decision",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "shared_decisions"
+    },
+    {
+      "rule_id": "case.immutable_forecast",
+      "title": "原解释与事后复盘分开",
+      "status": "defined",
+      "scope": "反馈及研究",
+      "statement": "反馈另存事件时间、提交时间、核实状态；原输入和预测快照不被覆盖；未反馈是未知，不计对错。",
+      "source_id": "USER-REQUIREMENTS",
+      "anchors": [
+        "shared_decisions"
+      ],
+      "evidence_type": "user_product_decision",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [],
+      "source_locator": "shared_decisions"
+    },
+    {
+      "rule_id": "research.use_spirit_selection",
+      "title": "用神缺失、多现与辅神筛选",
+      "status": "research",
+      "scope": "候选爻定位",
+      "statement": "功能取用原则不自动给出多个候选爻的唯一筛选算法；元神忌神仇神等需要完整条件和单目标约束。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1538",
+        "B1623",
+        "B1632",
+        "B1634"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [],
+      "research_questions": [
+        "多现的优先条件",
+        "用神缺失的处理",
+        "元神忌神仇神的生成和相互限制"
+      ],
+      "source_locator": "B1538、B1623、B1632、B1634"
+    },
+    {
+      "rule_id": "research.timing",
+      "title": "应期通则",
+      "status": "research",
+      "scope": "未来时间",
+      "statement": "核心存在位爻等应期用法的案例，但具体时间单位、触发与反例尚不能从单例无条件推出。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1654",
+        "B1656",
+        "B1658",
+        "B1660"
+      ],
+      "evidence_type": "example_supported",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不得随意输出确定日期"
+      ],
+      "research_questions": [
+        "时间单位与量纲",
+        "触发、延期与解除",
+        "完整反例和适用范围"
+      ],
+      "source_locator": "B1654、B1656、B1658、B1660"
+    },
+    {
+      "rule_id": "research.auxiliary_symbols",
+      "title": "胎爻神煞与十二长生",
+      "status": "research",
+      "scope": "辅助专题",
+      "statement": "辅助材料出现的名词不能直接进入核心计算，需核实核心采用依据与完整算法。",
+      "source_id": "SRC-OUTLINE",
+      "anchors": [],
+      "evidence_type": "supplementary_candidate",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不得据胎旺断定着床或妊娠安全"
+      ],
+      "research_questions": [
+        "核心采用依据",
+        "定位算法",
+        "对主问的作用与反例"
+      ],
+      "source_locator": ""
+    },
+    {
+      "rule_id": "research.sixji",
+      "title": "六峜扩展边界",
+      "status": "research",
+      "scope": "教学与未来专题",
+      "statement": "原典有六峜记录与纳甲说明，当前产品不启用、不采集、不从四象反推。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B0307",
+        "B1438",
+        "B1439"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "当前不是待用户补交的信息"
+      ],
+      "research_questions": [
+        "若用户日后启用，需独立明确需求及数据来源"
+      ],
+      "source_locator": "B0307、B1438、B1439"
+    },
+    {
+      "rule_id": "errata.core_chart_examples",
+      "title": "核心例表勘误隔离",
+      "status": "defined",
+      "scope": "例表导入",
+      "statement": "B1404的223应依B1409和B1438为艮；B1597艮土六亲依艮金定义重算；B1610旅世二依宫序及B1652改初；B1644阴爻动圆圈依B1652与四象定义处理。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1404",
+        "B1409",
+        "B1438",
+        "B1597",
+        "B1221",
+        "B1610",
+        "B1652",
+        "B1644"
+      ],
+      "evidence_type": "internal_erratum",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "保留原值、采用值和证据",
+        "B1329组合例表多字段异常，不作直接黄金数据"
+      ],
+      "research_questions": [],
+      "source_locator": "B1404、B1409、B1438、B1597、B1221、B1610、B1652、B1644"
+    },
+    {
+      "rule_id": "relation.three_forms_pairs",
+      "title": "三形的六对互形与十位追溯",
+      "status": "defined",
+      "scope": "十二支的结构配对与源位",
+      "statement": "子卯、寅巳、申亥、午酉、丑戌、辰未六对互形；阳支从源位顺数、阴支从源位逆数，含源位为1、对象位为10。这里的形是成形关键状态，不能用外部三刑三支组或自刑替换。",
+      "source_id": "SRC-BSZS-SUPP",
+      "anchors": [
+        "PDF-P1",
+        "PDF-P2",
+        "PDF-P3"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [
+        "只识别结构与源位，不推出吉凶、寿命或应期",
+        "本位计数为1，十位共移动九次",
+        "本体系的形不等于刑罚伤害"
+      ],
+      "research_questions": [],
+      "source_locator": "PDF-P1、PDF-P2、PDF-P3",
+      "pairs": [
+        [
+          "子",
+          "卯"
+        ],
+        [
+          "寅",
+          "巳"
+        ],
+        [
+          "申",
+          "亥"
+        ],
+        [
+          "午",
+          "酉"
+        ],
+        [
+          "丑",
+          "戌"
+        ],
+        [
+          "辰",
+          "未"
+        ]
+      ],
+      "code_refs": [
+        "software_prep/branch_relations.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/branch_relation_test_results.json",
+          "test_ids": [
+            "BR-ORIGIN-子",
+            "BR-ORIGIN-丑",
+            "BR-ORIGIN-寅",
+            "BR-ORIGIN-卯",
+            "BR-ORIGIN-辰",
+            "BR-ORIGIN-巳",
+            "BR-ORIGIN-午",
+            "BR-ORIGIN-未",
+            "BR-ORIGIN-申",
+            "BR-ORIGIN-酉",
+            "BR-ORIGIN-戌",
+            "BR-ORIGIN-亥",
+            "BR-FORM-子卯",
+            "BR-FORM-寅巳",
+            "BR-FORM-申亥",
+            "BR-FORM-午酉",
+            "BR-FORM-丑戌",
+            "BR-FORM-辰未",
+            "BR-MATRIX",
+            "BR-COUNT",
+            "BR-SOURCE"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "仅独立关系配对、类别和源位算法；不验证预测效果",
+        "尚未连接排盘、案例与AI完整服务流",
+        "不计算拆合效力、日月目标、个人动机或成败吉凶"
+      ]
+    },
+    {
+      "rule_id": "relation.three_forms_categories",
+      "title": "无恩恃势无礼三形分类",
+      "status": "defined",
+      "scope": "已匹配的互形地支对",
+      "statement": "子卯、寅巳、申亥为无恩之形；午酉为恃势之形；丑戌、辰未为无礼之形。三指三种关系类别，不是强制凑齐三个地支。",
+      "source_id": "SRC-BSZS-SUPP",
+      "anchors": [
+        "PDF-P3"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [
+        "类别本身不带吉凶分数",
+        "反生反克的理论说明不改变普通六亲标注公式"
+      ],
+      "research_questions": [],
+      "source_locator": "PDF-P3",
+      "categories": {
+        "无恩之形": [
+          [
+            "子",
+            "卯"
+          ],
+          [
+            "寅",
+            "巳"
+          ],
+          [
+            "申",
+            "亥"
+          ]
+        ],
+        "恃势之形": [
+          [
+            "午",
+            "酉"
+          ]
+        ],
+        "无礼之形": [
+          [
+            "丑",
+            "戌"
+          ],
+          [
+            "辰",
+            "未"
+          ]
+        ]
+      },
+      "code_refs": [
+        "software_prep/branch_relations.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/branch_relation_test_results.json",
+          "test_ids": [
+            "BR-FORM-子卯",
+            "BR-FORM-寅巳",
+            "BR-FORM-申亥",
+            "BR-FORM-午酉",
+            "BR-FORM-丑戌",
+            "BR-FORM-辰未",
+            "BR-MATRIX",
+            "BR-SOURCE"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "仅独立关系配对、类别和源位算法；不验证预测效果",
+        "尚未连接排盘、案例与AI完整服务流",
+        "不计算拆合效力、日月目标、个人动机或成败吉凶"
+      ]
+    },
+    {
+      "rule_id": "interpretation.three_forms_context",
+      "title": "形的解释须依据整体大象",
+      "status": "defined",
+      "scope": "三形原理解释边界",
+      "statement": "形既是立根成形关键，也可能是脆弱与功败垂成环节；原文明言形不关乎吉凶，只反映事态现状。整体大象论吉或凶之后，才选择相应解释，不得循环论证。",
+      "source_id": "SRC-BSZS-SUPP",
+      "anchors": [
+        "PDF-P1",
+        "PDF-P4"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "整体大象的具体判定仍依主问和有效作用",
+        "不把流产等理论譬喻输出为医学事实",
+        "不以配对单独判刑罚、灾害或必然失败"
+      ],
+      "research_questions": [],
+      "source_locator": "PDF-P1、PDF-P4"
+    },
+    {
+      "rule_id": "relation.six_harms_pairs",
+      "title": "六害的六对互害",
+      "status": "defined",
+      "scope": "十二支结构配对",
+      "statement": "子未、卯辰、午丑、寅巳、申亥、酉戌为六对互害；配对识别对称，实际作用方向与效力另行判断。",
+      "source_id": "SRC-BSZS-SUPP",
+      "anchors": [
+        "PDF-P4",
+        "PDF-P5"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [
+        "互害不等于现实恶意或确定坏结果",
+        "不凭配对自动改写五行或爻强弱"
+      ],
+      "research_questions": [],
+      "source_locator": "PDF-P4、PDF-P5",
+      "pairs": [
+        [
+          "子",
+          "未"
+        ],
+        [
+          "卯",
+          "辰"
+        ],
+        [
+          "午",
+          "丑"
+        ],
+        [
+          "寅",
+          "巳"
+        ],
+        [
+          "申",
+          "亥"
+        ],
+        [
+          "酉",
+          "戌"
+        ]
+      ],
+      "code_refs": [
+        "software_prep/branch_relations.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/branch_relation_test_results.json",
+          "test_ids": [
+            "BR-HARM-子未",
+            "BR-HARM-卯辰",
+            "BR-HARM-午丑",
+            "BR-HARM-寅巳",
+            "BR-HARM-申亥",
+            "BR-HARM-酉戌",
+            "BR-MATRIX",
+            "BR-OVERLAP",
+            "BR-SOURCE"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "仅独立关系配对、类别和源位算法；不验证预测效果",
+        "尚未连接排盘、案例与AI完整服务流",
+        "不计算拆合效力、日月目标、个人动机或成败吉凶"
+      ]
+    },
+    {
+      "rule_id": "relation.six_harms_categories",
+      "title": "六害的恩间与害间分类",
+      "status": "defined",
+      "scope": "已匹配的互害地支对",
+      "statement": "子未、卯辰因相克关系列为害间；午丑、寅巳、申亥、酉戌因相生关系列为恩间。分类保留原理语境，恩间初衷与实际效果不同。",
+      "source_id": "SRC-BSZS-SUPP",
+      "anchors": [
+        "PDF-P4",
+        "PDF-P5"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "limitations": [
+        "恩间不是保证有利，害间不是证明他人故意破坏",
+        "不将两类固定为纯吉或必凶"
+      ],
+      "research_questions": [],
+      "source_locator": "PDF-P4、PDF-P5",
+      "categories": {
+        "害间": [
+          [
+            "子",
+            "未"
+          ],
+          [
+            "卯",
+            "辰"
+          ]
+        ],
+        "恩间": [
+          [
+            "午",
+            "丑"
+          ],
+          [
+            "寅",
+            "巳"
+          ],
+          [
+            "申",
+            "亥"
+          ],
+          [
+            "酉",
+            "戌"
+          ]
+        ]
+      },
+      "code_refs": [
+        "software_prep/branch_relations.py"
+      ],
+      "test_refs": [
+        {
+          "path": "software_prep/branch_relation_test_results.json",
+          "test_ids": [
+            "BR-HARM-子未",
+            "BR-HARM-卯辰",
+            "BR-HARM-午丑",
+            "BR-HARM-寅巳",
+            "BR-HARM-申亥",
+            "BR-HARM-酉戌",
+            "BR-MATRIX",
+            "BR-SOURCE"
+          ]
+        }
+      ],
+      "verification_limits": [
+        "仅独立关系配对、类别和源位算法；不验证预测效果",
+        "尚未连接排盘、案例与AI完整服务流",
+        "不计算拆合效力、日月目标、个人动机或成败吉凶"
+      ]
+    },
+    {
+      "rule_id": "relation.six_harms_break_combination",
+      "title": "六害十二方向的拆合关系模板",
+      "status": "defined",
+      "scope": "甲乙配对及第三支的结构说明",
+      "statement": "甲冲乙的六合伙伴丙，构成甲与乙相害的解释模板。记录发出作用者、被涉及者、所冲之支及原六合；模板定义不代表当次卦中拆合已实际生效。",
+      "source_id": "SRC-BSZS-SUPP",
+      "anchors": [
+        "PDF-P4",
+        "PDF-P5"
+      ],
+      "evidence_type": "formalized_from_core",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "未明确第三支丙是否必须在卦中出现",
+        "冲、合是否有效及优先级需要另定",
+        "本条目前未登记拆合模板程序实现"
+      ],
+      "research_questions": [],
+      "source_locator": "PDF-P4、PDF-P5",
+      "direction_templates": [
+        {
+          "actor": "子",
+          "target": "未",
+          "clashed_partner": "午",
+          "combination": [
+            "未",
+            "午"
+          ]
+        },
+        {
+          "actor": "未",
+          "target": "子",
+          "clashed_partner": "丑",
+          "combination": [
+            "子",
+            "丑"
+          ]
+        },
+        {
+          "actor": "卯",
+          "target": "辰",
+          "clashed_partner": "酉",
+          "combination": [
+            "辰",
+            "酉"
+          ]
+        },
+        {
+          "actor": "辰",
+          "target": "卯",
+          "clashed_partner": "戌",
+          "combination": [
+            "卯",
+            "戌"
+          ]
+        },
+        {
+          "actor": "午",
+          "target": "丑",
+          "clashed_partner": "子",
+          "combination": [
+            "丑",
+            "子"
+          ]
+        },
+        {
+          "actor": "丑",
+          "target": "午",
+          "clashed_partner": "未",
+          "combination": [
+            "午",
+            "未"
+          ]
+        },
+        {
+          "actor": "寅",
+          "target": "巳",
+          "clashed_partner": "申",
+          "combination": [
+            "巳",
+            "申"
+          ]
+        },
+        {
+          "actor": "巳",
+          "target": "寅",
+          "clashed_partner": "亥",
+          "combination": [
+            "寅",
+            "亥"
+          ]
+        },
+        {
+          "actor": "申",
+          "target": "亥",
+          "clashed_partner": "寅",
+          "combination": [
+            "亥",
+            "寅"
+          ]
+        },
+        {
+          "actor": "亥",
+          "target": "申",
+          "clashed_partner": "巳",
+          "combination": [
+            "申",
+            "巳"
+          ]
+        },
+        {
+          "actor": "酉",
+          "target": "戌",
+          "clashed_partner": "卯",
+          "combination": [
+            "戌",
+            "卯"
+          ]
+        },
+        {
+          "actor": "戌",
+          "target": "酉",
+          "clashed_partner": "辰",
+          "combination": [
+            "酉",
+            "辰"
+          ]
+        }
+      ]
+    },
+    {
+      "rule_id": "interpretation.six_harms_direction",
+      "title": "六害方向的利人利己与动机映射",
+      "status": "research",
+      "scope": "六害理论解释向现实人物的应用",
+      "statement": "补充区分十二方向：午向丑、寅向巳、申向亥、亥向申、戌向酉称利人；丑向午、巳向寅称利己；酉向戌称利人利己；子未卯辰为害间方向。这些是原文解释，不是已验证的人物心理事实。",
+      "source_id": "SRC-BSZS-SUPP",
+      "anchors": [
+        "PDF-P4",
+        "PDF-P5",
+        "PDF-P6"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不同方向不简单视为同一动机",
+        "不把利人初衷等同好结果",
+        "不据害间认定对方必有恶意"
+      ],
+      "research_questions": [
+        "如何从明确主问识别现实角色与方向",
+        "哪些背景证据允许提出动机候选",
+        "多关系与已有生克如何共同解释且遵守单目标"
+      ],
+      "source_locator": "PDF-P4、PDF-P5、PDF-P6"
+    },
+    {
+      "rule_id": "interpretation.six_harms_application",
+      "title": "日月相害与用神害世的适用对象",
+      "status": "research",
+      "scope": "日月关系及主问得失",
+      "statement": "补充说日月相害一般顾此失彼，月令侧重社会关系、日令侧重内在感情；用神害世可表示有所得而他处失去。但本段未明确日月相害的另一端及全部生效条件，不把结构直接当成事、心理或现实事件。",
+      "source_id": "SRC-BSZS-SUPP",
+      "anchors": [
+        "PDF-P6"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "日月相害不直接等同日支与月支彼此相害",
+        "也不固定假定日月只作用于世爻或只作用于用神",
+        "时间未知不代入服务器当前日月",
+        "用神害世不独立保证事情成功"
+      ],
+      "research_questions": [
+        "相害双方具体是哪些对象",
+        "月令日令对不同目标的适用条件",
+        "用神选择、旺衰动静及有效性门槛",
+        "恩间和害间例子怎样进入个案解释"
+      ],
+      "source_locator": "PDF-P6"
+    },
+    {
+      "rule_id": "relation.multiple_branch_facts",
+      "title": "互形互害等多种关系同时保留",
+      "status": "defined",
+      "scope": "地支关系事实列表",
+      "statement": "寅巳、申亥同时属于互形和互害，记录所有成立的结构事实，不用一种覆盖另一种；解释组合和权重不由事实数量决定。",
+      "source_id": "SRC-BSZS-SUPP",
+      "anchors": [
+        "PDF-P5"
+      ],
+      "evidence_type": "formalized_from_core",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "不把同时存在两种关系计成两个凶分",
+        "长生帝旺墓库及阶段策略仅为作者原理解释，不能由一个地支自动认定用户人生阶段",
+        "PDF-P1百年九运讲解不构成软件寿命算法"
+      ],
+      "research_questions": [],
+      "source_locator": "PDF-P5"
+    },
+    {
+      "rule_id": "interpretation.target_effects",
+      "title": "围绕所问目标解释作用方向",
+      "status": "defined",
+      "scope": "核心原理下的AI条件性目标判断",
+      "statement": "按本次真实用途确定对应六亲，在卦中定位相应候选；利与不利以本次用神为目标。生扶目标可解释为对该目标的支持，克制目标可解释为该目标所受限制，须结合目标是否为所求或所忧、动静及已有旺衰条件。一个爻不能在同一主问里任意扩断多个不同亲属的吉凶。发动或旺相本身没有固定吉凶，必须说明实际针对的对象；不能把局部关系升级为目标必成或必败。",
+      "source_id": "SRC-BSZS",
+      "anchors": [
+        "B1457",
+        "B1459",
+        "B1479",
+        "B1480",
+        "B1492"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "not_implemented",
+      "limitations": [
+        "允许AI有依据的条件解释，未定义统一强弱评分、作用优先级或成功概率。",
+        "多处同类用神须保留采用条件；所忧对象受克与所求对象受克意义不同。"
+      ],
+      "research_questions": [],
+      "source_locator": "B1457、B1459、B1479、B1480、B1492"
+    },
+    {
+      "rule_id": "buzhai.relative_scope",
+      "title": "具体人、具体地、具体目标",
+      "status": "defined",
+      "scope": "全部卜宅阶段",
+      "statement": "卜宅吉凶针对特定个体或群体及目标；不能从某人适合推成所有人都适合。福地不是包揽财富、官职、家族等一切好处。",
+      "source_id": "SRC-BUZHAI",
+      "anchors": [
+        "043末段；044：相对吉凶、个体适应性"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "source_locator": "043末段；044：相对吉凶、个体适应性",
+      "limitations": [
+        "记录受益人和具体主问，不把地局候选当成功保证。"
+      ],
+      "research_questions": [],
+      "implementation_scope": "资料记录、作用域投影、结构提示及来源解释；不含已验证吉凶或完整风水推断算法。",
+      "verification": [
+        "liuyao_app/test_buzhai.py"
+      ],
+      "parameter_value": null,
+      "parameter_explanation": "定性原理，无0.5、1、2之类权重；未新设评分或成功率。"
+    },
+    {
+      "rule_id": "buzhai.site_then_divination",
+      "title": "相地与卜宅分工",
+      "status": "defined",
+      "scope": "择地与方案比较",
+      "statement": "先通过实地环境和规划形成明确备选方案，再对每个具体方案分别卜择；年命、日主和罗盘理气不能代替本次起卦。",
+      "source_id": "SRC-BUZHAI",
+      "anchors": [
+        "044：相地、卜宅、枚卜"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "source_locator": "044：相地、卜宅、枚卜",
+      "limitations": [
+        "软件不自动完成地形勘察或建筑设计，不以出生八字替换起卦。"
+      ],
+      "research_questions": [],
+      "implementation_scope": "资料记录、作用域投影、结构提示及来源解释；不含已验证吉凶或完整风水推断算法。",
+      "verification": [
+        "liuyao_app/test_buzhai.py"
+      ],
+      "parameter_value": null,
+      "parameter_explanation": "定性原理，无0.5、1、2之类权重；未新设评分或成功率。"
+    },
+    {
+      "rule_id": "buzhai.workflow",
+      "title": "择地、诊断与验证方案分开",
+      "status": "defined",
+      "scope": "核对问题范围／诊断／方案验证",
+      "statement": "择地与治风水是不同场景。治理须先核对问题范围，第二步另起一卦问具体问题，再起卦问拟定整改方案是否有效；不是一卦同时替代三个主问。方案判断不利时，应重新审视判断并调整方案后再占；诊断与治理不是同一件事。",
+      "source_id": "SRC-BUZHAI",
+      "anchors": [
+        "044末段：选择风水与治理风水、三阶段"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "source_locator": "044末段：选择风水与治理风水、三阶段",
+      "limitations": [
+        "软件提供分阶段记录与前序案例关联；不声称自动执行了全部三步或检验了前序案例。",
+        "原文在调整判断和方案的前提下谈再占；不把同题不作改变地重占直到吉作为流程，也不把先前占断当现实因果证据。"
+      ],
+      "research_questions": [],
+      "implementation_scope": "资料记录、作用域投影、结构提示及来源解释；不含已验证吉凶或完整风水推断算法。",
+      "verification": [
+        "liuyao_app/test_buzhai.py"
+      ],
+      "parameter_value": null,
+      "parameter_explanation": "定性原理，无0.5、1、2之类权重；未新设评分或成功率。"
+    },
+    {
+      "rule_id": "buzhai.five_lands",
+      "title": "五地的持世与旺相条件",
+      "status": "defined",
+      "scope": "风水五地的结构候选",
+      "statement": "亲丁地：兄弟持世、子孙旺相；丁财地：子孙持世、妻财旺相；财官地：妻财持世、官鬼旺相；官印地：官鬼持世、父母旺相；名望地：父母持世、兄弟旺相。均是相对大概特征，须具体分析。",
+      "source_id": "SRC-BUZHAI",
+      "anchors": [
+        "043：亲丁地、丁财地、财官地、官印地、名望地"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "source_locator": "043：亲丁地、丁财地、财官地、官印地、名望地",
+      "limitations": [
+        "只自动匹配世爻六亲和相关六亲所在爻位；不把普通月令或实验分阈值当作完整旺相算法。"
+      ],
+      "research_questions": [],
+      "implementation_scope": "资料记录、作用域投影、结构提示及来源解释；不含已验证吉凶或完整风水推断算法。",
+      "verification": [
+        "liuyao_app/test_buzhai.py"
+      ],
+      "parameter_value": null,
+      "parameter_explanation": "定性原理，无0.5、1、2之类权重；未新设评分或成功率。"
+    },
+    {
+      "rule_id": "buzhai.naming_anchor",
+      "title": "五地以世爻命名，不以元神倒置",
+      "status": "defined",
+      "scope": "五地命名与作用解释",
+      "statement": "五地命名以世爻为立极点看其福荫对象，不以世爻元神入名。父母持世、官鬼动来生世，命名仍按名望地方向，不倒置成官印地。该例以贪生忘克解释作用目标。",
+      "source_id": "SRC-BUZHAI",
+      "anchors": [
+        "043：父母持世、官动生世的反例"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "source_locator": "043：父母持世、官动生世的反例",
+      "limitations": [
+        "只实现命名锚点；通用评分尚无贪生忘克作用优先级，不把多向加分说成同时确定有效。"
+      ],
+      "research_questions": [],
+      "implementation_scope": "资料记录、作用域投影、结构提示及来源解释；不含已验证吉凶或完整风水推断算法。",
+      "verification": [
+        "liuyao_app/test_buzhai.py"
+      ],
+      "parameter_value": null,
+      "parameter_explanation": "定性原理，无0.5、1、2之类权重；未新设评分或成功率。"
+    },
+    {
+      "rule_id": "buzhai.combined_limits",
+      "title": "兼吉、独损须核对完整条件",
+      "status": "defined",
+      "scope": "兼吉、独损的条件解释",
+      "statement": "原文举名望兼吉丁财为父母持世、兄弟和子孙联合发动生旺财；举名望独损为兄弟动化衰败。二者是具体例子，不是完整穷举表。",
+      "source_id": "SRC-BUZHAI",
+      "anchors": [
+        "043：兼吉和独损的两个例子"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "source_locator": "043：兼吉和独损的两个例子",
+      "limitations": [
+        "不凭一个动爻或一个高低分自动判兼吉独损；不得直接推断绝后、夭折或家庭必然不和。"
+      ],
+      "research_questions": [],
+      "implementation_scope": "资料记录、作用域投影、结构提示及来源解释；不含已验证吉凶或完整风水推断算法。",
+      "verification": [
+        "liuyao_app/test_buzhai.py"
+      ],
+      "parameter_value": null,
+      "parameter_explanation": "定性原理，无0.5、1、2之类权重；未新设评分或成功率。"
+    },
+    {
+      "rule_id": "buzhai.casting_role",
+      "title": "卦师与主家起卦须分清",
+      "status": "defined",
+      "scope": "取用；区分角色、问题功能和已建立的主体关联",
+      "statement": "卦师独立勘察时通常考虑父母爻，特殊情况考虑土爻，并结合世应、动变；主家询问此地是否适合自己，应明确主体关联。选房段落强调与世爻关联后的枚卜，不凭“房子”二字固定一种取用。",
+      "source_id": "SRC-TAIBU",
+      "anchors": [
+        "PDF-P130（书内128页），1.3卜宅；PDF-P148～149（书内146～147页）"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "source_locator": "PDF-P130（书内128页），1.3卜宅；PDF-P148～149（书内146～147页）",
+      "limitations": [
+        "特殊取土条件未形成完整算法；系统不要求实施原文所举的圈地动作，也不自动把所有代问当主家自占。"
+      ],
+      "research_questions": [],
+      "implementation_scope": "资料记录、作用域投影、结构提示及来源解释；不含已验证吉凶或完整风水推断算法。",
+      "verification": [
+        "liuyao_app/test_buzhai.py"
+      ],
+      "parameter_value": null,
+      "parameter_explanation": "定性原理，无0.5、1、2之类权重；未新设评分或成功率。"
+    },
+    {
+      "rule_id": "buzhai.residence_choice",
+      "title": "阳宅选房的静旺与冲动条件",
+      "status": "defined",
+      "scope": "只用于主家本人起卦、阳宅择地／选房阶段",
+      "statement": "对与主家主体明确关联的阳宅选房，原文优先静旺；静卦中避六冲、注意世爻日冲及暗动的不稳定，六合静卦较优；动卦偏好动爻少、尤其一动生旺主体，同时核对动爻是否有关，不能只数多少。",
+      "source_id": "SRC-TAIBU",
+      "anchors": [
+        "PDF-P149（书内147页），选房子之枚卜法第5项"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "source_locator": "PDF-P149（书内147页），选房子之枚卜法第5项",
+      "limitations": [
+        "静卦不等于静旺；日冲不都等于暗动；不跨用到诊断、阴宅或所有事务，不从多动爻推断他人欺诈。"
+      ],
+      "research_questions": [],
+      "implementation_scope": "资料记录、作用域投影、结构提示及来源解释；不含已验证吉凶或完整风水推断算法。",
+      "verification": [
+        "liuyao_app/test_buzhai.py"
+      ],
+      "parameter_value": null,
+      "parameter_explanation": "定性原理，无0.5、1、2之类权重；未新设评分或成功率。"
+    },
+    {
+      "rule_id": "buzhai.empty_scope",
+      "title": "未入住时世空的条件例外",
+      "status": "defined",
+      "scope": "主家本人、阳宅选房、尚未入住，并且世旺条件成立",
+      "statement": "在上述主家阳宅选房情境，尚未入住且世爻旺时，原文不因世爻旬空单独否定选择；入住与填实的解释有此前提。",
+      "source_id": "SRC-TAIBU",
+      "anchors": [
+        "PDF-P149（书内147页），第5项中“只要它旺”"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "source_locator": "PDF-P149（书内147页），第5项中“只要它旺”",
+      "limitations": [
+        "未入住不是世旺证明。未核定旺衰只能保留条件；不全局取消EMPTY扣分，不声称已经出空或给出精确入住日期。"
+      ],
+      "research_questions": [],
+      "implementation_scope": "资料记录、作用域投影、结构提示及来源解释；不含已验证吉凶或完整风水推断算法。",
+      "verification": [
+        "liuyao_app/test_buzhai.py"
+      ],
+      "parameter_value": null,
+      "parameter_explanation": "定性原理，无0.5、1、2之类权重；未新设评分或成功率。"
+    },
+    {
+      "rule_id": "buzhai.diagnosis_scope",
+      "title": "诊断卦不以求吉为目标",
+      "status": "defined",
+      "scope": "核对问题范围／具体诊断／验证整改方案",
+      "statement": "买房选择与装修查找问题不同；诊断旨在找不利因素，不要求得到吉卦。原文区分日月作用与卦内动爻作用以讨论外部环境和内部问题，整改方案需另问效果。",
+      "source_id": "SRC-TAIBU",
+      "anchors": [
+        "PDF-P149～150（书内147～148页），房子装修第6项"
+      ],
+      "evidence_type": "explicit_definition",
+      "implementation_status": "tested",
+      "source_locator": "PDF-P149～150（书内147～148页），房子装修第6项",
+      "limitations": [
+        "只能给核查方向；不能仅凭卦断定具体疾病、建筑故障或环境危害，也不能把诊断中的不利直接作为整套房屋不可用的结论。"
+      ],
+      "research_questions": [],
+      "implementation_scope": "资料记录、作用域投影、结构提示及来源解释；不含已验证吉凶或完整风水推断算法。",
+      "verification": [
+        "liuyao_app/test_buzhai.py"
+      ],
+      "parameter_value": null,
+      "parameter_explanation": "定性原理，无0.5、1、2之类权重；未新设评分或成功率。"
+    }
+  ]
+}

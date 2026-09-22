@@ -1,0 +1,6 @@
+{
+  "name": "liuyao-android-web-build",
+  "private": true,
+  "scripts": {"build:web": "node build-web.mjs"},
+  "devDependencies": {"esbuild": "0.25.10"}
+}

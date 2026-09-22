@@ -1,0 +1,44 @@
+{
+  "test_suite": "ai_case_store_integration",
+  "scope": "本地validator与SQLite事件联通；没有调用真实AI",
+  "total": 5,
+  "passed": 5,
+  "failed": 0,
+  "tests": [
+    {
+      "test_id": "AI-STORE-001",
+      "title": "失败原始输出与校验错误保留，未被成功重试覆盖",
+      "status": "passed",
+      "runner": "software_prep/test_ai_store_integration.py",
+      "evidence_file": "software_prep/ai_store_integration_results.json"
+    },
+    {
+      "test_id": "AI-STORE-002",
+      "title": "通过结构引用校验的采用内容保持运行绑定",
+      "status": "passed",
+      "runner": "software_prep/test_ai_store_integration.py",
+      "evidence_file": "software_prep/ai_store_integration_results.json"
+    },
+    {
+      "test_id": "AI-STORE-003",
+      "title": "原始输出与采用内容分开保存，摘要由存储生成",
+      "status": "passed",
+      "runner": "software_prep/test_ai_store_integration.py",
+      "evidence_file": "software_prep/ai_store_integration_results.json"
+    },
+    {
+      "test_id": "AI-STORE-004",
+      "title": "分析整包摘要与阶段模板摘要均可追溯",
+      "status": "passed",
+      "runner": "software_prep/test_ai_store_integration.py",
+      "evidence_file": "software_prep/ai_store_integration_results.json"
+    },
+    {
+      "test_id": "AI-STORE-005",
+      "title": "输入缺日期仍留案例，不把录入时间补为实际起卦时间",
+      "status": "passed",
+      "runner": "software_prep/test_ai_store_integration.py",
+      "evidence_file": "software_prep/ai_store_integration_results.json"
+    }
+  ]
+}

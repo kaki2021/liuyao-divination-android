@@ -1,0 +1,81 @@
+{
+  "checked_at": "2026-09-20",
+  "method": "Google Drive 原件的可读正文；按课次标题与段落定位核对，不假称原始 DOCX 字节校验或印刷页码。",
+  "sources": [
+    {
+      "title": "卜筮正术.docx",
+      "url": "https://docs.google.com/document/d/11P9yps_a0OGXZadlpIyCwj_pHWXFszZV/edit?usp=drivesdk&ouid=114159189813703759493&rtpof=true&sd=true",
+      "readable_text_sha256": "df2d39d6af6e9e49e15621290801a3f67ef3172e2c4cc7ab4ff8ea33b322717d"
+    },
+    {
+      "title": "卜筮正术补充卜宅.docx",
+      "url": "https://docs.google.com/document/d/1-SBhy0rYdyXDgS5ZwnUiCE0MpgQI9nXC/edit?usp=drivesdk&ouid=114159189813703759493&rtpof=true&sd=true",
+      "readable_text_sha256": "d93b61db894f52fe04a658d521e8427806df583b80831b6f397bf481f3c87c48"
+    }
+  ],
+  "rules": {
+    "intent.plan_before_cast": {
+      "locator": "001 序言：三、巫术与道术的融合",
+      "quote": "卜筮，卜的是“谋”后的“运”，而不是命。",
+      "review_note": "谋事先认真计划，再卜其中未拿准的部分；卦象不吉时检查计划、查漏补缺后再占。原文术语为“谋而后卜”。不能把该段弱化为任何泛问都可直接分析，也不能据此推成所有诊断都必须已有治理方案。",
+      "source_url": "https://docs.google.com/document/d/11P9yps_a0OGXZadlpIyCwj_pHWXFszZV/edit?usp=drivesdk&ouid=114159189813703759493&rtpof=true&sd=true",
+      "evidence_status": "source_checked_summary"
+    },
+    "intent.true_concern": {
+      "locator": "010：起卦的心理准备／真念",
+      "quote": "必须让占卦人亲口，清清楚楚、明明白白，告诉你他内心的真实想法",
+      "review_note": "实际关切由本人说明。软件只根据用户表达整理，不用卦象猜来意。",
+      "source_url": "https://docs.google.com/document/d/11P9yps_a0OGXZadlpIyCwj_pHWXFszZV/edit?usp=drivesdk&ouid=114159189813703759493&rtpof=true&sd=true",
+      "evidence_status": "source_checked_summary"
+    },
+    "intent.main_question": {
+      "locator": "012：世应与得失；参照 003 枚卜原则",
+      "quote": "单独看世应的生克，与你所问之事，最终成不成没关系，他只是告诉你这个得失趋向。",
+      "review_note": "同一主问的得失与成败可以一起看；不同方案分别记录，是软件据原理组织案例的方式，不冒称原文有所有场景通用的固定卦数。",
+      "source_url": "https://docs.google.com/document/d/11P9yps_a0OGXZadlpIyCwj_pHWXFszZV/edit?usp=drivesdk&ouid=114159189813703759493&rtpof=true&sd=true",
+      "evidence_status": "source_checked_summary"
+    },
+    "interpretation.functional_role": {
+      "locator": "011：六亲／妻财和子孙",
+      "quote": "如果你要打算买卖，那么这个土地就属于财爻；如果你没有买卖的意思，就是种庄稼收粮食，那么这块土地就是父母爻。",
+      "review_note": "原文以土地、粮食等随用途改变取用为例。先明真实功能，不能仅凭对象名称定六亲。",
+      "source_url": "https://docs.google.com/document/d/11P9yps_a0OGXZadlpIyCwj_pHWXFszZV/edit?usp=drivesdk&ouid=114159189813703759493&rtpof=true&sd=true",
+      "evidence_status": "source_checked_summary"
+    },
+    "interpretation.gains_before_success": {
+      "locator": "012：世应",
+      "quote": "文始道卜筮理念里，就是要先定得失，后看成败。",
+      "review_note": "办成与受益分别判断，不能把单独世应关系等同目标成败。",
+      "source_url": "https://docs.google.com/document/d/11P9yps_a0OGXZadlpIyCwj_pHWXFszZV/edit?usp=drivesdk&ouid=114159189813703759493&rtpof=true&sd=true",
+      "evidence_status": "source_checked_summary"
+    },
+    "interpretation.three_self_references": {
+      "locator": "012：身位／世身和卦身",
+      "quote": "所谓世身，就是剥离那些社会角色后的自己。而卦身呢，是剥离社会角色后，自己要面对的事儿。",
+      "review_note": "社会角色与个人身位分尺度使用；不能为有利结论任意切换。",
+      "source_url": "https://docs.google.com/document/d/11P9yps_a0OGXZadlpIyCwj_pHWXFszZV/edit?usp=drivesdk&ouid=114159189813703759493&rtpof=true&sd=true",
+      "evidence_status": "source_checked_summary"
+    },
+    "interpretation.target_effects": {
+      "locator": "011：兄弟",
+      "quote": "一个卦爻本身没有吉凶，需要看对象来论吉凶。",
+      "review_note": "动旺并不等于有利，要说明它实际支持或限制的对象。",
+      "source_url": "https://docs.google.com/document/d/11P9yps_a0OGXZadlpIyCwj_pHWXFszZV/edit?usp=drivesdk&ouid=114159189813703759493&rtpof=true&sd=true",
+      "evidence_status": "source_checked_summary"
+    },
+    "buzhai.site_then_divination": {
+      "locator": "044：相地与卜宅／多个方案",
+      "quote": "最后剩下几个看上去没什么问题的方案，再用枚卜法逐一对这些方案进行占卜",
+      "review_note": "先经实地勘察和规划形成可选方案，再逐案卜择。",
+      "source_url": "https://docs.google.com/document/d/1-SBhy0rYdyXDgS5ZwnUiCE0MpgQI9nXC/edit?usp=drivesdk&ouid=114159189813703759493&rtpof=true&sd=true",
+      "evidence_status": "source_checked_summary"
+    },
+    "buzhai.workflow": {
+      "locator": "044 末段：诊断与治理的三步",
+      "quote": "第二步你还得再起一卦，来指定占问这个阴宅风水问题具体出在哪里。",
+      "review_note": "治风水依次核对范围、另问具体问题、再问整改方案。若方案判断不利，原文要求重新审视判断及方案；不能只重复原题等到吉，也不能把占断当成已证实的现实原因。",
+      "source_url": "https://docs.google.com/document/d/1-SBhy0rYdyXDgS5ZwnUiCE0MpgQI9nXC/edit?usp=drivesdk&ouid=114159189813703759493&rtpof=true&sd=true",
+      "evidence_status": "source_checked_summary"
+    }
+  }
+}

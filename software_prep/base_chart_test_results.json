@@ -1,0 +1,399 @@
+{
+  "scope": "main base chart, supplied auxiliary crosscheck, selected explicit core examples",
+  "total": 77,
+  "passed": 77,
+  "failed": 0,
+  "results": [
+    {
+      "test_id": "CHART-001",
+      "title": "辅助表交叉核对 乾为天",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-002",
+      "title": "辅助表交叉核对 天风姤",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-003",
+      "title": "辅助表交叉核对 天山遁",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-004",
+      "title": "辅助表交叉核对 天地否",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-005",
+      "title": "辅助表交叉核对 风地观",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-006",
+      "title": "辅助表交叉核对 山地剥",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-007",
+      "title": "辅助表交叉核对 火地晋",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-008",
+      "title": "辅助表交叉核对 火天大有",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-009",
+      "title": "辅助表交叉核对 兑为泽",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-010",
+      "title": "辅助表交叉核对 泽水困",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-011",
+      "title": "辅助表交叉核对 泽地萃",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-012",
+      "title": "辅助表交叉核对 泽山咸",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-013",
+      "title": "辅助表交叉核对 水山蹇",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-014",
+      "title": "辅助表交叉核对 地山谦",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-015",
+      "title": "辅助表交叉核对 雷山小过",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-016",
+      "title": "辅助表交叉核对 雷泽归妹",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-017",
+      "title": "辅助表交叉核对 离为火",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-018",
+      "title": "辅助表交叉核对 火山旅",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-019",
+      "title": "辅助表交叉核对 火风鼎",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-020",
+      "title": "辅助表交叉核对 火水未济",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-021",
+      "title": "辅助表交叉核对 山水蒙",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-022",
+      "title": "辅助表交叉核对 风水涣",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-023",
+      "title": "辅助表交叉核对 天水讼",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-024",
+      "title": "辅助表交叉核对 天火同人",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-025",
+      "title": "辅助表交叉核对 震为雷",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-026",
+      "title": "辅助表交叉核对 雷地豫",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-027",
+      "title": "辅助表交叉核对 雷水解",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-028",
+      "title": "辅助表交叉核对 雷风恒",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-029",
+      "title": "辅助表交叉核对 地风升",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-030",
+      "title": "辅助表交叉核对 水风井",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-031",
+      "title": "辅助表交叉核对 泽风大过",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-032",
+      "title": "辅助表交叉核对 泽雷随",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-033",
+      "title": "辅助表交叉核对 巽为风",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-034",
+      "title": "辅助表交叉核对 风天小畜",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-035",
+      "title": "辅助表交叉核对 风火家人",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-036",
+      "title": "辅助表交叉核对 风雷益",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-037",
+      "title": "辅助表交叉核对 天雷无妄",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-038",
+      "title": "辅助表交叉核对 火雷噬嗑",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-039",
+      "title": "辅助表交叉核对 山雷颐",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-040",
+      "title": "辅助表交叉核对 山风蛊",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-041",
+      "title": "辅助表交叉核对 坎为水",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-042",
+      "title": "辅助表交叉核对 水泽节",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-043",
+      "title": "辅助表交叉核对 水雷屯",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-044",
+      "title": "辅助表交叉核对 水火既济",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-045",
+      "title": "辅助表交叉核对 泽火革",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-046",
+      "title": "辅助表交叉核对 雷火丰",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-047",
+      "title": "辅助表交叉核对 地火明夷",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-048",
+      "title": "辅助表交叉核对 地水师",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-049",
+      "title": "辅助表交叉核对 艮为山",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-050",
+      "title": "辅助表交叉核对 山火贲",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-051",
+      "title": "辅助表交叉核对 山天大畜",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-052",
+      "title": "辅助表交叉核对 山泽损",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-053",
+      "title": "辅助表交叉核对 火泽睽",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-054",
+      "title": "辅助表交叉核对 天泽履",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-055",
+      "title": "辅助表交叉核对 风泽中孚",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-056",
+      "title": "辅助表交叉核对 风山渐",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-057",
+      "title": "辅助表交叉核对 坤为地",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-058",
+      "title": "辅助表交叉核对 地雷复",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-059",
+      "title": "辅助表交叉核对 地泽临",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-060",
+      "title": "辅助表交叉核对 地天泰",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-061",
+      "title": "辅助表交叉核对 雷天大壮",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-062",
+      "title": "辅助表交叉核对 泽天夬",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-063",
+      "title": "辅助表交叉核对 水天需",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-064",
+      "title": "辅助表交叉核对 水地比",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-INPUT-01",
+      "title": "拒绝不完整或缺动静枚举的输入",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-INPUT-02",
+      "title": "拒绝不完整或缺动静枚举的输入",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-INPUT-03",
+      "title": "拒绝不完整或缺动静枚举的输入",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-INPUT-04",
+      "title": "拒绝不完整或缺动静枚举的输入",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-INPUT-05",
+      "title": "拒绝不完整或缺动静枚举的输入",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-INPUT-06",
+      "title": "拒绝不完整或缺动静枚举的输入",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-QIAN-BODY",
+      "title": "乾卦身位及不现位置",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-KUN-BODY",
+      "title": "阴世卦身计数",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-CORE-CHANGE",
+      "title": "核心革之既济实例",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-ALL-MOVING",
+      "title": "老阴全动形成乾",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-SPIRITS",
+      "title": "核定日干的六神循环",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-MONTH",
+      "title": "核心火月旺相休囚死实例",
+      "status": "passed"
+    },
+    {
+      "test_id": "CHART-GEN-METAL",
+      "title": "艮金参照六亲",
+      "status": "passed"
+    }
+  ],
+  "source_fixture_sha256": "642705abcbd16fe433fe62c73c4ec321c305dc5962dc105bfc8fd43e02cb5c2f",
+  "limits": [
+    "No predictive outcome test",
+    "No calendar integration",
+    "No changed-line relative calculation"
+  ]
+}

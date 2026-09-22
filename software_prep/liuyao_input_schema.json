@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:liuyao:client-input",
+  "title": "六爻占断软件输入契约",
+  "description": "用户提供问题，以及自初至上六项四象或枚卜丸三次结果或太极丸六次结果；实际起卦时间和本次人物信息可选。服务器保留原始casting并生成lines，账户身份与记录时间由服务器添加。",
+  "type": "object",
+  "properties": {
+    "question": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "pattern": "\\S"
+    },
+    "lines": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "string",
+        "enum": [
+          "old_yin",
+          "young_yang",
+          "young_yin",
+          "old_yang"
+        ]
+      }
+    },
+    "actual_cast_time": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "casting": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "method": {
+              "const": "meibu"
+            },
+            "results": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "circle",
+                  "square",
+                  "1",
+                  "2",
+                  "3",
+                  "4",
+                  "5",
+                  "6"
+                ]
+              },
+              "description": "第一次下卦，第二次上卦；第三次circle全动、square全静、1至6对应爻位发动。"
+            }
+          },
+          "required": [
+            "method",
+            "results"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "method": {
+              "const": "taiji"
+            },
+            "results": {
+              "type": "array",
+              "minItems": 6,
+              "maxItems": 6,
+              "items": {
+                "type": "string",
+                "pattern": "^[23]{3}$",
+                "minLength": 3,
+                "maxLength": 3
+              },
+              "description": "第一次初爻、第六次上爻；单次222老阴、223及排列少阳、233及排列少阴、333老阳。保留原始字符串。"
+            }
+          },
+          "required": [
+            "method",
+            "results"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "person_info": {
+      "type": "object",
+      "description": "选填的本次占问人物信息。年龄为用户提供的起卦时周岁，不是当前年龄；未填不妨碍保存或分析，且不会凭年龄自动切换五行算法。",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "enum": [
+            "self",
+            "other",
+            "unspecified"
+          ],
+          "description": "本次所问对象：自己、他人或未指定；省略等同未指定。"
+        },
+        "querent_age": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 150,
+          "description": "卜筮人在本次起卦时的周岁。"
+        },
+        "subject_age": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 150,
+          "description": "所问对象在本次起卦时的周岁，不能误用卜筮人的年龄。问自己时不得另填此项。"
+        },
+        "relationship": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "\\S",
+          "description": "所问对象与卜筮人的关系，或本次事件中的角色。"
+        },
+        "background": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "\\S",
+          "description": "与本次问题有关的身份、处境或事实；不要求姓名、出生日期等无关资料。"
+        },
+        "profile_id": {
+          "type": "string",
+          "pattern": "^person_[a-f0-9]{32}$"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "subject": {
+                "const": "self"
+              }
+            },
+            "required": [
+              "subject"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "subject_age"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "buzhai": {
+      "type": "object",
+      "properties": {
+        "stage": {
+          "type": "string",
+          "enum": [
+            "site_choice",
+            "scope_check",
+            "diagnosis",
+            "remedy_check"
+          ]
+        },
+        "site_kind": {
+          "type": "string",
+          "enum": [
+            "yang",
+            "yin"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "host",
+            "consultant",
+            "other"
+          ]
+        },
+        "residence": {
+          "type": "string",
+          "enum": [
+            "not_occupied",
+            "occupied",
+            "unknown"
+          ]
+        },
+        "beneficiary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "\\S"
+        },
+        "site": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "\\S"
+        },
+        "proposal": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 800,
+          "pattern": "\\S"
+        },
+        "previous_case_id": {
+          "type": "string",
+          "pattern": "^case_[a-f0-9]{32}$"
+        }
+      },
+      "required": [
+        "stage",
+        "site_kind",
+        "role",
+        "residence",
+        "beneficiary",
+        "site",
+        "proposal"
+      ],
+      "additionalProperties": false,
+      "description": "用户主动启用的卜宅专题；记录一个对象、场所、方案与阶段。无此字段时不启用专题规则。"
+    }
+  },
+  "required": [
+    "question"
+  ],
+  "additionalProperties": false,
+  "$comment": "若同时提供lines与casting，服务端必须验证转换后一致；该跨字段计算约束由validate_input和normalize_casting_input执行。太极单次结果的排列不代表空间顺序，不计算六峜。",
+  "anyOf": [
+    {
+      "required": [
+        "lines"
+      ]
+    },
+    {
+      "required": [
+        "casting"
+      ]
+    }
+  ]
+}

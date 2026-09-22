@@ -1,0 +1,603 @@
+{
+  "test_suite": "ai_contract_offline",
+  "scope": "局部结构、引用和原子结论校验；未调用真实AI；未验证预测效果或所有自然语言语义",
+  "total": 66,
+  "passed": 66,
+  "failed": 0,
+  "tests": [
+    {
+      "test_id": "AI-001",
+      "title": "完整正例：intent",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-002",
+      "title": "完整正例：selection",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-003",
+      "title": "完整正例：interpretation",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-004",
+      "title": "完整正例：report",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-005",
+      "title": "意图步骤拒绝偷传六爻盘面",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "$: unexpected fields ['chart']"
+    },
+    {
+      "test_id": "AI-006",
+      "title": "功能选择拒绝偷传旺衰结论",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "$: unexpected fields ['outcome']"
+    },
+    {
+      "test_id": "AI-007",
+      "title": "拒绝跨分析run输出",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "cross-run or cross-snapshot binding"
+    },
+    {
+      "test_id": "AI-008",
+      "title": "拒绝提示词digest不匹配",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "prompt digest mismatch"
+    },
+    {
+      "test_id": "AI-009",
+      "title": "拒绝伪造用户引文",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "user evidence quotation not found"
+    },
+    {
+      "test_id": "AI-010",
+      "title": "明确问题不需例行确认",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-011",
+      "title": "明确状态不容阻断式追问",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "ready intent must select a candidate without a blocking question"
+    },
+    {
+      "test_id": "AI-012",
+      "title": "拒绝引文缺失却强选真念",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "$.candidates[0].evidence_quotes: invalid array length"
+    },
+    {
+      "test_id": "AI-013",
+      "title": "拒绝固定六亲与功能方向矛盾",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "functional relation/kinship mismatch"
+    },
+    {
+      "test_id": "AI-014",
+      "title": "拒绝补充文献覆盖核心",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "source identity and source role do not match"
+    },
+    {
+      "test_id": "AI-015",
+      "title": "拒绝个人纲要升级生产依据",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "source identity and source role do not match"
+    },
+    {
+      "test_id": "AI-016",
+      "title": "拒绝未决规则支撑自动选择",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "only approved core or core-supplement rules support current production claims"
+    },
+    {
+      "test_id": "AI-017",
+      "title": "拒绝虚构用神候选引用",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "$.selected_primary_id: candidate ID does not exist in candidates"
+    },
+    {
+      "test_id": "AI-018",
+      "title": "无旺衰输入保留部分结果而不编成交",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-019",
+      "title": "拒绝漏掉服务器未决事项",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "an unresolved server gap was omitted"
+    },
+    {
+      "test_id": "AI-020",
+      "title": "拒绝JSON中重复键",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "duplicate JSON key: binding"
+    },
+    {
+      "test_id": "AI-021",
+      "title": "拒绝JSON非有限数",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "non-finite JSON number: NaN"
+    },
+    {
+      "test_id": "AI-022",
+      "title": "拒绝代码围栏包装",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "invalid JSON"
+    },
+    {
+      "test_id": "AI-023",
+      "title": "验证原子结论可核对的引擎事实",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-024",
+      "title": "编号真实但结论方向相反仍拒绝",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "inference does not support exact structured conclusion"
+    },
+    {
+      "test_id": "AI-025",
+      "title": "编号真实但对象被替换仍拒绝",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "inference does not support exact structured conclusion"
+    },
+    {
+      "test_id": "AI-026",
+      "title": "拒绝缺少推理前提",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "claim facts: nonexistent refs ['OTHER_FACT']"
+    },
+    {
+      "test_id": "AI-027",
+      "title": "拒绝跨run推理事实",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "inference belongs to another run"
+    },
+    {
+      "test_id": "AI-028",
+      "title": "候选推理不能伪装核验事实",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "inference does not support exact structured conclusion"
+    },
+    {
+      "test_id": "AI-029",
+      "title": "AI条件解释保留复核与局限",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-030",
+      "title": "拒绝AI假设取消复核标记",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "AI hypothesis needs applicable core rule, review flag and limitations"
+    },
+    {
+      "test_id": "AI-031",
+      "title": "拒绝AI假设省略适用局限",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "AI hypothesis needs applicable core rule, review flag and limitations"
+    },
+    {
+      "test_id": "AI-032",
+      "title": "拒绝用supported掩盖AI假设",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "review-required claim is not reflected in status"
+    },
+    {
+      "test_id": "AI-033",
+      "title": "现实背景可以原样引用",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-034",
+      "title": "现实背景不可改造成吉凶预测",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "real-world context cannot masquerade as a divination prediction"
+    },
+    {
+      "test_id": "AI-035",
+      "title": "拒绝报告省略未决项",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "an unresolved server gap was omitted"
+    },
+    {
+      "test_id": "AI-036",
+      "title": "拒绝报告修改主问",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "report changed the current question"
+    },
+    {
+      "test_id": "AI-037",
+      "title": "拒绝报告无证据却宣称已有支持",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "unsupported report section is presented as resolved"
+    },
+    {
+      "test_id": "AI-038",
+      "title": "拒绝用重复维度掩盖遗漏代价",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "report must cover six distinct dimensions"
+    },
+    {
+      "test_id": "AI-039",
+      "title": "拒绝不存在的报告证据",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "report claims: nonexistent refs ['FAKE_CLAIM']"
+    },
+    {
+      "test_id": "AI-040",
+      "title": "拒绝改写待研究事项为其他问题",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "report must preserve all accepted uncertainty records verbatim"
+    },
+    {
+      "test_id": "AI-041",
+      "title": "拒绝输出偷写chart字段",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "$: unexpected fields ['chart']"
+    },
+    {
+      "test_id": "AI-042",
+      "title": "提示词原文变化使digest失效",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "prompt digest mismatch"
+    },
+    {
+      "test_id": "AI-043",
+      "title": "拒绝无证据行动建议",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "advice needs a factual or interpretive basis"
+    },
+    {
+      "test_id": "AI-044",
+      "title": "阻断缺口不能靠已核验局部事实绕过",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "blocking gap prevents supported claim in this dimension"
+    },
+    {
+      "test_id": "AI-045",
+      "title": "拒绝JSON数字溢出为无限值",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "non-finite JSON number"
+    },
+    {
+      "test_id": "AI-046",
+      "title": "现实建议不能以盘面判断冒充现实依据",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "real-world advice needs observed context facts"
+    },
+    {
+      "test_id": "AI-047",
+      "title": "核心补充的获准关系分类规则可用",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-048",
+      "title": "核心补充未决条目不能自动获准",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "only approved core or core-supplement rules support current production claims"
+    },
+    {
+      "test_id": "AI-049",
+      "title": "拒绝来源ID与核心补充身份不一致",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "source identity and source role do not match"
+    },
+    {
+      "test_id": "AI-050",
+      "title": "课外补充正确登记身份后仍不能冒充核心依据",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "only approved core or core-supplement rules support current production claims"
+    },
+    {
+      "test_id": "AI-051",
+      "title": "同对子互形与互害事实及判断允许并存",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-052",
+      "title": "中性互形分类推理不能被改成凶结论",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "inference does not support exact structured conclusion"
+    },
+    {
+      "test_id": "AI-053",
+      "title": "恩间分类推理不能被改成吉结论",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "inference does not support exact structured conclusion"
+    },
+    {
+      "test_id": "AI-054",
+      "title": "输出不能偷偷增添全局反向五行开关",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "$: unexpected fields ['reverse_all_wuxing']"
+    },
+    {
+      "test_id": "AI-055",
+      "title": "主候选有效时保留未决条件继续取用",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-056",
+      "title": "主候选有效时保留细化问题继续取用",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-057",
+      "title": "取用同时保留条件和细化问题",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-058",
+      "title": "空主候选编号给出明确字段错误",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "$.selected_primary_id: ready selection needs a non-null primary candidate ID"
+    },
+    {
+      "test_id": "AI-059",
+      "title": "不存在的主候选编号给出明确字段错误",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "$.selected_primary_id: candidate ID does not exist in candidates"
+    },
+    {
+      "test_id": "AI-060",
+      "title": "辅助候选不能冒充主候选且定位purpose字段",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "$.candidates[0].purpose: selected_primary_id must reference a primary candidate"
+    },
+    {
+      "test_id": "AI-061",
+      "title": "缺失主候选编号仍拒绝",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "$: missing ['selected_primary_id']"
+    },
+    {
+      "test_id": "AI-062",
+      "title": "保留条件不能绕过未知规则校验",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "rule: nonexistent refs ['INVENTED_RULE']"
+    },
+    {
+      "test_id": "AI-063",
+      "title": "保留条件不能绕过六亲映射校验",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "functional relation/kinship mismatch"
+    },
+    {
+      "test_id": "AI-064",
+      "title": "主功能根本未定不能冻结一个主候选",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "unresolved selection cannot be frozen as selected"
+    },
+    {
+      "test_id": "AI-065",
+      "title": "解释阶段保留取用未决事项",
+      "expected": "accepted",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": null
+    },
+    {
+      "test_id": "AI-066",
+      "title": "解释阶段不得遗漏传入的取用未决事项",
+      "expected": "rejected",
+      "status": "passed",
+      "evidence_file": "software_prep/ai_contract_test_results.json",
+      "runner": "software_prep/test_ai_contract.py",
+      "observed_error": "an unresolved server gap was omitted"
+    }
+  ]
+}

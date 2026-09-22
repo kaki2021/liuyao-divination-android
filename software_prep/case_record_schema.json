@@ -1,0 +1,930 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:liuyao:service-case-record",
+  "title": "六爻服务案例记录契约",
+  "description": "仅供可信服务端导出，不是客户端写入入口；允许保存失败与未决结果，不将无反馈解释为成败。",
+  "type": "object",
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "original_input": {
+      "$ref": "#/$defs/UserInput"
+    },
+    "revisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision_seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "revision_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recorded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "kind": {
+            "enum": [
+              "initial",
+              "user_correction"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "input": {
+            "$ref": "#/$defs/UserInput"
+          },
+          "time_context": {
+            "type": "object",
+            "properties": {
+              "actual_cast_time": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "precision": {
+                "enum": [
+                  "second",
+                  "subsecond",
+                  "unknown"
+                ]
+              },
+              "provenance": {
+                "enum": [
+                  "user_supplied",
+                  "unknown"
+                ]
+              }
+            },
+            "required": [
+              "actual_cast_time",
+              "precision",
+              "provenance"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "case_id",
+          "revision_seq",
+          "revision_id",
+          "recorded_at",
+          "kind",
+          "reason",
+          "input",
+          "time_context"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "context_events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ContextEvent"
+      }
+    },
+    "analysis_runs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "analysis_run_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "case_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision_seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "parent_run_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "analyzed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "input_snapshot_id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "input_snapshot": {
+            "type": "object",
+            "properties": {
+              "case_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "revision_seq": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "input": {
+                "$ref": "#/$defs/UserInput"
+              },
+              "time_context": {
+                "type": "object",
+                "properties": {
+                  "actual_cast_time": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "precision": {
+                    "enum": [
+                      "second",
+                      "subsecond",
+                      "unknown"
+                    ]
+                  },
+                  "provenance": {
+                    "enum": [
+                      "user_supplied",
+                      "unknown"
+                    ]
+                  }
+                },
+                "required": [
+                  "actual_cast_time",
+                  "precision",
+                  "provenance"
+                ],
+                "additionalProperties": false
+              },
+              "context_events": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/ContextEvent"
+                }
+              },
+              "person_profile_snapshot": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "case_id",
+              "revision_seq",
+              "input",
+              "time_context",
+              "context_events"
+            ],
+            "additionalProperties": false
+          },
+          "source_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "rules_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "prompt_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "engine_build": {
+            "type": "string",
+            "minLength": 1
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "analysis_run_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "recorded_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "status": {
+                    "enum": [
+                      "completed",
+                      "partial",
+                      "unresolved",
+                      "failed"
+                    ]
+                  },
+                  "result": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "enum": [
+                          "completed",
+                          "partial",
+                          "unresolved",
+                          "failed"
+                        ]
+                      },
+                      "chart_snapshot": {
+                        "$ref": "#/$defs/JsonValue"
+                      },
+                      "evidence": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/$defs/JsonValue"
+                        }
+                      },
+                      "report": {
+                        "$ref": "#/$defs/JsonValue"
+                      },
+                      "validation": {
+                        "type": "object",
+                        "additionalProperties": true,
+                        "description": "原样保留的相关服务载荷；排盘或AI字段应先由对应模块契约验证，存储不证明其内容正确。"
+                      },
+                      "unresolved": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/$defs/JsonValue"
+                        }
+                      },
+                      "error": {
+                        "$ref": "#/$defs/JsonValue"
+                      }
+                    },
+                    "required": [
+                      "status",
+                      "chart_snapshot",
+                      "evidence",
+                      "report",
+                      "validation",
+                      "unresolved",
+                      "error"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "result_digest": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "analysis_run_id",
+                  "recorded_at",
+                  "status",
+                  "result",
+                  "result_digest"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "running",
+              "completed",
+              "partial",
+              "unresolved",
+              "failed"
+            ]
+          },
+          "ai_events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "event_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "analysis_run_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "recorded_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "stage": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "attempt_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "attempt": {
+                  "type": "object",
+                  "properties": {
+                    "event_type": {
+                      "const": "ai_attempt"
+                    },
+                    "stage": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "attempt_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "raw_output": {
+                      "type": "string"
+                    },
+                    "parse_status": {
+                      "enum": [
+                        "parsed",
+                        "invalid_json",
+                        "provider_error",
+                        "not_parsed"
+                      ]
+                    },
+                    "validation_errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/JsonValue"
+                      }
+                    },
+                    "adopted_output": {
+                      "$ref": "#/$defs/JsonValue"
+                    },
+                    "adopted_output_digest": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "model_run_metadata": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "原样保留的相关服务载荷；排盘或AI字段应先由对应模块契约验证，存储不证明其内容正确。"
+                    }
+                  },
+                  "required": [
+                    "event_type",
+                    "stage",
+                    "attempt_id",
+                    "raw_output",
+                    "parse_status",
+                    "validation_errors",
+                    "adopted_output",
+                    "adopted_output_digest",
+                    "model_run_metadata"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "event_id",
+                "analysis_run_id",
+                "recorded_at",
+                "stage",
+                "attempt_id",
+                "attempt"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "analysis_run_id",
+          "case_id",
+          "revision_seq",
+          "parent_run_id",
+          "analyzed_at",
+          "input_snapshot_id",
+          "input_snapshot",
+          "source_hash",
+          "rules_digest",
+          "prompt_digest",
+          "engine_build",
+          "outcome",
+          "status",
+          "ai_events"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "feedback": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "feedback_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "case_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_run_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "occurred_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recorded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reported_outcome": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verification_status": {
+            "enum": [
+              "self_reported",
+              "externally_supported",
+              "disputed",
+              "unknown"
+            ]
+          },
+          "verification_method": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "supersedes_feedback_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rules_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "match_degree": {
+            "enum": [
+              null,
+              "matched",
+              "partly_matched",
+              "unmatched",
+              "pending"
+            ]
+          },
+          "user_notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "feedback_id",
+          "case_id",
+          "analysis_run_id",
+          "occurred_at",
+          "recorded_at",
+          "reported_outcome",
+          "verification_status",
+          "verification_method",
+          "supersedes_feedback_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "usage_policy": {
+      "type": "object",
+      "properties": {
+        "service_case_archive": {
+          "const": true
+        },
+        "public_use": {
+          "const": false
+        },
+        "training_use": {
+          "const": false
+        }
+      },
+      "required": [
+        "service_case_archive",
+        "public_use",
+        "training_use"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "case_id",
+    "owner_id",
+    "session_id",
+    "recorded_at",
+    "original_input",
+    "revisions",
+    "context_events",
+    "analysis_runs",
+    "feedback",
+    "usage_policy"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "UserInput": {
+      "description": "用户提供问题，以及自初至上六项四象或枚卜丸三次结果或太极丸六次结果；实际起卦时间可选。服务器保留原始casting并生成lines，身份与记录时间由服务器添加。",
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "\\S"
+        },
+        "lines": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {
+            "type": "string",
+            "enum": [
+              "old_yin",
+              "young_yang",
+              "young_yin",
+              "old_yang"
+            ]
+          }
+        },
+        "actual_cast_time": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "casting": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "method": {
+                  "const": "meibu"
+                },
+                "results": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "circle",
+                      "square",
+                      "1",
+                      "2",
+                      "3",
+                      "4",
+                      "5",
+                      "6"
+                    ]
+                  },
+                  "description": "第一次下卦，第二次上卦；第三次circle全动、square全静、1至6对应爻位发动。"
+                }
+              },
+              "required": [
+                "method",
+                "results"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "method": {
+                  "const": "taiji"
+                },
+                "results": {
+                  "type": "array",
+                  "minItems": 6,
+                  "maxItems": 6,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[23]{3}$"
+                  },
+                  "description": "第一次初爻、第六次上爻；单次222老阴、223及排列少阳、233及排列少阴、333老阳。保留原始字符串。"
+                }
+              },
+              "required": [
+                "method",
+                "results"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "person_info": {
+          "type": "object",
+          "description": "选填的本次占问人物信息。年龄为用户提供的起卦时周岁，不是当前年龄；未填不妨碍保存或分析，且不会凭年龄自动切换五行算法。",
+          "properties": {
+            "subject": {
+              "type": "string",
+              "enum": [
+                "self",
+                "other",
+                "unspecified"
+              ],
+              "description": "本次所问对象：自己、他人或未指定；省略等同未指定。"
+            },
+            "querent_age": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 150,
+              "description": "卜筮人在本次起卦时的周岁。"
+            },
+            "subject_age": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 150,
+              "description": "所问对象在本次起卦时的周岁，不能误用卜筮人的年龄。问自己时不得另填此项。"
+            },
+            "relationship": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "\\S",
+              "description": "所问对象与卜筮人的关系，或本次事件中的角色。"
+            },
+            "background": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "\\S",
+              "description": "与本次问题有关的身份、处境或事实；不要求姓名、出生日期等无关资料。"
+            },
+            "profile_id": {
+              "type": "string",
+              "pattern": "^person_[a-f0-9]{32}$"
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "subject": {
+                    "const": "self"
+                  }
+                },
+                "required": [
+                  "subject"
+                ]
+              },
+              "then": {
+                "not": {
+                  "required": [
+                    "subject_age"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "buzhai": {
+          "type": "object",
+          "properties": {
+            "stage": {
+              "type": "string",
+              "enum": [
+                "site_choice",
+                "scope_check",
+                "diagnosis",
+                "remedy_check"
+              ]
+            },
+            "site_kind": {
+              "type": "string",
+              "enum": [
+                "yang",
+                "yin"
+              ]
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "host",
+                "consultant",
+                "other"
+              ]
+            },
+            "residence": {
+              "type": "string",
+              "enum": [
+                "not_occupied",
+                "occupied",
+                "unknown"
+              ]
+            },
+            "beneficiary": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80,
+              "pattern": "\\S"
+            },
+            "site": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "pattern": "\\S"
+            },
+            "proposal": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 800,
+              "pattern": "\\S"
+            },
+            "previous_case_id": {
+              "type": "string",
+              "pattern": "^case_[a-f0-9]{32}$"
+            }
+          },
+          "required": [
+            "stage",
+            "site_kind",
+            "role",
+            "residence",
+            "beneficiary",
+            "site",
+            "proposal"
+          ],
+          "additionalProperties": false,
+          "description": "用户主动启用的卜宅专题；记录一个对象、场所、方案与阶段。无此字段时不启用专题规则。"
+        }
+      },
+      "required": [
+        "question",
+        "lines"
+      ],
+      "additionalProperties": false,
+      "$comment": "若同时提供lines与casting，服务端必须验证转换后一致；该跨字段计算约束由validate_input和normalize_casting_input执行。太极单次结果的排列不代表空间顺序，不计算六峜。",
+      "anyOf": [
+        {
+          "required": [
+            "lines"
+          ]
+        },
+        {
+          "required": [
+            "casting"
+          ]
+        }
+      ]
+    },
+    "ContextEvent": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "event_seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "event_type": {
+          "enum": [
+            "background",
+            "clarification_question",
+            "clarification_answer",
+            "intent_interpretation",
+            "user_correction",
+            "unresolved_notice",
+            "service_failure"
+          ]
+        },
+        "recorded_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "原样保留的相关服务载荷；排盘或AI字段应先由对应模块契约验证，存储不证明其内容正确。"
+        }
+      },
+      "required": [
+        "event_id",
+        "case_id",
+        "event_seq",
+        "event_type",
+        "recorded_at",
+        "session_id",
+        "content"
+      ],
+      "additionalProperties": false
+    },
+    "JsonValue": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          }
+        }
+      ]
+    }
+  }
+}

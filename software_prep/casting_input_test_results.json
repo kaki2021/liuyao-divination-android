@@ -1,0 +1,88 @@
+{
+  "scope": "Casting conversion, strict input agreement and raw-data retention; no AI or prediction accuracy validation.",
+  "rule_ids": [
+    "casting.meibu_conversion",
+    "casting.taiji_conversion"
+  ],
+  "coverage": {
+    "meibu_ordered_draw_combinations": 512,
+    "taiji_permutation_position_combinations": 48
+  },
+  "tests_run": 12,
+  "passed": 12,
+  "failed": 0,
+  "tests": [
+    {
+      "test_id": "CAST-001",
+      "title": "枚卜全部512种有序组合的卦象与动变",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_all_512_meibu_draws"
+    },
+    {
+      "test_id": "CAST-002",
+      "title": "原始起卦和派生六爻跨原记录与修订保留",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_casting_original_and_derived_values_survive_store_revisions"
+    },
+    {
+      "test_id": "CAST-003",
+      "title": "第三次圆全动、方全静",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_circle_and_square_third_draws"
+    },
+    {
+      "test_id": "CAST-004",
+      "title": "枚卜、太极、直接六爻等价输入一致",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_equivalent_meibu_taiji_and_direct_inputs"
+    },
+    {
+      "test_id": "CAST-005",
+      "title": "八种太极排列在六个爻位的48种定位",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_every_taiji_permutation_at_every_line"
+    },
+    {
+      "test_id": "CAST-006",
+      "title": "新入口不能绕过问题时间和字段校验",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_full_form_validation_is_not_bypassed"
+    },
+    {
+      "test_id": "CAST-007",
+      "title": "无效起卦不能依靠附带六爻静默回退",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_invalid_shapes_and_tokens_cannot_fall_back_to_lines"
+    },
+    {
+      "test_id": "CAST-008",
+      "title": "原始起卦与附带六爻必须一致",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_matching_both_forms_are_accepted_but_mismatch_is_rejected"
+    },
+    {
+      "test_id": "CAST-009",
+      "title": "归一化幂等且不修改原始排列和实际时间",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_normalization_is_idempotent_and_does_not_mutate_input"
+    },
+    {
+      "test_id": "CAST-010",
+      "title": "核心5、2、4例下离上兑四爻动",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_primary_source_meibu_example"
+    },
+    {
+      "test_id": "CAST-011",
+      "title": "新旧输入契约所需字段及封闭结构",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_schema_accepts_new_and_legacy_shapes"
+    },
+    {
+      "test_id": "CAST-012",
+      "title": "太极六次先后顺序对应初爻至上爻",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_taiji_six_throws_keep_bottom_to_top_order"
+    }
+  ]
+}
