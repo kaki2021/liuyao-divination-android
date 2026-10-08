@@ -86,9 +86,12 @@ const check=(name,value)=>{assert.ok(value,name);checks.push(name);console.log('
  await page.locator('#open-feedback').click();await page.locator('#feedback-text').fill('测试记录：已经签约。');await page.locator('#feedback-form button[type=submit]').click();
  await page.waitForFunction(()=>document.querySelector('#feedback-list').textContent.includes('已经签约'));check('后续反馈能保存',true);
  await page.locator('#feedback-return').click();await page.locator('#result-tab-answer').click();
- check('追问输入框位于直接答案页',await page.locator('#result-answer #context-form').isVisible()&&await page.locator('#feedback-section #context-form').count()===0);
- await page.locator('#context-text').fill('测试补充：对方已确认条款。');await page.locator('#context-save-only').click();
- await page.waitForFunction(()=>document.querySelector('#context-list').textContent.includes('对方已确认条款'));await page.locator('#context-history>summary').click();check('补充说明能单独保存并展开回看',await page.locator('#context-list').isVisible());
+ check('追问输入框位于解卦结论页',await page.locator('#result-answer #context-form').isVisible()&&await page.locator('#feedback-section #context-form').count()===0);
+ const followupResponse=page.waitForResponse(response=>response.request().method()==='POST'&&/\/api\/cases\/[^/]+\/analyze$/.test(response.url()));
+ await page.locator('#context-text').fill('测试补充：对方已确认条款。');await page.locator('#context-analyze').click();
+ check('发送追问会发起本案的新分析',Boolean((await (await followupResponse).json()).job_id));
+ await page.waitForFunction(()=>document.querySelector('#case-form').getAttribute('aria-busy')==='false'&&document.querySelector('#context-text').value==='');
+ await page.waitForFunction(()=>document.querySelector('#context-list').textContent.includes('对方已确认条款'));await page.locator('#context-history>summary').click();check('追问自动保存并可展开回看',await page.locator('#context-list').isVisible());
  await page.locator('#edit-case-input').click();await page.locator('.mobile-step-back').click();await page.locator('#question').fill('修改后的问题：合同本月能签成吗？');await page.locator('#mobile-next').click();await page.locator('#save-case').click();
  await page.waitForFunction(()=>document.querySelector('#global-message').textContent.includes('修改原因'));check('缺少修改原因时提示并保留输入',await page.locator('#question').inputValue()==='修改后的问题：合同本月能签成吗？');
  await page.locator('#revision-reason').fill('实际情况变化');await page.locator('#save-case').click();await page.waitForFunction(()=>document.body.dataset.view==='results');check('修改原案例可保存',true);

@@ -36,9 +36,8 @@ const check=(name,value)=>{assert.ok(value,name);checks.push(name);console.log('
     window.ReportViews.render(data,document.querySelector('#analysis-content'),{result:context,...options});
   },{data,context,options});
   await render(report,result);
-  check('直接答案页包含追问输入框',await page.locator('#result-answer #context-form').isVisible()&&await page.locator('#feedback-section #context-form').count()===0);
-  await page.locator('.answer-followup-link').click();
-  check('结论旁追问入口定位并聚焦输入框',await page.locator('#context-text').evaluate(node=>node===document.activeElement));
+  check('解卦结论页包含进一步交流输入框',await page.locator('#result-answer #context-form').isVisible()&&await page.locator('#feedback-section #context-form').count()===0&&await page.locator('#result-tab-answer').textContent()==='解卦结论'&&await page.locator('#context-title').textContent()==='进一步交流');
+  check('交流只保留下方输入框和发送按钮',await page.locator('.answer-followup-link,#context-save-only').count()===0&&await page.locator('#context-form button').count()===1&&await page.locator('#context-analyze').textContent()==='发送追问');
   await page.locator('#result-tab-professional').click();
   const professional=page.locator('#professional-content');
   check('专业页使用表格展示意念与原文依据',await page.locator('table.professional-intent').count()===1&&(await professional.textContent()).includes('行动 / 目标')&&(await professional.textContent()).includes('原文依据'));
@@ -60,7 +59,7 @@ const check=(name,value)=>{assert.ok(value,name);checks.push(name);console.log('
   check('专业主题分页可用',(await page.locator('.professional-body').textContent()).includes('第二主题。'));
   await page.locator('#result-tab-professional').focus();await page.keyboard.press('End');
   check('三个分页键盘导航可用',await page.locator('#result-tab-chart').getAttribute('aria-selected')==='true');
-  await page.keyboard.press('ArrowRight');check('分页末尾可循环到直接答案',await page.locator('#result-tab-answer').getAttribute('aria-selected')==='true');
+  await page.keyboard.press('ArrowRight');check('分页末尾可循环到解卦结论',await page.locator('#result-tab-answer').getAttribute('aria-selected')==='true');
   await page.evaluate(()=>window.AnalysisStatus.bind({replies(){window.ReportViews.openLog();}}));
   await page.locator('#result-tab-professional').click();
   await page.locator('#analysis-records-open').click();

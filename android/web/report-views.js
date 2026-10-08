@@ -12,7 +12,7 @@
   tabs.setAttribute("role", "tablist");
   tabs.setAttribute("aria-label", "结果阅读方式");
   const panels = {}, buttons = {};
-  for (const [key, label] of [["answer", "直接答案"], ["professional", "专业分析"], ["chart", "卦盘与计算"]]) {
+  for (const [key, label] of [["answer", "解卦结论"], ["professional", "专业分析"], ["chart", "卦盘与计算"]]) {
     const b = el("button", label);
     b.type = "button";
     b.id = "result-tab-" + key;
@@ -83,11 +83,6 @@
   }
   function openLog() {
     if (!log.open) log.showModal();
-  }
-  function focusFollowup() {
-    show("answer");
-    followup.scrollIntoView({ block: "start", behavior: "smooth" });
-    $("context-text").focus({ preventScroll: true });
   }
   function reset() {
     professional.replaceChildren(el("p", "本次尚无专业报告。", "empty-state"));
@@ -237,13 +232,8 @@
     let shown = false;
     if (plain) {
       const hero = el("div", "", "answer-hero");
-      hero.append(el("p", "这次的答案", "eyebrow"), el("h3", plain.answer, "direct-answer"));
+      hero.append(el("p", "本次结论", "eyebrow"), el("h3", plain.answer, "direct-answer"));
       if (plain.reason) hero.append(el("p", plain.reason, "answer-reason"));
-      const ask = el("button", "继续问 AI ↓", "text-button answer-followup-link");
-      ask.type = "button";
-      ask.setAttribute("aria-controls", "context-form");
-      ask.addEventListener("click", focusFollowup);
-      hero.append(ask);
       container.append(hero);
       shown = true;
       const grid = el("div", "", "answer-grid");
@@ -258,7 +248,7 @@
       }
       container.append(grid);
       if (plain.timing) container.append(el("p", "时间判断：" + plain.timing, "answer-timing"));
-      if (plain.source === "compatibility") container.append(el("p", "当前展示简要答案；完整原文和依据在“专业分析”。", "small-note"));
+      if (plain.source === "compatibility") container.append(el("p", "当前展示简要结论；完整原文和依据在“专业分析”。", "small-note"));
     } else if (report.summary) {
       container.append(el("p", report.summary, "report-summary"));
       shown = true;

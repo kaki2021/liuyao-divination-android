@@ -118,7 +118,6 @@ body { background:#f5f6f3; }
 .answer-note ul { padding-left:20px; margin:0; line-height:1.95; }
 .answer-note li+li { margin-top:8px; }
 .answer-timing { border-top:1px solid #e2e7df; margin-top:24px; padding-top:18px; line-height:1.8; color:#5c6558; }
-.answer-followup-link{margin-top:12px;min-height:40px}
 #context-card textarea{font-size:14px}
 .context-history{margin-top:16px;font-size:12px}
 .context-history summary{cursor:pointer;color:var(--accent)}

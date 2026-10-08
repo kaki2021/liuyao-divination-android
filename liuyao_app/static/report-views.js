@@ -5,7 +5,7 @@
   const section=$('results-section'), analysis=$('analysis-card');
   const tabs=el('nav','','result-tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','结果阅读方式');
   const panels={},buttons={};
-  for(const [key,label] of [['answer','直接答案'],['professional','专业分析'],['chart','卦盘与计算']]){
+  for(const [key,label] of [['answer','解卦结论'],['professional','专业分析'],['chart','卦盘与计算']]){
     const b=el('button',label);b.type='button';b.id='result-tab-'+key;b.setAttribute('role','tab');b.setAttribute('aria-controls','result-'+key);tabs.append(b);buttons[key]=b;
     const p=el('div','','result-panel');p.id='result-'+key;p.setAttribute('role','tabpanel');p.setAttribute('aria-labelledby',b.id);panels[key]=p;
     b.addEventListener('click',()=>show(key));
@@ -25,7 +25,6 @@
   section.append(toolbar,tabs,...Object.values(panels));
   function show(key){if(!panels[key])return;for(const k of Object.keys(panels)){panels[k].hidden=k!==key;buttons[k].setAttribute('aria-selected',String(k===key));buttons[k].tabIndex=k===key?0:-1;}}
   function openLog(){if(!log.open)log.showModal();}
-  function focusFollowup(){show('answer');followup.scrollIntoView({block:'start',behavior:'smooth'});$('context-text').focus({preventScroll:true});}
   function reset(){professional.replaceChildren(el('p','本次尚无专业报告。','empty-state'));model.replaceChildren();$('audit-report').open=false;}
   function readableValue(value){if(value===undefined||value===null)return '';if(typeof value==='string'||typeof value==='number')return String(value);if(Array.isArray(value))return value.map(readableValue).filter(Boolean).join('\n');if(typeof value==='object')return readableValue(value.text||value.content||value.message||value.description||value.question||value.reason||value.summary||value.impact||value.gap||'');return '';}
   function values(items){return (Array.isArray(items)?items:items?[items]:[]).map(readableValue).filter(Boolean);}
@@ -67,10 +66,10 @@
   function render(report,container,{isDemo=false,result=null}={}){
     const c=report.conclusion||result?.stage_outputs?.interpretation?.conclusion,plain=!isDemo&&(report.plain_language|| (c?fallback(c):null));
     let shown=false;
-    if(plain){const hero=el('div','','answer-hero');hero.append(el('p','这次的答案','eyebrow'),el('h3',plain.answer,'direct-answer'));if(plain.reason)hero.append(el('p',plain.reason,'answer-reason'));const ask=el('button','继续问 AI ↓','text-button answer-followup-link');ask.type='button';ask.setAttribute('aria-controls','context-form');ask.addEventListener('click',focusFollowup);hero.append(ask);container.append(hero);shown=true;
+    if(plain){const hero=el('div','','answer-hero');hero.append(el('p','本次结论','eyebrow'),el('h3',plain.answer,'direct-answer'));if(plain.reason)hero.append(el('p',plain.reason,'answer-reason'));container.append(hero);shown=true;
       const grid=el('div','','answer-grid');for(const [key,label] of [['watch_for','需要留意'],['next_steps','接下来怎么做']]){if(!plain[key]?.length)continue;const card=el('section','','answer-note');card.append(el('h4',label));const list=el('ul');plain[key].slice(0,3).forEach(t=>list.append(el('li',t)));card.append(list);grid.append(card);}container.append(grid);
       if(plain.timing)container.append(el('p','时间判断：'+plain.timing,'answer-timing'));
-      if(plain.source==='compatibility')container.append(el('p','当前展示简要答案；完整原文和依据在“专业分析”。','small-note'));
+      if(plain.source==='compatibility')container.append(el('p','当前展示简要结论；完整原文和依据在“专业分析”。','small-note'));
     }else if(report.summary){container.append(el('p',report.summary,'report-summary'));shown=true;}
     const sections=(report.sections||[]).filter(x=>x.content||x.body||x.text);
     professional.replaceChildren();

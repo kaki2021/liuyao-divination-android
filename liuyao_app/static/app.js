@@ -88,7 +88,7 @@
     $('case-form').setAttribute('aria-busy', String(value));
     $('analyze-current-case').disabled = value;
     $('analyze-current-case').textContent = value && state.analyzing ? '分析进行中…' : '重新解卦';
-    $('context-analyze').textContent = value && state.analyzing ? '正在回复…' : '发送并继续解卦';
+    $('context-analyze').textContent = value && state.analyzing ? '正在回复…' : '发送追问';
     if (runSelect) runSelect.disabled = value;
   }
   function showView(view, { scroll = false } = {}) {
@@ -917,7 +917,6 @@
   $('analyze-case').addEventListener('click', () => startAnalysis());
   $('analyze-current-case').addEventListener('click', () => startAnalysis({ savedCase: true }));
   $('context-form').addEventListener('submit', event => { event.preventDefault(); appendCaseEvent('context', { reanalyze: true }); });
-  $('context-save-only').addEventListener('click', () => appendCaseEvent('context'));
   ['input', 'results', 'feedback'].forEach(name => {
     const tab = $(`tab-${name}`);
     tab.addEventListener('click', () => showView(name));
