@@ -12,7 +12,7 @@
   tabs.setAttribute("role", "tablist");
   tabs.setAttribute("aria-label", "结果阅读方式");
   const panels = {}, buttons = {};
-  for (const [key, label] of [["answer", "直接答案"], ["professional", "专业分析"], ["chart", "卦盘与计算"], ["records", "Log"]]) {
+  for (const [key, label] of [["answer", "直接答案"], ["professional", "专业分析"], ["chart", "卦盘与计算"]]) {
     const b = el("button", label);
     b.type = "button";
     b.id = "result-tab-" + key;
@@ -29,10 +29,10 @@
     b.addEventListener("keydown", (e) => {
       const keys = Object.keys(buttons), i = keys.indexOf(key);
       let next;
-      if (e.key === "ArrowRight") next = (i + 1) % 4;
-      else if (e.key === "ArrowLeft") next = (i + 3) % 4;
+      if (e.key === "ArrowRight") next = (i + 1) % keys.length;
+      else if (e.key === "ArrowLeft") next = (i + keys.length - 1) % keys.length;
       else if (e.key === "Home") next = 0;
-      else if (e.key === "End") next = 3;
+      else if (e.key === "End") next = keys.length - 1;
       else return;
       e.preventDefault();
       show(keys[next]);
@@ -48,21 +48,41 @@
   const professional = el("section", "", "paper-card professional-card");
   professional.id = "professional-content";
   panels.professional.append(professional);
-  const records = el("section", "", "paper-card log-card");
-  records.append(el("h3", "分析 Log"));
+  const log = el("dialog", "", "analysis-log-dialog");
+  log.id = "analysis-log-dialog";
+  log.setAttribute("aria-labelledby", "analysis-log-title");
+  const logHeading = el("div", "", "log-heading"), logTitle = el("h2", "分析 Log");
+  logTitle.id = "analysis-log-title";
+  const closeLog = el("button", "×", "icon-button");
+  closeLog.id = "analysis-log-close";
+  closeLog.type = "button";
+  closeLog.title = "关闭 Log";
+  closeLog.setAttribute("aria-label", "关闭 Log");
+  closeLog.onclick = () => log.close();
+  logHeading.append(logTitle, closeLog);
   const model = el("div");
   model.id = "model-info-content";
-  records.append(model, analysis.querySelector("#audit-report"), analysis.querySelector("#ai-raw-replies"));
-  panels.records.append(records);
+  log.append(logHeading, model, analysis.querySelector("#audit-report"), analysis.querySelector("#ai-raw-replies"));
+  document.body.append(log);
+  log.addEventListener("click", (event) => {
+    if (event.target === log) {
+      const rect = log.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) log.close();
+    }
+  });
   const followup = section.querySelector(".follow-up-card");
   $("feedback-section").append(followup);
   section.append(toolbar, tabs, ...Object.values(panels));
   function show(key) {
+    if (!panels[key]) return;
     for (const k of Object.keys(panels)) {
       panels[k].hidden = k !== key;
       buttons[k].setAttribute("aria-selected", String(k === key));
       buttons[k].tabIndex = k === key ? 0 : -1;
     }
+  }
+  function openLog() {
+    if (!log.open) log.showModal();
   }
   function reset() {
     professional.replaceChildren(el("p", "本次尚无专业报告。", "empty-state"));
@@ -79,26 +99,33 @@
   function values(items) {
     return (Array.isArray(items) ? items : items ? [items] : []).map(readableValue).filter(Boolean);
   }
-  function appendList(parent, items, title, cls = "professional-list") {
-    const listItems = values(items);
-    if (!listItems.length) return false;
-    const block = el("section", "", cls);
-    block.append(el("h4", title));
-    const list = el("ul");
-    listItems.forEach((text) => list.append(el("li", text)));
-    block.append(list);
-    parent.append(block);
-    return true;
+  function table(title, cls = "") {
+    const node = el("table", "", "professional-table " + cls);
+    node.append(el("caption", title), el("tbody"));
+    return node;
   }
-  function appendFields(parent, fields) {
-    const rows = fields.filter(([_, value]) => readableValue(value));
-    if (!rows.length) return false;
-    const dl = el("dl", "", "professional-fields");
-    rows.forEach(([label, value]) => {
-      dl.append(el("dt", label), el("dd", readableValue(value)));
-    });
-    parent.append(dl);
-    return true;
+  function row(node, label, value, cls = "") {
+    if (!readableValue(value)) return null;
+    const tr = el("tr", "", cls), th = el("th", label), td = el("td", readableValue(value));
+    th.scope = "row";
+    tr.append(th, td);
+    node.tBodies[0].append(tr);
+    return td;
+  }
+  function listRow(node, label, items, cls = "") {
+    const texts = values(items);
+    if (!texts.length) return;
+    const td = row(node, label, texts, cls);
+    td.replaceChildren();
+    const list = el("ul");
+    texts.forEach((text) => list.append(el("li", text)));
+    td.append(list);
+  }
+  function appendFields(node, fields) {
+    fields.forEach(([label, value]) => row(node, label, value));
+  }
+  function pair(first, second) {
+    return [readableValue(first) || "未说明", readableValue(second) || "未说明"].join(" / ");
   }
   function candidates(stage) {
     return (Array.isArray(stage == null ? void 0 : stage.candidates) ? stage.candidates : []).filter((item) => item && typeof item === "object");
@@ -106,8 +133,29 @@
   function candidateTitle(label, candidate, selectedId, index) {
     return label + (selectedId ? candidate.candidate_id === selectedId ? " · 本次采用" : " · 其他候选" : " · 待确认候选 " + (index + 1));
   }
-  function appendQuotes(parent, quotes) {
-    appendList(parent, (Array.isArray(quotes) ? quotes : []).map((q) => (q == null ? void 0 : q.quote) || q), "用户原文依据");
+  function appendQuotes(node, quotes) {
+    const texts = values((Array.isArray(quotes) ? quotes : []).map((q) => (q == null ? void 0 : q.quote) || q));
+    if (!texts.length) return;
+    const td = row(node, "原文依据", " "), details = el("details", "", "professional-evidence");
+    td.replaceChildren();
+    details.append(el("summary", "查看 " + texts.length + " 处原文"));
+    texts.forEach((text) => details.append(el("p", text)));
+    td.append(details);
+  }
+  function appendCandidates(parent, stage, selectedId, label, renderCandidate) {
+    const entries = candidates(stage), chosen = entries.find((candidate) => selectedId && candidate.candidate_id === selectedId);
+    if (!chosen) {
+      entries.forEach((candidate, index) => parent.append(renderCandidate(candidate, candidateTitle(label, candidate, null, index))));
+      return;
+    }
+    parent.append(renderCandidate(chosen, candidateTitle(label, chosen, selectedId, 0)));
+    const others = entries.filter((candidate) => candidate !== chosen);
+    if (others.length) {
+      const details = el("details", "", "professional-alternatives");
+      details.append(el("summary", "其他" + label + "候选（" + others.length + "）"));
+      others.forEach((candidate, index) => details.append(renderCandidate(candidate, candidateTitle(label, candidate, selectedId, index))));
+      parent.append(details);
+    }
   }
   function useLabel(candidate) {
     if (!candidate) return "";
@@ -127,8 +175,8 @@
     if (interpretation) return [];
     return selection == null ? void 0 : selection.unresolved;
   }
-  function renderCheck(result, report) {
-    var _a, _b, _c;
+  function renderChecks(result, report, c) {
+    var _a, _b, _c, _d, _e;
     const intent = (_a = result == null ? void 0 : result.stage_outputs) == null ? void 0 : _a.intent, selection = (_b = result == null ? void 0 : result.stage_outputs) == null ? void 0 : _b.selection, interpretation = (_c = result == null ? void 0 : result.stage_outputs) == null ? void 0 : _c.interpretation;
     const intents = candidates(intent), uses = candidates(selection);
     const missing = [...new Set([
@@ -142,47 +190,34 @@
       selectionNotes(result),
       selection == null ? void 0 : selection.clarifying_questions
     ].reduce((all, items) => all.concat(values(items)), []))];
-    if (!intents.length && !uses.length && !missing.length) return false;
+    const audit = result == null ? void 0 : result.audit_report, conditions = (_d = c == null ? void 0 : c.key_conditions) != null ? _d : audit == null ? void 0 : audit.conclusion_conditions, limits = (_e = c == null ? void 0 : c.limits) != null ? _e : audit == null ? void 0 : audit.conclusion_limits;
+    if (!intents.length && !uses.length && !missing.length && !c && !values(conditions).length && !values(limits).length) return false;
     const wrap = el("section", "", "professional-checks");
-    wrap.append(el("h3", "原始意念与取象核对"));
-    const grid = el("div", "", "professional-check-grid");
-    intents.forEach((candidate, index) => {
-      const card = el("section", "", "professional-check-card professional-intent");
-      card.append(el("h4", candidateTitle("AI 抓取的原始意念", candidate, intent.selected_candidate_id, index)));
-      appendFields(card, [["所问事项", candidate.primary_question], ["主体", candidate.actor], ["对象", candidate.object], ["拟采取行动", candidate.action], ["想要结果", candidate.desired_outcome], ["时间范围", candidate.time_scope]]);
-      appendList(card, candidate.facets, "关注维度");
-      appendQuotes(card, candidate.evidence_quotes);
-      grid.append(card);
+    appendCandidates(wrap, intent, intent == null ? void 0 : intent.selected_candidate_id, "意念", (candidate, title) => {
+      const node = table(title, "professional-intent");
+      appendFields(node, [["所问事项", candidate.primary_question], ["主体 / 对象", pair(candidate.actor, candidate.object)], ["行动 / 目标", pair(candidate.action, candidate.desired_outcome)], ["时间范围", candidate.time_scope], ["关注维度", values(candidate.facets).join("；")]]);
+      appendQuotes(node, candidate.evidence_quotes);
+      return node;
     });
     const relations = { generates_me: "生我者", same_as_me: "同我者", generated_by_me: "我生者", controlled_by_me: "我克者", controls_me: "克我者" }, purposes = { primary: "主目标", supporting: "支持因素", cost: "代价", carrier: "载体" };
-    uses.forEach((candidate, index) => {
-      const card = el("section", "", "professional-check-card professional-use");
-      card.append(el("h4", candidateTitle("AI 取象与关注对象", candidate, selection.selected_primary_id, index)));
-      appendFields(card, [["关注对象", candidate.object_role], ["本次作用", candidate.function], ["用途", purposes[candidate.purpose] || candidate.purpose], ["对应六亲 / 主体", useLabel(candidate)], ["功能关系", relations[candidate.relation] || candidate.relation]]);
-      appendList(card, candidate.assumptions, "取象成立假设");
-      appendQuotes(card, candidate.evidence_quotes);
-      grid.append(card);
+    appendCandidates(wrap, selection, selection == null ? void 0 : selection.selected_primary_id, "取象", (candidate, title) => {
+      const node = table(title, "professional-use");
+      appendFields(node, [["关注对象", candidate.object_role], ["本次作用", candidate.function], ["用途 / 对应", [purposes[candidate.purpose] || candidate.purpose, useLabel(candidate)].filter(Boolean).join(" / ")], ["功能关系", relations[candidate.relation] || candidate.relation]]);
+      listRow(node, "成立假设", candidate.assumptions);
+      appendQuotes(node, candidate.evidence_quotes);
+      return node;
     });
-    if (grid.childElementCount) wrap.append(grid);
-    appendList(wrap, missing, "仍缺条件 / 待核实项", "professional-missing");
-    professional.append(wrap);
-    return true;
-  }
-  function renderConclusionMeta(c, result) {
-    var _a, _b;
-    const audit = result == null ? void 0 : result.audit_report, conditions = (_a = c == null ? void 0 : c.key_conditions) != null ? _a : audit == null ? void 0 : audit.conclusion_conditions, limits = (_b = c == null ? void 0 : c.limits) != null ? _b : audit == null ? void 0 : audit.conclusion_limits;
-    if (!c && !values(conditions).length && !values(limits).length) return false;
     const directions = { favorable: "偏顺利", unfavorable: "阻力较多", mixed: "有利有弊", undetermined: "暂不能判断" };
-    const card = el("section", "", "conclusion-card conclusion-" + ((c == null ? void 0 : c.direction) || "undetermined")), head = el("div", "", "conclusion-heading");
-    head.append(el("h3", "综合判断核对"));
-    if (c) {
-      head.append(el("span", directions[c.direction] || directions.undetermined, "conclusion-direction"));
+    if (c || values(conditions).length || values(limits).length || missing.length) {
+      const node = table("结论与条件", "professional-conclusion");
+      const answer = row(node, "综合判断", c == null ? void 0 : c.answer);
+      if (answer && (c == null ? void 0 : c.direction)) answer.prepend(el("span", directions[c.direction] || directions.undetermined, "professional-direction"));
+      listRow(node, "成立条件", conditions, "conclusion-conditions");
+      listRow(node, "判断边界", limits, "conclusion-limits");
+      listRow(node, "待补 / 核实", missing, "professional-missing");
+      wrap.append(node);
     }
-    card.append(head);
-    if (readableValue(c == null ? void 0 : c.answer)) card.append(el("p", readableValue(c.answer), "conclusion-answer"));
-    appendList(card, conditions, "结论成立条件", "conclusion-conditions");
-    appendList(card, limits, "判断边界", "conclusion-limits");
-    professional.append(card);
+    professional.append(wrap);
     return true;
   }
   const jargon = /用神|官鬼|妻财|父母爻|兄弟爻|子孙|世爻|应爻|应克世|持世|动爻|变爻|旬空|月令|日辰|生扶|回头生克|实验|综合分|结构性|第[一二三四五六1-6]爻/;
@@ -220,10 +255,7 @@
     }
     const sections = (report.sections || []).filter((x) => x.content || x.body || x.text);
     professional.replaceChildren();
-    if (!isDemo) {
-      shown = renderCheck(result, report) || shown;
-      shown = renderConclusionMeta(c, result) || shown;
-    }
+    if (!isDemo) shown = renderChecks(result, report, c) || shown;
     if (sections.length) {
       let page = function(i) {
         current = i;
@@ -273,7 +305,7 @@
     } else professional.append(el("p", "本次没有分段推演。", "empty-state"));
     return shown;
   }
-  window.ReportViews = { render, reset, show };
+  window.ReportViews = { render, reset, show, openLog };
   reset();
   show("answer");
 })();

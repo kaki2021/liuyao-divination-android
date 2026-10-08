@@ -1217,7 +1217,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     },
     async replies() {
       showView("results");
-      window.ReportViews.show("records");
+      window.ReportViews.openLog();
       const details = $("ai-raw-replies");
       details.hidden = false;
       details.open = true;

@@ -843,7 +843,7 @@
   window.AnalysisStatus.bind({
     answer(){showView('results');window.ReportViews.show('answer');$('analysis-content').scrollIntoView({block:'start',behavior:'smooth'});},
     async replies(){
-      showView('results'); window.ReportViews.show('records');
+      showView('results'); window.ReportViews.openLog();
       const details=$('ai-raw-replies');details.hidden=false;details.open=true;
       if (!state.runId) $('ai-raw-replies-content').replaceChildren(node('p','small-note','正在建立分析记录，尚未收到 AI 回复。'));
       else await loadRawReplies(true);

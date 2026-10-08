@@ -27,12 +27,12 @@
   error.hidden = true;
   error.setAttribute("role", "status");
   const actions = el("div", "analysis-monitor-actions", "");
-  const replies = el("button", "analysis-view-replies", "查看 Log", "secondary-button"), refresh = el("button", "analysis-refresh", "刷新状态", "text-button");
+  const refresh = el("button", "analysis-refresh", "刷新状态", "text-button");
   const answer = el("button", "analysis-view-answer", "先看解卦结论", "secondary-button");
   answer.type = "button";
   answer.hidden = true;
-  replies.type = refresh.type = "button";
-  actions.append(answer, replies, refresh);
+  refresh.type = "button";
+  actions.append(answer, refresh);
   const note = el("p", "analysis-lock-note", "", "small-note");
   box.append(title, meta, stepText, bar, list, time, connection, hint, error, actions, note);
   const floating = el("button", "analysis-floating", "正在解卦 · 查看进度");
@@ -41,6 +41,8 @@
   document.body.append(floating);
   const shortcut = el("button", "analysis-records-open", "Log", "text-button");
   shortcut.type = "button";
+  shortcut.setAttribute("aria-haspopup", "dialog");
+  shortcut.setAttribute("aria-controls", "analysis-log-dialog");
   document.querySelector(".analysis-actions").append(shortcut);
   let job = null, receivedAt = 0, disconnected = "", callbacks = {};
   const running = () => job && ["queued", "running"].includes(job.status);
@@ -95,7 +97,7 @@
     $("tab-results").click();
     box.scrollIntoView({ block: "start", behavior: "smooth" });
   };
-  replies.onclick = shortcut.onclick = () => {
+  shortcut.onclick = () => {
     var _a;
     return (_a = callbacks.replies) == null ? void 0 : _a.call(callbacks);
   };

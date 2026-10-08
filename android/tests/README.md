@@ -1,6 +1,6 @@
 # 手机界面回归检查
 
-使用 `node tests/report_views_browser.cjs` 独立验证专业页的原始意念、取象候选、结论条件、判断边界、缺失条件和 Log 入口。它使用实际页面、CSS 和编译后的 Android 脚本，不依赖私有规则包，不启动后台服务，不调用模型。覆盖早期缺口已解决、待澄清、历史报告、演示、切换分析及 320 到 1280 像素宽度。
+使用 `node tests/report_views_browser.cjs` 独立验证专业页的意念与取象表格、折叠候选和引文、结论条件、判断边界、缺失条件，以及不占结果分页的 Log 弹窗。它使用实际页面、CSS 和编译后的 Android 脚本，不依赖私有规则包，不启动后台服务，不调用模型。覆盖弹窗关闭与焦点恢复、三分页键盘导航、早期缺口已解决、待澄清、历史报告、演示、切换分析及 320 到 1280 像素宽度。
 
 在 android 目录准备好 content.zip 后，安装 Playwright（`npm install --no-save --package-lock=false playwright`），运行 `npx playwright install chromium`，然后运行 `node tests/buttons_browser.cjs`。也可通过 CHROMIUM_PATH 指定现有 Chromium，通过 PYTHON 指定 Python 3 命令。
 

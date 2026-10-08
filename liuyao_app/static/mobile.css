@@ -103,10 +103,11 @@ body[data-mobile-page=rules] .main-column{display:none}
  .phone-strength-card{padding:14px 0;border-bottom:1px solid var(--line)}
  .phone-strength-heading{display:grid;grid-template-columns:minmax(0,1fr);grid-row-gap:6px;font-size:14px;margin-bottom:8px}
  .phone-strength-heading span{color:var(--accent);font-size:13px}
- .result-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-column-gap:3px;gap:3px}
+ .result-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-column-gap:3px;gap:3px}
  .result-tabs button{white-space:normal;line-height:1.6}
  .professional-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-gap:7px;overflow:visible}
  .professional-nav button{white-space:normal;text-align:left;min-width:0}
+ .professional-body{min-height:0}
  .professional-pager{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-gap:8px}
  .professional-pager button{white-space:normal;min-width:0}
  .run-history select,.analysis-actions,.report-toolbar,.result-actions{min-width:0;max-width:100%}
@@ -120,7 +121,7 @@ body[data-mobile-page=rules] .main-column{display:none}
 @media(max-width:350px){
  .workspace{padding-left:10px;padding-right:10px}.paper-card{padding:18px 14px}
  .site-header{padding:0 14px}.brand{font-size:22px}
- .result-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .result-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
  .phone-line-core{grid-template-columns:60px 1fr auto;font-size:14px;grid-column-gap:8px}
  .rules-page .parameter-types{grid-template-columns:minmax(0,1fr)}
 }
