@@ -36,6 +36,9 @@ const check=(name,value)=>{assert.ok(value,name);checks.push(name);console.log('
     window.ReportViews.render(data,document.querySelector('#analysis-content'),{result:context,...options});
   },{data,context,options});
   await render(report,result);
+  check('直接答案页包含追问输入框',await page.locator('#result-answer #context-form').isVisible()&&await page.locator('#feedback-section #context-form').count()===0);
+  await page.locator('.answer-followup-link').click();
+  check('结论旁追问入口定位并聚焦输入框',await page.locator('#context-text').evaluate(node=>node===document.activeElement));
   await page.locator('#result-tab-professional').click();
   const professional=page.locator('#professional-content');
   check('专业页使用表格展示意念与原文依据',await page.locator('table.professional-intent').count()===1&&(await professional.textContent()).includes('行动 / 目标')&&(await professional.textContent()).includes('原文依据'));

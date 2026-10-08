@@ -70,8 +70,8 @@
       if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) log.close();
     }
   });
-  const followup = section.querySelector(".follow-up-card");
-  $("feedback-section").append(followup);
+  const followup = $("context-card");
+  panels.answer.append(followup);
   section.append(toolbar, tabs, ...Object.values(panels));
   function show(key) {
     if (!panels[key]) return;
@@ -83,6 +83,11 @@
   }
   function openLog() {
     if (!log.open) log.showModal();
+  }
+  function focusFollowup() {
+    show("answer");
+    followup.scrollIntoView({ block: "start", behavior: "smooth" });
+    $("context-text").focus({ preventScroll: true });
   }
   function reset() {
     professional.replaceChildren(el("p", "本次尚无专业报告。", "empty-state"));
@@ -234,6 +239,11 @@
       const hero = el("div", "", "answer-hero");
       hero.append(el("p", "这次的答案", "eyebrow"), el("h3", plain.answer, "direct-answer"));
       if (plain.reason) hero.append(el("p", plain.reason, "answer-reason"));
+      const ask = el("button", "继续问 AI ↓", "text-button answer-followup-link");
+      ask.type = "button";
+      ask.setAttribute("aria-controls", "context-form");
+      ask.addEventListener("click", focusFollowup);
+      hero.append(ask);
       container.append(hero);
       shown = true;
       const grid = el("div", "", "answer-grid");

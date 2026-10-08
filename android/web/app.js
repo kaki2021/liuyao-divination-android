@@ -122,6 +122,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     $("case-form").setAttribute("aria-busy", String(value));
     $("analyze-current-case").disabled = value;
     $("analyze-current-case").textContent = value && state.analyzing ? "分析进行中…" : "重新解卦";
+    $("context-analyze").textContent = value && state.analyzing ? "正在回复…" : "发送并继续解卦";
     if (runSelect) runSelect.disabled = value;
   }
   function showView(view, { scroll = false } = {}) {
@@ -972,6 +973,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       container.append(item);
     };
     (record.context_events || []).forEach((item) => appendEvent($("context-list"), readable(item.content), item.recorded_at));
+    $("context-history").hidden = !$("context-list").childElementCount;
     (record.feedback || []).forEach((item) => {
       var _a2;
       return appendEvent($("feedback-list"), [readable((_a2 = item.reported_outcome) != null ? _a2 : item.text), item.occurred_at ? "发生时间：" + dateText(item.occurred_at) : "", item.rules_version ? "规则版本：" + item.rules_version : "", item.match_degree ? "符合程度：" + ({ matched: "符合", partly_matched: "部分符合", unmatched: "不符合", pending: "尚待验证" }[item.match_degree] || item.match_degree) : "", item.user_notes || ""].filter(Boolean).join("\n"), item.recorded_at);
@@ -1247,7 +1249,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     const text = field.value;
     if (!text.trim()) {
       field.focus();
-      banner(kind === "context" ? "请先写下需要补充的说明。" : "请先写下实际进展或结果。", "warning");
+      banner(kind === "context" ? "请先写下追问或补充信息。" : "请先写下实际进展或结果。", "warning");
       return;
     }
     const caseId = state.caseId;
@@ -1270,7 +1272,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       if (kind === "context" && reanalyze) {
         const job = await analyzeSavedCase(caseId);
         if (!job || job.status === "failed") return;
-      } else banner(kind === "context" ? "补充说明已保存。可以点击“重新解卦”，把新情况一并纳入。" : "反馈已独立保存，可继续补充后续进展。");
+      } else banner(kind === "context" ? "追问与补充已保存。点击“重新解卦”后，会把这些内容一并纳入。" : "反馈已独立保存，可继续补充后续进展。");
       if (field.value === text) field.value = "";
       if (kind === "feedback") {
         $("feedback-occurred").value = "";
