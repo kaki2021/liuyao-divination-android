@@ -388,7 +388,7 @@ class Application:
                     if checkpoint.get('analysis_run_id') == value.get('analysis_run_id') and isinstance(checkpoint.get('user_report'), dict):
                         safe['_checkpoint'] = {k:v for k,v in checkpoint.items() if k in (
                             'analysis_run_id','status','chart','user_report','display_report','is_demo','unresolved','clarifying_questions',
-                            'rules_version','parameter_version','engine_build','ai_model','rules_snapshot','audit_report','stage_outputs','selection_note_reviews')}
+                            'rules_version','parameter_version','engine_build','ai_model','rules_snapshot','audit_report','stage_outputs','selection_note_reviews','logic_snapshot')}
                 if type(value.get('report_timeout_seconds')) is int:safe['report_timeout_seconds']=value['report_timeout_seconds']
                 self.update_job(job_id,**safe)
             extra = {}
@@ -535,7 +535,7 @@ class Handler(BaseHTTPRequestHandler):
         try:
             self.guard(mutation)
             path=urlsplit(self.path).path
-            if not mutation and path in ('/','/index.html','/app.js','/styles.css','/static/app.js','/static/styles.css','/chart-display.js','/static/chart-display.js','/v5-features.js','/static/v5-features.js','/static/report-views.js','/static/buzhai.js','/static/mobile.js','/static/mobile.css','/static/compat.js','/static/phone-chart.js','/static/analysis-status.js','/static/guidance.js','/favicon.ico'):
+            if not mutation and path in ('/','/index.html','/app.js','/styles.css','/static/app.js','/static/styles.css','/chart-display.js','/static/chart-display.js','/v5-features.js','/static/v5-features.js','/static/report-views.js','/static/buzhai.js','/static/mobile.js','/static/mobile.css','/static/compat.js','/static/phone-chart.js','/static/analysis-status.js','/static/guidance.js','/static/rules-ui.js','/static/condition-rules.js','/static/rules.css','/static/series.js','/favicon.ico'):
                 if path=='/favicon.ico':
                     self._headers(204,'image/x-icon',0);return
                 name='index.html' if path in ('/','/index.html') else path.rsplit('/',1)[-1]
@@ -589,6 +589,20 @@ class Handler(BaseHTTPRequestHandler):
                 if path=='/api/usage-guide':
                     from .learning_guide import usage_guide
                     self.send_json(usage_guide());return
+                if path in ('/api/calculation-logic', '/api/calculation-logic/export', '/api/condition-rules'):
+                    from .calculation_logic import logic_guide, logic_markdown
+                    from .conditional_reasoning import rule_guide
+                    if path=='/api/condition-rules':
+                        self.send_json(rule_guide());return
+                    try: version=load_rules(app.rules_directory).version
+                    except RulesNotInstalled: version=None
+                    guide=logic_guide(version)
+                    if path.endswith('/export'):
+                        raw=logic_markdown(guide).encode('utf-8')
+                        self._headers(200,'text/markdown; charset=utf-8',len(raw),{'Content-Disposition':'attachment; filename="calculation-logic.md"'})
+                        self.wfile.write(raw)
+                    else:self.send_json(guide)
+                    return
                 if path in ('/api/principles', '/api/principles/export'):
                     from .buzhai import principle_guide
                     guide = principle_guide()
@@ -643,6 +657,34 @@ class Handler(BaseHTTPRequestHandler):
                     try: result=save_profile(store,actor,body['profile'],person_id=body.get('person_id'),expected_version=body.get('expected_version'),is_self=body.get('is_self',False),idempotency_key=idem)
                     finally: store.close()
                     self.send_json(result,201);return
+                if path=='/api/condition-rules/preview':
+                    exact_fields(body,('input','context','expected_version'),('expected_version',))
+                    from .conditional_reasoning import logic_digest
+                    from .buzhai import STAGES, ROLES, KINDS, RESIDENCE
+                    from copy import deepcopy
+                    if body['expected_version']!=logic_digest():raise Conflict('判断逻辑已更新，请重新打开规则页')
+                    data=body.get('input') or {'question':'这套房屋适合本人居住吗？','lines':['young_yang']*6,'actual_cast_time':'2026-09-18T12:00:00+08:00'}
+                    from validate_input import validate_input
+                    if not validate_input(data)['valid']:raise ValueError('试算输入不完整，请先保存一个有效卦盘')
+                    data=deepcopy(normalize_casting_input(data))
+                    changed=deepcopy(data)
+                    context=body.get('context',{})
+                    exact_fields(context,('enabled','stage','site_kind','role','residence'))
+                    if 'enabled' in context and type(context['enabled']) is not bool:raise ValueError('专题启用状态无效')
+                    for key,allowed in [('stage',STAGES),('site_kind',KINDS),('role',ROLES),('residence',RESIDENCE)]:
+                        if key in context and (not isinstance(context[key],str) or context[key] not in allowed):raise ValueError('试算场景选项无效')
+                    if context.get('enabled',bool(changed.get('buzhai'))):
+                        changed['buzhai']={**{'stage':'site_choice','site_kind':'yang','role':'host','residence':'unknown',
+                            'beneficiary':'情景试算对象','site':'指定房屋','proposal':'居住使用'},**changed.get('buzhai',{}),
+                            **{k:v for k,v in context.items() if k!='enabled'}}
+                    else:changed.pop('buzhai',None)
+                    before=calculate_chart(data,include_experimental=False)
+                    after=calculate_chart(changed,include_experimental=False)
+                    self.send_json({'saved':False,'is_demo':not bool(body.get('input')),
+                        'chart_name':before['main']['name'],
+                        'before':before['conditional_analysis'],
+                        'after':after['conditional_analysis'],
+                        'note':'仅比较场景条件；未保存、未调用 AI、未补造综合旺衰或改变起卦记录。'});return
                 if path=='/api/rules/preview':
                     exact_fields(body,('rule_id','value','enabled','expected_version','input'),('rule_id','value','enabled','expected_version'))
                     from .rule_explanations import preview_rule

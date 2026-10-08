@@ -4,6 +4,22 @@ from liuyao_app.report_template import SECTIONS, format_divination_report
 LABELS={'generates':'生','controls':'克','same':'同类','drains':'被生（目标生来源）','consumes':'被克（目标克来源）'}
 
 def computed_sections(chart):
+    if chart.get('conditional_analysis'):
+        a=chart['conditional_analysis']; lines=a['lines']; targets=a['primary_matches'] or lines
+        dm=[]; changes=[]
+        for line in targets:
+            name=f"{'伏神' if line['layer']=='hidden' else ''}第{line['position']}爻{line['relative']}{line['branch']}{line['element']}"
+            flags=[label for key,label in [('empty','原爻旬空'),('month_break','月破'),('day_clash','日冲')] if line[key] is True]
+            dm.append(name+'：'+('月令'+line['month_class'] if line['month_class'] else '日月未能计算')+('；'+'、'.join(flags) if flags else '')+'；综合旺衰仍待条件判断。')
+        for line in lines:
+            if line['moving']:
+                labels=[label for key,label in [('changed_empty','化空'),('changed_month_break','化月破')] if line[key] is True]
+                changes.append(f"第{line['position']}爻{line['branch']}动变{line['changed_branch']}；回头五行关系为{LABELS[line['return_relation']]}"+('；'+'、'.join(labels) if labels else '')+'。以上为结构，具体作用条件另核对。')
+        shi=lines[chart['shi_position']-1];ying=lines[chart['ying_position']-1]
+        from .day_month_analysis import element_relation
+        sy=f"世为第{shi['position']}爻{shi['branch']}，应为第{ying['position']}爻{ying['branch']}；应对世：{LABELS[element_relation(ying['element'],shi['element'])]}。主体得失与目标成败分开解释。"
+        return {'day_month':'\n'.join(dm),'change':'\n'.join(changes) or '静卦，无动爻化空；原爻旬空仍须另看。',
+                'shi_ying':sy,'relations':'仅列本问相关的候选作用；有效性与先后未核定，不把配对统一累计为吉凶。'}
     a=chart.get('comprehensive_analysis',{}); lines=a.get('lines',[])
     u=a.get('use_selection',{}).get('primary') or {};target=u.get('chosen')
     chosen=next((l for l in (a.get('hidden_spirits',[]) if target and target['layer']=='hidden' else lines) if target and l['position']==target['position']),None)

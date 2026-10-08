@@ -436,6 +436,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     updateCastingMode();
   }
   function resetCase({ transferContext = false } = {}) {
+    var _a2;
+    (_a2 = window.ConditionRules) == null ? void 0 : _a2.setCase(null);
     if (state.busy) return false;
     if (!mayDiscard({ transferContext })) return false;
     window.AnalysisStatus.clear();
@@ -1065,6 +1067,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     area.append(label, select);
   }
   function renderEvents(record) {
+    var _a2;
+    (_a2 = window.ConditionRules) == null ? void 0 : _a2.setCase(record);
     clear($("context-list"));
     clear($("feedback-list"));
     const appendEvent = (container, text, stamp) => {
@@ -1078,8 +1082,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     (record.context_events || []).forEach((item) => appendEvent($("context-list"), readable(item.content), item.recorded_at));
     $("context-history").hidden = !$("context-list").childElementCount;
     (record.feedback || []).forEach((item) => {
-      var _a2;
-      return appendEvent($("feedback-list"), [readable((_a2 = item.reported_outcome) != null ? _a2 : item.text), item.occurred_at ? "发生时间：" + dateText(item.occurred_at) : "", item.rules_version ? "规则版本：" + item.rules_version : "", item.match_degree ? "符合程度：" + ({ matched: "符合", partly_matched: "部分符合", unmatched: "不符合", pending: "尚待验证" }[item.match_degree] || item.match_degree) : "", item.user_notes || ""].filter(Boolean).join("\n"), item.recorded_at);
+      var _a3;
+      return appendEvent($("feedback-list"), [readable((_a3 = item.reported_outcome) != null ? _a3 : item.text), item.occurred_at ? "发生时间：" + dateText(item.occurred_at) : "", item.rules_version ? "规则版本：" + item.rules_version : "", item.match_degree ? "符合程度：" + ({ matched: "符合", partly_matched: "部分符合", unmatched: "不符合", pending: "尚待验证" }[item.match_degree] || item.match_degree) : "", item.user_notes || ""].filter(Boolean).join("\n"), item.recorded_at);
     });
   }
   async function saveCase() {

@@ -76,12 +76,12 @@ def select_use_lines(chart,selection,rules):
             if line.get('is_shi'):rank+=rules.weight('SELECT_SHI')
             ranked.append({'position':line['position'],'branch':line['branch'],'element':line['element'],'relative':line['relative'],
                 'layer':layer,'rank_score':round(rank,3),'strength':line['strength']['score']})
-        ranked.sort(key=lambda x:(-x['rank_score'],x['position']))
+        ranked.sort(key=lambda x:x['position'])
         tied=[r for r in ranked if r['rank_score']==ranked[0]['rank_score']] if ranked else []
         choices.append({'candidate_id':candidate['candidate_id'],'purpose':candidate['purpose'],'matches':ranked,
-            'chosen':ranked[0] if ranked else None,'tied_positions':[r['position'] for r in tied] if len(tied)>1 else [],
-            'selection_method':'同类候选按实验强度+发动/持世加分排序；并列取较低爻位并保留并列信息',
-            'status':'experimental' if len(ranked)>1 or layer=='hidden' else 'structural_match'})
+            'chosen':ranked[0] if len(ranked)==1 else None,'tied_positions':[r['position'] for r in tied] if len(tied)>1 else [],
+            'selection_method':'按用途匹配；唯一匹配可定位，多现保留全部候选，实验分不决定具体取用',
+            'status':'multiple_matches' if len(ranked)>1 else 'structural_match' if ranked else 'not_located'})
     main=next((x for x in choices if x['candidate_id']==selection['selected_primary_id']),None)
     target=main['chosen'] if main else None
     roles={'原神':[],'忌神':[],'仇神':[],'同类':[]}
@@ -104,6 +104,9 @@ def select_use_lines(chart,selection,rules):
     return {'primary':main,'candidates':choices,'roles':roles,'auxiliary_effects':auxiliary,'rules_version':rules.version}
 
 def analysis_facts(chart):
+    if chart.get('conditional_analysis'):
+        from .conditional_reasoning import reasoning_facts
+        return reasoning_facts(chart)
     a=chart['comprehensive_analysis'];facts=[]
     def add(key,subject,predicate,value):
         if not isinstance(value,(str,int,float,bool)):value=json.dumps(value,ensure_ascii=False,separators=(',',':'))

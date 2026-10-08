@@ -170,8 +170,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       guide = null;
       rulesVersion = "";
       showRuleContent(false);
-      $("rules-version").textContent = "尚未安装规则包 · 使用原理可直接阅读";
-      if ($("parameter-tab").getAttribute("aria-pressed") === "true") window.RuleWorkbench.show("package");
+      $("rules-version").textContent = "条件判断 1 · 计算逻辑可直接阅读 · 实验参数未安装";
       return false;
     }
     guide = await api("/api/rules/guide");
@@ -180,7 +179,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     rulesVersion = guide.version;
     showRuleContent(true);
     window.RuleWorkbench.overview(guide);
-    $("rules-version").textContent = "".concat(guide.rules.length, " 项参数 · ").concat(guide.version);
+    $("rules-version").textContent = "条件判断 1 · 实验参数 ".concat(guide.version);
     if (!guide.rules.some((r) => r.id === selectedRule)) selectedRule = "BASE_SCORE";
     refreshRules();
     return true;
@@ -326,7 +325,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     window.MobileUI.openRules();
     $("rules-message").textContent = "";
     try {
-      await loadRules();
+      await Promise.all([loadRules(), window.ConditionRules.load()]);
     } catch (e) {
       $("rules-message").textContent = e.message;
     }
@@ -414,7 +413,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     }
   });
   function renderComprehensive(chart) {
-    var _a;
+    var _a, _b;
+    (_a = window.ConditionRules) == null ? void 0 : _a.setChart(chart);
     const box = $("comprehensive-content");
     box.replaceChildren();
     const a = chart == null ? void 0 : chart.comprehensive_analysis;
@@ -437,7 +437,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     });
     box.append(table);
     a.hidden_spirits.forEach((f) => box.append(node("p", "第".concat(f.position, "爻下伏").concat(f.relative).concat(f.branch).concat(f.element, "；飞神").concat(f.flying_relative).concat(f.flying_branch, "，伏神实验分 ").concat(f.strength.score, "/10。"), "small-note")));
-    const u = (_a = a.use_selection) == null ? void 0 : _a.primary;
+    const u = (_b = a.use_selection) == null ? void 0 : _b.primary;
     if (u == null ? void 0 : u.chosen) {
       const c = u.chosen;
       box.append(node("p", "主用：".concat(c.layer === "hidden" ? "伏神" : "", "第").concat(c.position, "爻").concat(c.relative).concat(c.branch).concat(c.element).concat(u.tied_positions.length ? "；并列候选：" + u.tied_positions.join("、") : "")));
@@ -471,7 +471,9 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     rulePage = 0;
     refreshRules();
   }, setProfile, selectSelf, renderComprehensive, renderAudit, setAnalysisContext(input) {
+    var _a;
     analysisInput = input;
+    (_a = window.ConditionRules) == null ? void 0 : _a.setInput(input);
     if (guide && !$("rules-page").hidden) refreshRules();
   } };
   loadProfiles().catch(() => {

@@ -79,7 +79,9 @@
     host.replaceChildren(node("p", "正在读取使用原理…"));
     guidePromise = (async () => {
       try {
-        const [g, b] = await Promise.all([read("/api/usage-guide"), read("/api/principles")]);
+        const [g, b, l] = await Promise.all([read("/api/usage-guide"), read("/api/principles"), read("/api/calculation-logic")]);
+        const logic = section("软件计算逻辑");
+        window.ConditionRules.renderLogic(logic, l);
         const workflow = section("使用流程");
         workflow.append(node("p", g.purpose, "small-note"), table(["步骤", "怎么做"], g.workflow.map((s, i) => [i + 1 + ". " + s.title, s.text]), "rule-pairs"));
         const layers = fold("四类依据怎样分工");
@@ -90,7 +92,7 @@
           ["AI 解读", "结合问题与背景组织判断，成立条件仍需核对。"]
         ], "rule-pairs"));
         workflow.append(layers);
-        const scoring = section("评分机制"), guide = g.scoring;
+        const scoring = fold("实验评分说明与调校依据"), guide = g.scoring;
         scoring.append(node("p", "每个爻单独评分；强度不是整卦的成功率。", "small-note"), table(["阶段", "计算与用途"], guide.formulas.map((f) => {
           const body = node("div");
           body.append(node("p", f.formula, "formula"));
@@ -139,7 +141,7 @@
         link.href = "/api/principles/export";
         link.download = "卜宅原理.json";
         residence.append(link);
-        host.replaceChildren(workflow, scoring, general, residence);
+        host.replaceChildren(logic, workflow, scoring, general, residence);
         host.dataset.loaded = "true";
       } catch (e) {
         host.replaceChildren(node("p", e.message));
@@ -154,11 +156,13 @@
     return guidePromise;
   }
   function show(which) {
+    var _a;
     for (const [key, panel, button] of [["parameter", "parameter-panel", "parameter-tab"], ["usage", "usage-panel", "usage-tab"], ["package", "package-panel", "package-tab"]]) {
       $(panel).hidden = key !== which;
       $(button).setAttribute("aria-pressed", String(key === which));
     }
     if (which === "usage") loadUsage();
+    if (which === "parameter") (_a = window.ConditionRules) == null ? void 0 : _a.load();
   }
   for (const key of ["parameter", "usage", "package"]) $(key === "usage" ? "usage-tab" : key + "-tab").addEventListener("click", () => show(key));
   function overview(guide) {
@@ -172,5 +176,5 @@
     });
     kind.value = previous || "";
   }
-  window.RuleWorkbench = { node, table, fold, model, show, overview };
+  window.RuleWorkbench = { node, table, fold, model, show, overview, loadUsage };
 })();

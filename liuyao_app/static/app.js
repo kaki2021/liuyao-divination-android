@@ -333,6 +333,7 @@
     $('time-details').open = Boolean(rawTime); $('revision-reason').value = ''; updateCastingMode();
   }
   function resetCase({ transferContext = false } = {}) {
+    window.ConditionRules?.setCase(null);
     if (state.busy) return false;
     if (!mayDiscard({ transferContext })) return false;
     window.AnalysisStatus.clear(); currentJob=null;
@@ -746,6 +747,7 @@
     area.append(label, select);
   }
   function renderEvents(record) {
+    window.ConditionRules?.setCase(record);
     clear($('context-list')); clear($('feedback-list'));
     const appendEvent = (container, text, stamp) => {
       if (!text) return; const item = node('p', 'event-item'); const time = node('time', '', dateText(stamp)); if (stamp) time.dateTime = stamp; item.append(time, document.createTextNode(text)); container.append(item);

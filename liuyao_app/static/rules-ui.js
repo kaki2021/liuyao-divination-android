@@ -38,12 +38,13 @@
     host.replaceChildren(node('p','正在读取使用原理…'));
     guidePromise=(async()=>{
       try{
-        const [g,b]=await Promise.all([read('/api/usage-guide'),read('/api/principles')]);
+        const [g,b,l]=await Promise.all([read('/api/usage-guide'),read('/api/principles'),read('/api/calculation-logic')]);
+        const logic=section('软件计算逻辑');window.ConditionRules.renderLogic(logic,l);
         const workflow=section('使用流程');workflow.append(node('p',g.purpose,'small-note'),table(['步骤','怎么做'],g.workflow.map((s,i)=>[(i+1)+'. '+s.title,s.text]),'rule-pairs'));
         const layers=fold('四类依据怎样分工');layers.append(table(['依据','作用'],[
           ['原理说明','说明定性关系、适用条件与出处。'],['程序计算','按已编码的规则排盘、识别结构。'],['实验评分','用当前参数表达六爻的相对强弱。'],['AI 解读','结合问题与背景组织判断，成立条件仍需核对。']
         ],'rule-pairs'));workflow.append(layers);
-        const scoring=section('评分机制'),guide=g.scoring;
+        const scoring=fold('实验评分说明与调校依据'),guide=g.scoring;
         scoring.append(node('p','每个爻单独评分；强度不是整卦的成功率。','small-note'),table(['阶段','计算与用途'],guide.formulas.map(f=>{const body=node('div');body.append(node('p',f.formula,'formula'));const d=fold('作用与边界');d.append(node('p',f.detail));body.append(d);return [f.title,body];}),'rule-pairs'));
         const basis=fold('起点、分值依据与调校方法');basis.id='score-overview';basis.append(node('p',guide.rationale),table(['问题','说明'],guide.intro.map(t=>[t.title,t.text]),'rule-pairs'));scoring.append(basis);
         const kinds=fold('参数类型与影响范围');kinds.append(table(['参数类型','影响什么'],guide.kinds.map(k=>[k.name,k.meaning]),'rule-pairs'));scoring.append(kinds);
@@ -57,7 +58,7 @@
           const cell=node('div');cell.append(node('p',r.statement));const d=fold('范围、边界与出处','principle-entry');d.append(node('p','适用范围：'+r.scope));r.limitations.forEach(t=>d.append(node('p',t,'small-note')));const source=b.sources.find(s=>s.source_id===r.source_id);d.append(node('p',`出处：《${source?.title||r.source_id}》${r.source_locator}。`,'source-note'));cell.append(d);return [r.title,cell];
         }),'rule-pairs'));
         const link=node('a','导出卜宅原理与出处','text-button');link.href='/api/principles/export';link.download='卜宅原理.json';residence.append(link);
-        host.replaceChildren(workflow,scoring,general,residence);host.dataset.loaded='true';
+        host.replaceChildren(logic,workflow,scoring,general,residence);host.dataset.loaded='true';
       }catch(e){host.replaceChildren(node('p',e.message));const retry=node('button','重新读取','secondary-button');retry.type='button';retry.onclick=loadUsage;host.append(retry);}
       finally{guidePromise=null;}
     })();return guidePromise;
@@ -65,8 +66,9 @@
   function show(which){
     for(const [key,panel,button]of [['parameter','parameter-panel','parameter-tab'],['usage','usage-panel','usage-tab'],['package','package-panel','package-tab']]){$(panel).hidden=key!==which;$(button).setAttribute('aria-pressed',String(key===which));}
     if(which==='usage')loadUsage();
+    if(which==='parameter')window.ConditionRules?.load();
   }
   for(const key of ['parameter','usage','package'])$(key==='usage'?'usage-tab':key+'-tab').addEventListener('click',()=>show(key));
   function overview(guide){const kind=$('rule-kind'),previous=kind.value;kind.replaceChildren(node('option','全部类型'));kind.firstChild.value='';guide.kinds.forEach(t=>{const o=node('option',t.name);o.value=t.id;kind.append(o);});kind.value=previous||'';}
-  window.RuleWorkbench={node,table,fold,model,show,overview};
+  window.RuleWorkbench={node,table,fold,model,show,overview,loadUsage};
 })();

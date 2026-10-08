@@ -11,6 +11,7 @@
   <script src="/static/compat.js" defer></script>
   <script src="/static/chart-display.js" defer></script>
   <script src="/static/rules-ui.js" defer></script>
+  <script src="/static/condition-rules.js" defer></script>
   <script src="/static/v5-features.js" defer></script>
   <script src="/static/report-views.js" defer></script>
   <script src="/static/buzhai.js" defer></script>
@@ -99,16 +100,19 @@
   <dialog id="profiles-dialog" aria-labelledby="profiles-title"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭人物档案">×</button></form><h2 id="profiles-title">人物档案</h2><p class="small-note">档案可反复选用。出生信息与八字只记录，不参与六爻判断。</p><label for="profile-edit-select">已有档案</label><select id="profile-edit-select"><option value="">新建人物</option></select><form id="profile-form"><div class="person-grid"><div><label for="profile-name">姓名或称呼</label><input id="profile-name" required maxlength="200"></div><div><label for="profile-gender">性别（选填）</label><input id="profile-gender" maxlength="40"></div><div><label for="profile-birth_date">公历出生日期</label><input id="profile-birth_date" type="date" min="1900-01-01" max="2100-12-31"></div><div><label for="profile-birth-clock">出生时刻（不知道可留空）</label><input id="profile-birth-clock" type="time" step="1"></div></div><section class="birth-preview"><div class="section-heading"><h3>自动排八字</h3><span class="soft-tag">随日期计算</span></div><div id="birth-pillars" class="birth-pillars"></div><p id="birth-message" role="status" class="small-note"></p><input id="profile-bazi" maxlength="500" aria-label="旧档案手填八字" hidden><details><summary>计算口径</summary><p class="small-note">请填写公历日期与北京时间。立春换年、节令换月，零点换日；23 时的时柱按次日子时计算。不校正真太阳时和历史夏令时。出生地点仅作记录。</p></details></section><details class="profile-extras"><summary>更多资料：出生地、职业与备注</summary><div class="person-grid"><div><label for="profile-birth_place">出生地点（选填）</label><input id="profile-birth_place" maxlength="500"></div><div><label for="profile-occupation">职业（选填）</label><input id="profile-occupation" maxlength="200"></div><div><label for="profile-industry">行业（选填）</label><input id="profile-industry" maxlength="200"></div></div><label for="profile-tags">标签</label><input id="profile-tags" maxlength="1000"><label for="profile-notes">备注</label><textarea id="profile-notes" maxlength="4000" rows="2"></textarea></details><label class="checkbox-line"><input type="checkbox" id="profile-is-self">设为本人档案，自占时默认选用</label><button class="primary-button" id="profile-save" type="submit">保存档案</button></form><p id="profile-message" role="status"></p></dialog>
   <section id="rules-page" class="rules-page" aria-labelledby="rules-title" hidden>
     <button type="button" class="text-button rules-back" id="rules-back">← 返回</button>
-    <p class="eyebrow">查参数 · 看作用 · 比较结果</p><h2 id="rules-title">规则工作台</h2>
+    <p class="eyebrow">查条件 · 看作用 · 核对判断</p><h2 id="rules-title">规则工作台</h2>
     <p id="rules-version" class="small-note"></p>
     <nav class="rules-tabs" aria-label="规则工作台栏目">
-      <button id="parameter-tab" type="button" aria-pressed="true" aria-controls="parameter-panel">参数调校</button>
+      <button id="parameter-tab" type="button" aria-pressed="true" aria-controls="parameter-panel">判断规则</button>
       <button id="usage-tab" type="button" aria-pressed="false" aria-controls="usage-panel">使用原理</button>
       <button id="package-tab" type="button" aria-pressed="false" aria-controls="package-panel">规则包</button>
     </nav>
     <p id="rules-message" role="status"></p>
-    <section id="parameter-panel" aria-label="参数调校">
-      <p class="small-note">强度、取用排序与结构开关统一在此试调。每次只比较一项，试算值不保存。</p>
+    <div class="logic-actions"><button id="calculation-logic-open" type="button" class="text-button">软件计算逻辑 ↗</button><a href="/api/calculation-logic/export" download="calculation-logic.md" class="text-button">导出说明 ↗</a></div>
+    <section id="parameter-panel" aria-label="判断规则">
+      <p class="small-note">按本次用途核对条件与作用。满足、不满足和未知分别保留。</p>
+      <div class="conditional-browser"><section class="rule-catalog"><div class="rule-filters"><div><label for="condition-scene">适用场景</label><select id="condition-scene"><option value="">全部场景</option></select></div><div><label for="condition-search">查找规则</label><input id="condition-search" type="search" placeholder="名称、条件或处理方式"></div></div><div id="condition-list">正在读取判断规则…</div></section><section id="condition-detail" aria-live="polite"><p>选择规则查看条件与依据。</p></section></div>
+      <details id="experimental-scoring" class="rule-fold"><summary>实验评分 · 参数与对照</summary><p class="small-note">保留旧评分计算供研究比较；新分析不按分数自动取用。</p>
       <p id="rules-empty" class="empty-state" hidden>尚未安装规则包。到「规则包」导入后即可查看参数；「使用原理」仍可阅读。</p>
       <div class="rule-browser" hidden>
         <section class="rule-catalog" aria-label="参数表">
@@ -118,6 +122,7 @@
         </section>
         <section id="rule-detail" aria-label="参数试调" aria-live="polite"><p class="empty-state">选择一项参数，查看作用并试算。</p></section>
       </div>
+      </details>
     </section>
     <section id="usage-panel" class="usage-guide" aria-label="使用原理" hidden><p>正在读取使用原理…</p></section>
     <section id="package-panel" aria-label="规则包管理" hidden>

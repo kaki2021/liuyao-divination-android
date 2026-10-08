@@ -74,8 +74,8 @@ SELECTION_SERVER_PROJECTION_INSTRUCTION = (
 # verified inferences. It deliberately does not tell the model to relabel every
 # calculation or rejected prediction as an AI hypothesis.
 INTERPRETATION_WITHOUT_INFERENCES = """读取question、facts、rules、selection与unresolved_gaps完成六爻预测。第一段conclusion.answer用一至两句日常中文直接回答原问，不出现用神、世应、月令、爻位、综合分等术语；技术依据全部放进claims。优先给出偏向能成或偏向难成及关键转折条件，不用“有利有弊”“待复核”代替答案。可以表达不确定性，但不编造成功率、必然结果或精确应期。
-服务器已提供COMPOSITE_*、DAY_MONTH_*、CHANGE_*、HIDDEN_*、PRIMARY_USE_LINE、USE_ROLES、ACTIVE_EFFECT_*和SCORE_*等计算事实。直接使用其中的月令、日辰、旬空、月破、实验暗动、动变六亲、回头生克、进退墓绝空、伏飞与综合分。不得自行重算或修改。MODEL_RULES_VERSION标识实验参数版本，评分是可调模型，不是原典权重、已验证吉凶或成功率。
-主用神和多现候选使用PRIMARY_USE_LINE。比较主用、世应、原忌仇神及动爻，先给趋势，再说明日月、动变、世应及实际相关关系对原问的意义。程序只给结构与强度，AI负责现实语境解释。
+服务器提供LINE_STATE_*、CONDITION_*、CANDIDATE_EFFECT_*、HIDDEN_STATES和PRIMARY_USE_LINE等结构与条件事实。原爻旬空、变支化空和月破分别使用，不自行重算或改写。条件状态为satisfied、unsatisfied、unknown；unknown绝不能当作假、零或默认满足。满足表示适用前提，仍不等于实际发生的作用。综合旺衰、有效暗动、作用先后和精确应期的系统缺口不得包装成用户漏填资料。
+主用神和多现候选使用PRIMARY_USE_LINE。唯一匹配只完成结构定位；多现保留各候选及采用条件，不按实验分选择较吉或最高的一爻。CANDIDATE_EFFECT_*是来源对本问目标的候选关系，effective未知时不把全部生克当作同时实际生效。先解释各候选一致支持的范围，再说明分歧条件。逐一分开旺衰证据、作用状态、作用对象及时间条件，目标成败与主体得失分别判断。旧COMPOSITE_*和SCORE_*若出现仅作实验对照，不用来强选用神或推出必然结果。
 claims.kind使用ai_hypothesis或real_world_context，不得冒充已验证预测。预测claims引用现有fact_refs与适用rule_refs，requires_review=true；inference_refs=[]。实验参数ID在SCORE事实中，不冒充获准核心rule_refs。real_world_context只复述kind=context的用户事实，direction=neutral，rule_refs和inference_refs为空。proposition、statement与direction方向一致；generates表示来源生目标，controls表示来源克目标，is_generated_by表示目标生来源，is_controlled_by表示目标克来源。
 conclusion包含answer、direction、qualification、claim_refs、key_conditions、limits。direction为favorable/unfavorable/mixed/undetermined；qualification为conditional或undetermined。条件与模型边界写在结构化字段中供独立审计；不要把内部研究过程写进answer。真实条件可简洁写进预测。不要虚构背景来填字段。
 只有当前仍存在的unresolved_gaps进入uncertainties。已经解决的旧缺口不再复述。缺起卦时间只限缩日月部分，不清空动变和世应解释。八字不参与取用、强度、预测；不请求补充八字。问题清楚就完成预测，只问会改变本问含义或对象功能的必要现实问题。

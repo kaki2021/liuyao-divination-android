@@ -1,4 +1,16 @@
 /* Consolidated rules workbench; loaded after the existing mobile styles. */
+.logic-actions{display:flex;flex-wrap:wrap;justify-content:space-between;margin:8px 0 16px}
+.conditional-browser{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);grid-gap:24px;gap:24px;align-items:start;margin:20px 0}
+#condition-detail{min-width:0;padding:20px;background:var(--paper);border:1px solid var(--line);border-radius:14px;scroll-margin-top:24px}
+#condition-detail>h3{margin:0 0 12px;font-size:19px}.condition-table th:first-child{width:36%}.condition-table .rule-item{font-weight:500}
+.condition-table .rule-item[aria-pressed=true]{background:#edf2e8;box-shadow:inset 3px 0 #476b60;color:var(--ink)}
+.condition-status{display:inline-block;font-size:12px;color:#796540}.condition-status.satisfied{color:#3a6556}.condition-status.unsatisfied{color:#66716b}
+.condition-trial{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-gap:10px;gap:10px}
+.condition-trial label{font-size:12px;margin:0 0 4px}.condition-trial select{min-width:0;width:100%;margin:0}.condition-trial button{grid-column:1/-1;min-height:44px;margin-top:8px}
+#calculation-logic-section>select{max-width:260px;font-size:13px;min-height:44px}#calculation-logic-section .secondary-button{display:inline-block;padding:10px 18px}
+.professional-states{table-layout:fixed;width:100%;font-size:12px}.professional-states th,.professional-states td{word-wrap:break-word;overflow-wrap:anywhere;vertical-align:top;white-space:normal}
+.professional-states th:nth-child(1){width:18%}.professional-states th:nth-child(2){width:23%}.professional-states th:nth-child(3){width:24%}.professional-states th:nth-child(4){width:35%}
+.professional-explanation{margin-top:18px;padding:14px;border:1px solid var(--line);border-radius:10px}.professional-explanation>summary{cursor:pointer;min-height:30px;font-size:14px}
 .rules-page>h2{margin:10px 0 8px}.rules-page #rules-version{margin:0 0 20px}
 .rules-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-gap:4px;gap:4px;padding:4px;margin:20px 0;background:#e8ece2;border:1px solid var(--line);border-radius:12px}
 .rules-tabs button{min-width:0;min-height:44px;background:transparent;border:0;border-radius:8px;font:inherit;font-size:14px;color:var(--muted);cursor:pointer;padding:9px 6px}
@@ -38,6 +50,7 @@
 .rules-tools>section{padding:18px;background:var(--paper);border:1px solid var(--line);border-radius:12px;min-width:0}
 .rules-tools h4{font-size:15px;margin:0 0 12px}.rules-tools label{font-size:12px}.rules-tools input{min-width:0;width:100%;margin:8px 0 16px}.rules-tools .secondary-button,.rules-tools .primary-button{display:block;text-align:center;width:100%;min-height:44px;padding:12px 8px}
 @media(max-width:760px){
+ .conditional-browser{display:block}#condition-detail{padding:18px 14px;margin-top:20px}.professional-states th,.professional-states td{padding:8px 5px;font-size:11px}
  .rules-page .rule-browser{display:block}.rules-page #rule-detail{padding:18px 14px;margin-top:22px}
  .rules-page .rule-table th,.rules-page .rule-table td{padding:9px 7px;font-size:12px}.rules-page .rule-parameter-table td{padding:0}.rules-page .rule-parameter-table td+td{padding:8px 6px}
  .rules-page .rule-item{padding:9px 8px;font-size:12px}

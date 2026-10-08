@@ -18,7 +18,9 @@
 
 使用 `node tests/guidance_browser.cjs` 检查提问说明、四类卜宅引导、案例持久化、九类参数筛选、实际卦盘计分、只读试算及手机宽度。测试使用本地合成数据，不把教学例子发给模型。
 
-规则工作台只有「参数调校／使用原理／规则包」三个栏目。参数列表只显示参数及当前值，保留类型筛选；选中后的当前值与试调值并排，恢复当前值或再次编辑会清除旧对比。通用与卜宅原理并入使用原理表，出处按需展开。试算不保存，持久调整仍通过导出并重新导入 XLSX 完成。
+规则工作台只有「判断规则／使用原理／规则包」三个栏目。判断规则列表只显示规则与当前策略，情景试算逐项对比满足、不满足与未知；旧参数调校保留在实验评分折叠区。“软件计算逻辑”可离线阅读和导出，新分析保存说明快照。通用与卜宅原理并入使用原理表，出处按需展开。试算不保存，实验参数持久调整仍通过导出并重新导入 XLSX 完成。
+
+仓库根目录运行 `node android/tests/condition_model.cjs`，检查源码和 Chrome 58 编译版的三值状态、筛选、试算比较、原爻旬空与化空区别，以及反馈绑定原分析而非最近结果。运行 `PYTHONPATH=software_prep:. python -m unittest liuyao_app.test_conditional_reasoning`，检查全部 4096 种盘面、多现取用、系统判据缺口、AI 事实投影与说明快照、真实 HTTP 静态资源路由、离线说明导出和只读情景试算。使用公开占位参数及模型替身。
 
 使用 `node tests/rules_model.cjs` 检查生产代码的筛选、分页边界、数值／地支输入、必要参数与识别开关，无需浏览器或私有规则。仓库根目录运行 `PYTHONPATH=software_prep:. python -m unittest liuyao_app.test_guidance.GuidanceTests.test_public_principles_include_scoring_without_installed_rules liuyao_app.test_guidance.GuidanceTests.test_parameter_preview_is_read_only_and_traces_match_the_engine`，检查未安装规则时的原理内容，以及试算贡献与计算引擎一致、原规则和输入不被修改。使用公开占位参数，不验证真实占断效果。
 

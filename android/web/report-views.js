@@ -85,6 +85,8 @@
     if (!log.open) log.showModal();
   }
   function reset() {
+    var _a;
+    (_a = window.ConditionRules) == null ? void 0 : _a.setSnapshot(null);
     professional.replaceChildren(el("p", "本次尚无专业报告。", "empty-state"));
     model.replaceChildren();
     $("audit-report").open = false;
@@ -176,8 +178,9 @@
     return selection == null ? void 0 : selection.unresolved;
   }
   function renderChecks(result, report, c) {
-    var _a, _b, _c, _d, _e;
-    const intent = (_a = result == null ? void 0 : result.stage_outputs) == null ? void 0 : _a.intent, selection = (_b = result == null ? void 0 : result.stage_outputs) == null ? void 0 : _b.selection, interpretation = (_c = result == null ? void 0 : result.stage_outputs) == null ? void 0 : _c.interpretation;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+    const conditional = (result == null ? void 0 : result.chart) ? result.chart.conditional_analysis : (_b = (_a = window.ConditionRules) == null ? void 0 : _a.getChart()) == null ? void 0 : _b.conditional_analysis;
+    const intent = (_c = result == null ? void 0 : result.stage_outputs) == null ? void 0 : _c.intent, selection = (_d = result == null ? void 0 : result.stage_outputs) == null ? void 0 : _d.selection, interpretation = (_e = result == null ? void 0 : result.stage_outputs) == null ? void 0 : _e.interpretation;
     const intents = candidates(intent), uses = candidates(selection);
     const missing = [...new Set([
       result == null ? void 0 : result.unresolved,
@@ -190,8 +193,8 @@
       selectionNotes(result),
       selection == null ? void 0 : selection.clarifying_questions
     ].reduce((all, items) => all.concat(values(items)), []))];
-    const audit = result == null ? void 0 : result.audit_report, conditions = (_d = c == null ? void 0 : c.key_conditions) != null ? _d : audit == null ? void 0 : audit.conclusion_conditions, limits = (_e = c == null ? void 0 : c.limits) != null ? _e : audit == null ? void 0 : audit.conclusion_limits;
-    if (!intents.length && !uses.length && !missing.length && !c && !values(conditions).length && !values(limits).length) return false;
+    const audit = result == null ? void 0 : result.audit_report, conditions = (_f = c == null ? void 0 : c.key_conditions) != null ? _f : audit == null ? void 0 : audit.conclusion_conditions, limits = (_g = c == null ? void 0 : c.limits) != null ? _g : audit == null ? void 0 : audit.conclusion_limits;
+    if (!conditional && !intents.length && !uses.length && !missing.length && !c && !values(conditions).length && !values(limits).length) return false;
     const wrap = el("section", "", "professional-checks");
     appendCandidates(wrap, intent, intent == null ? void 0 : intent.selected_candidate_id, "意念", (candidate, title) => {
       const node = table(title, "professional-intent");
@@ -207,6 +210,37 @@
       appendQuotes(node, candidate.evidence_quotes);
       return node;
     });
+    if (conditional) {
+      const focus = new Set(conditional.primary_matches.filter((l) => l.layer === "visible").map((l) => l.position));
+      conditional.lines.filter((l) => l.moving).forEach((l) => focus.add(l.position));
+      const shi = ((_h = result == null ? void 0 : result.chart) == null ? void 0 : _h.shi_position) || ((_j = (_i = window.ConditionRules) == null ? void 0 : _i.getChart()) == null ? void 0 : _j.shi_position);
+      if (shi) focus.add(shi);
+      const states = (lines, title) => {
+        const t = table(title, "professional-states");
+        const head = el("thead"), tr = el("tr");
+        ["爻", "日月依据", "状态", "本问作用"].forEach((name) => {
+          const h = el("th", name);
+          h.scope = "col";
+          tr.append(h);
+        });
+        head.append(tr);
+        t.prepend(head);
+        for (const l of lines) {
+          const tr2 = el("tr"), effects = conditional.effects.filter((e) => e.target_position === l.position && e.target_layer === l.layer && e.status !== "unsatisfied");
+          const text = effects.length ? effects.map((e) => "第" + e.source_position + "爻→本爻：" + e.relation_label + "（待核定）").join("；") : conditional.primary_matches.some((m) => m.position === l.position && m.layer === l.layer) ? "已匹配候选，作用待判断" : "保留结构，未定本问作用";
+          [String(l.position) + (l.layer === "hidden" ? "伏" : "") + " " + l.relative + l.branch + l.element, (l.month_class ? "月令" + l.month_class + "；日辰" + ({ same: "同类", generates: "生本爻", controls: "克本爻", drains: "本爻生日辰", consumes: "本爻克日辰" }[l.day_relation] || "关系待核对") : "日月未核对") + "；综合旺衰待判断", window.ConditionRules.model.state(l), text].forEach((value) => tr2.append(el("td", value)));
+          t.tBodies[0].append(tr2);
+        }
+        return t;
+      };
+      wrap.append(states(conditional.lines.filter((l) => focus.has(l.position)).concat(conditional.primary_matches.filter((l) => l.layer === "hidden")), "爻的状态与本问作用"));
+      const others = conditional.lines.filter((l) => !focus.has(l.position));
+      if (others.length) {
+        const d = el("details", "", "professional-alternatives");
+        d.append(el("summary", "其他爻的状态（" + others.length + "）"), states(others, "其他爻"));
+        wrap.append(d);
+      }
+    }
     const directions = { favorable: "偏顺利", unfavorable: "阻力较多", mixed: "有利有弊", undetermined: "暂不能判断" };
     if (c || values(conditions).length || values(limits).length || missing.length) {
       const node = table("结论与条件", "professional-conclusion");
@@ -215,6 +249,16 @@
       listRow(node, "成立条件", conditions, "conclusion-conditions");
       listRow(node, "判断边界", limits, "conclusion-limits");
       listRow(node, "待补 / 核实", missing, "professional-missing");
+      if (conditional) {
+        listRow(node, "系统判断范围", conditional.limits);
+        const td = row(node, "规则条件核对", " "), d = el("details", "", "professional-evidence");
+        td.replaceChildren();
+        d.append(el("summary", "查看满足、不满足与未知条件"));
+        conditional.checks.forEach((check) => {
+          d.append(el("h4", check.name || check.rule_id), el("p", check.conditions.map((x) => x.label + "：" + window.ConditionRules.model.label(x.status) + (x.note ? "（" + x.note + "）" : "")).join("；")));
+        });
+        td.append(d);
+      }
       wrap.append(node);
     }
     professional.append(wrap);
@@ -227,8 +271,9 @@
     return { answer: text, source: "compatibility" };
   }
   function render(report, container, { isDemo = false, result = null } = {}) {
-    var _a, _b, _c;
-    const c = report.conclusion || ((_b = (_a = result == null ? void 0 : result.stage_outputs) == null ? void 0 : _a.interpretation) == null ? void 0 : _b.conclusion), plain = !isDemo && (report.plain_language || (c ? fallback(c) : null));
+    var _a, _b, _c, _d;
+    (_a = window.ConditionRules) == null ? void 0 : _a.setSnapshot(result == null ? void 0 : result.logic_snapshot);
+    const c = report.conclusion || ((_c = (_b = result == null ? void 0 : result.stage_outputs) == null ? void 0 : _b.interpretation) == null ? void 0 : _c.conclusion), plain = !isDemo && (report.plain_language || (c ? fallback(c) : null));
     let shown = false;
     if (plain) {
       const hero = el("div", "", "answer-hero");
@@ -238,7 +283,7 @@
       shown = true;
       const grid = el("div", "", "answer-grid");
       for (const [key, label] of [["watch_for", "需要留意"], ["next_steps", "接下来怎么做"]]) {
-        if (!((_c = plain[key]) == null ? void 0 : _c.length)) continue;
+        if (!((_d = plain[key]) == null ? void 0 : _d.length)) continue;
         const card = el("section", "", "answer-note");
         card.append(el("h4", label));
         const list = el("ul");
@@ -299,7 +344,9 @@
       prev.addEventListener("click", () => page(current - 1));
       next.addEventListener("click", () => page(current + 1));
       footer.append(prev, count, next);
-      professional.append(nav, body, footer);
+      const detail = el("details", "", "professional-explanation");
+      detail.append(el("summary", "分段推演与详细解读"), nav, body, footer);
+      professional.append(detail);
       page(0);
       if (!plain) container.append(el("p", "分段说明可在“专业分析”中查看。", "small-note"));
     } else professional.append(el("p", "本次没有分段推演。", "empty-state"));

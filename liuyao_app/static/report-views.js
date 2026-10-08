@@ -25,7 +25,7 @@
   section.append(toolbar,tabs,...Object.values(panels));
   function show(key){if(!panels[key])return;for(const k of Object.keys(panels)){panels[k].hidden=k!==key;buttons[k].setAttribute('aria-selected',String(k===key));buttons[k].tabIndex=k===key?0:-1;}}
   function openLog(){if(!log.open)log.showModal();}
-  function reset(){professional.replaceChildren(el('p','本次尚无专业报告。','empty-state'));model.replaceChildren();$('audit-report').open=false;}
+  function reset(){window.ConditionRules?.setSnapshot(null);professional.replaceChildren(el('p','本次尚无专业报告。','empty-state'));model.replaceChildren();$('audit-report').open=false;}
   function readableValue(value){if(value===undefined||value===null)return '';if(typeof value==='string'||typeof value==='number')return String(value);if(Array.isArray(value))return value.map(readableValue).filter(Boolean).join('\n');if(typeof value==='object')return readableValue(value.text||value.content||value.message||value.description||value.question||value.reason||value.summary||value.impact||value.gap||'');return '';}
   function values(items){return (Array.isArray(items)?items:items?[items]:[]).map(readableValue).filter(Boolean);}
   function table(title,cls=''){const node=el('table','','professional-table '+cls);node.append(el('caption',title),el('tbody'));return node;}
@@ -47,23 +47,34 @@
     return selection?.unresolved;
   }
   function renderChecks(result,report,c){
+    const conditional=result?.chart?result.chart.conditional_analysis:window.ConditionRules?.getChart()?.conditional_analysis;
     const intent=result?.stage_outputs?.intent,selection=result?.stage_outputs?.selection,interpretation=result?.stage_outputs?.interpretation;
     const intents=candidates(intent),uses=candidates(selection);
     const missing=[...new Set([result?.unresolved,result?.clarifying_questions,report?.uncertainties,report?.clarifying_questions,
       intent?.clarifying_questions,interpretation?.uncertainties,interpretation?.clarifying_questions,selectionNotes(result),selection?.clarifying_questions].reduce((all,items)=>all.concat(values(items)),[]))];
     const audit=result?.audit_report,conditions=c?.key_conditions??audit?.conclusion_conditions,limits=c?.limits??audit?.conclusion_limits;
-    if(!intents.length&&!uses.length&&!missing.length&&!c&&!values(conditions).length&&!values(limits).length)return false;
+    if(!conditional&&!intents.length&&!uses.length&&!missing.length&&!c&&!values(conditions).length&&!values(limits).length)return false;
     const wrap=el('section','','professional-checks');
     appendCandidates(wrap,intent,intent?.selected_candidate_id,'意念',(candidate,title)=>{const node=table(title,'professional-intent');appendFields(node,[['所问事项',candidate.primary_question],['主体 / 对象',pair(candidate.actor,candidate.object)],['行动 / 目标',pair(candidate.action,candidate.desired_outcome)],['时间范围',candidate.time_scope],['关注维度',values(candidate.facets).join('；')]]);appendQuotes(node,candidate.evidence_quotes);return node;});
     const relations={generates_me:'生我者',same_as_me:'同我者',generated_by_me:'我生者',controlled_by_me:'我克者',controls_me:'克我者'},purposes={primary:'主目标',supporting:'支持因素',cost:'代价',carrier:'载体'};
     appendCandidates(wrap,selection,selection?.selected_primary_id,'取象',(candidate,title)=>{const node=table(title,'professional-use');appendFields(node,[['关注对象',candidate.object_role],['本次作用',candidate.function],['用途 / 对应',[purposes[candidate.purpose]||candidate.purpose,useLabel(candidate)].filter(Boolean).join(' / ')],['功能关系',relations[candidate.relation]||candidate.relation]]);listRow(node,'成立假设',candidate.assumptions);appendQuotes(node,candidate.evidence_quotes);return node;});
+    if(conditional){
+      const focus=new Set(conditional.primary_matches.filter(l=>l.layer==='visible').map(l=>l.position));conditional.lines.filter(l=>l.moving).forEach(l=>focus.add(l.position));
+      const shi=result?.chart?.shi_position||window.ConditionRules?.getChart()?.shi_position;if(shi)focus.add(shi);
+      const states=(lines,title)=>{const t=table(title,'professional-states');const head=el('thead'),tr=el('tr');['爻','日月依据','状态','本问作用'].forEach(name=>{const h=el('th',name);h.scope='col';tr.append(h);});head.append(tr);t.prepend(head);
+        for(const l of lines){const tr=el('tr'),effects=conditional.effects.filter(e=>e.target_position===l.position&&e.target_layer===l.layer&&e.status!=='unsatisfied');const text=effects.length?effects.map(e=>'第'+e.source_position+'爻→本爻：'+e.relation_label+'（待核定）').join('；'):conditional.primary_matches.some(m=>m.position===l.position&&m.layer===l.layer)?'已匹配候选，作用待判断':'保留结构，未定本问作用';
+          [String(l.position)+(l.layer==='hidden'?'伏':'')+' '+l.relative+l.branch+l.element,(l.month_class?'月令'+l.month_class+'；日辰'+({same:'同类',generates:'生本爻',controls:'克本爻',drains:'本爻生日辰',consumes:'本爻克日辰'}[l.day_relation]||'关系待核对'):'日月未核对')+'；综合旺衰待判断',window.ConditionRules.model.state(l),text].forEach(value=>tr.append(el('td',value)));t.tBodies[0].append(tr);}return t;};
+      wrap.append(states(conditional.lines.filter(l=>focus.has(l.position)).concat(conditional.primary_matches.filter(l=>l.layer==='hidden')),'爻的状态与本问作用'));
+      const others=conditional.lines.filter(l=>!focus.has(l.position));if(others.length){const d=el('details','','professional-alternatives');d.append(el('summary','其他爻的状态（'+others.length+'）'),states(others,'其他爻'));wrap.append(d);}
+    }
     const directions={favorable:'偏顺利',unfavorable:'阻力较多',mixed:'有利有弊',undetermined:'暂不能判断'};
-    if(c||values(conditions).length||values(limits).length||missing.length){const node=table('结论与条件','professional-conclusion');const answer=row(node,'综合判断',c?.answer);if(answer&&c?.direction)answer.prepend(el('span',directions[c.direction]||directions.undetermined,'professional-direction'));listRow(node,'成立条件',conditions,'conclusion-conditions');listRow(node,'判断边界',limits,'conclusion-limits');listRow(node,'待补 / 核实',missing,'professional-missing');wrap.append(node);}
+    if(c||values(conditions).length||values(limits).length||missing.length){const node=table('结论与条件','professional-conclusion');const answer=row(node,'综合判断',c?.answer);if(answer&&c?.direction)answer.prepend(el('span',directions[c.direction]||directions.undetermined,'professional-direction'));listRow(node,'成立条件',conditions,'conclusion-conditions');listRow(node,'判断边界',limits,'conclusion-limits');listRow(node,'待补 / 核实',missing,'professional-missing');if(conditional){listRow(node,'系统判断范围',conditional.limits);const td=row(node,'规则条件核对',' '),d=el('details','','professional-evidence');td.replaceChildren();d.append(el('summary','查看满足、不满足与未知条件'));conditional.checks.forEach(check=>{d.append(el('h4',check.name||check.rule_id),el('p',check.conditions.map(x=>x.label+'：'+window.ConditionRules.model.label(x.status)+(x.note?'（'+x.note+'）':'')).join('；')));});td.append(d);}wrap.append(node);}
     professional.append(wrap);return true;
   }
   const jargon=/用神|官鬼|妻财|父母爻|兄弟爻|子孙|世爻|应爻|应克世|持世|动爻|变爻|旬空|月令|日辰|生扶|回头生克|实验|综合分|结构性|第[一二三四五六1-6]爻/;
   function fallback(c){let text=(c?.answer||'').split(/[：:；;。\n]/)[0].replace(/^按本次卦象[，,]?/,'');if(!text||text.length>110||jargon.test(text))text=({favorable:'这件事偏向能成，但仍有条件需要落实。',unfavorable:'这件事目前偏向难成，需要重新评估条件。',mixed:'这件事有机会，但推进中可能反复。'})[c?.direction]||'目前还不能明确判断结果。';return {answer:text,source:'compatibility'};}
   function render(report,container,{isDemo=false,result=null}={}){
+    window.ConditionRules?.setSnapshot(result?.logic_snapshot);
     const c=report.conclusion||result?.stage_outputs?.interpretation?.conclusion,plain=!isDemo&&(report.plain_language|| (c?fallback(c):null));
     let shown=false;
     if(plain){const hero=el('div','','answer-hero');hero.append(el('p','本次结论','eyebrow'),el('h3',plain.answer,'direct-answer'));if(plain.reason)hero.append(el('p',plain.reason,'answer-reason'));container.append(hero);shown=true;
@@ -78,7 +89,7 @@
       const footer=el('div','','professional-pager'),prev=el('button','← 上一页','secondary-button'),next=el('button','下一页 →','secondary-button'),count=el('span');prev.type=next.type='button';
       const controls=sections.map((s,i)=>{const b=el('button',(i+1)+' '+(s.heading||s.title||'分析说明'));b.type='button';b.id='professional-topic-'+i;b.setAttribute('role','tab');b.setAttribute('aria-controls',body.id);b.addEventListener('click',()=>page(i));b.addEventListener('keydown',e=>{if(!['ArrowRight','ArrowLeft','Home','End'].includes(e.key))return;e.preventDefault();page(e.key==='Home'?0:e.key==='End'?sections.length-1:(i+(e.key==='ArrowRight'?1:sections.length-1))%sections.length);controls[current].focus();});nav.append(b);return b;});
       function page(i){current=i;const s=sections[i];body.replaceChildren(el('h3',s.heading||s.title||'分析说明'),el('p',s.content||s.body||s.text));body.setAttribute('aria-labelledby',controls[i].id);controls.forEach((b,j)=>{b.setAttribute('aria-selected',String(i===j));b.tabIndex=i===j?0:-1;});prev.disabled=i===0;next.disabled=i===sections.length-1;count.textContent=`${i+1} / ${sections.length}`;}
-      prev.addEventListener('click',()=>page(current-1));next.addEventListener('click',()=>page(current+1));footer.append(prev,count,next);professional.append(nav,body,footer);page(0);
+      prev.addEventListener('click',()=>page(current-1));next.addEventListener('click',()=>page(current+1));footer.append(prev,count,next);const detail=el('details','','professional-explanation');detail.append(el('summary','分段推演与详细解读'),nav,body,footer);professional.append(detail);page(0);
       if(!plain)container.append(el('p','分段说明可在“专业分析”中查看。','small-note'));
     }else professional.append(el('p','本次没有分段推演。','empty-state'));
     return shown;

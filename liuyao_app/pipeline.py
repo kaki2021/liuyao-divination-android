@@ -151,7 +151,7 @@ def _selection_rules(catalog, evidence, topic_context=None):
     return rules
 
 
-def calculate_chart(input_data, rules=None):
+def calculate_chart(input_data, rules=None, *, include_experimental=True):
     """One chart path for initial display, retained analysis and case reopening."""
     calendar = calculate_calendar(input_data)
     day_stem = calendar.get("day_stem") if calendar["status"] == "computed" else None
@@ -171,9 +171,12 @@ def calculate_chart(input_data, rules=None):
     chart["line_pair_relations"] = pairs
     chart["relation_scope"] = "main_chart_pair_and_category_only"
     chart["basic_analysis"] = build_basic_analysis(chart)
-    chart["comprehensive_analysis"] = calculate_comprehensive(chart, rules or load_rules())
-    chart["not_computed"] = [x for x in chart["not_computed"] if x not in ('changed_line_relatives','comprehensive_strength')]
-    if input_data.get('buzhai'):
+    from .conditional_reasoning import evaluate_conditions
+    chart['conditional_analysis'] = evaluate_conditions(chart, input_data)
+    if include_experimental:
+        chart["comprehensive_analysis"] = calculate_comprehensive(chart, rules or load_rules())
+        chart["not_computed"] = [x for x in chart["not_computed"] if x not in ('changed_line_relatives','comprehensive_strength')]
+    if input_data.get('buzhai') and include_experimental:
         chart['buzhai_analysis'] = buzhai.analyze_buzhai(chart, input_data['buzhai'])
     return chart
 
@@ -327,6 +330,8 @@ def _facts(chart, evidence, selection):
 
 def _gaps(input_data, chart, selection, evidence):
     gaps = [{"gap_id":"GAP_TIMING", "description":"精确应期算法尚未实现，不推造精确日期。", "affects":["timing"], "blocking":False}]
+    if chart.get('conditional_analysis'):
+        gaps.append({'gap_id':'GAP_CONDITIONAL_CRITERIA','description':'综合旺衰、有效暗动、化空具体影响及作用先后没有完整自动判据；结构候选未核定实际生效。属于系统能力边界，不要求用户补算法。','affects':['outcome','subject_effect'],'blocking':False})
     if chart.get("calendar", {}).get("status") != "computed":
         gaps.append({"gap_id": "GAP_CALENDAR", "description": "实际起卦时间未能用于历法排盘，暂不评价日月强弱与精确应期；仍需根据已有本变卦、世应身位及关系给粗略解读。",
                      "affects": ["outcome", "timing"], "blocking": True})
@@ -334,7 +339,9 @@ def _gaps(input_data, chart, selection, evidence):
     if not primary.get("subject_reference"):
         matches = [line["position"] for line in chart["main"]["lines"] if line["relative_code"] == primary["six_relative"]]
         use = chart['comprehensive_analysis'].get('use_selection',{}).get('primary') or {}
-        if not use.get('chosen'):
+        if use.get('matches') and not use.get('chosen'):
+            gaps.append({'gap_id':'GAP_USE_MULTIPLE','description':'本问功能在卦中有多个同类候选，保留各候选及采用条件，不以实验强度选定最高者。','affects':['selection','outcome'],'blocking':False})
+        elif not use.get('chosen'):
             gaps.append({'gap_id':'GAP_USE_LINE','description':'当前功能六亲在本卦和本宫伏神中均未定位。','affects':['selection','outcome'],'blocking':False})
     if primary.get("subject_reference") == "shi_body" and len(chart["gua_body_positions"]) != 1:
         gaps.append({"gap_id": "GAP_BODY_POSITION", "description": "卦身在本卦缺位或有多个匹配。位身五行关系仅作结构参考，须说明显现程度或候选位置，不能当作唯一有效作用。",
@@ -617,7 +624,7 @@ def run_analysis(db_path, actor: Actor, case_id, provider, model, expected_revis
                              **{name: hashlib.sha256(Path(__file__).with_name(name + ".py").read_bytes()).hexdigest()
                                 for name in ("runtime_contract", "selection_context", "validation_feedback", "interpretation_checks", "claim_rule_scope",
                                              "basic_analysis", "person_context", "selection_projection", "rulebook", "comprehensive_analysis",
-                                             "day_month_analysis", "change_analysis", "strength_engine", "relation_effect_engine", "report_generator", "report_template", "profile_store", "buzhai")}})
+                                             "day_month_analysis", "change_analysis", "strength_engine", "relation_effect_engine", "report_generator", "report_template", "profile_store", "buzhai", "conditional_reasoning", "calculation_logic")}})
     store = CaseStore(db_path)
     started = None
     terminal = False
@@ -625,7 +632,9 @@ def run_analysis(db_path, actor: Actor, case_id, provider, model, expected_revis
               "display_report": {}, "clarifying_questions": [], "unresolved": [], "stage_outputs": {}, "is_demo": provider == "demo"}
     result.update(rules_version=rulebook.version,parameter_version=rulebook.version,engine_build=engine,
                   ai_model={'provider':provider,'model':model},rules_snapshot=rulebook.compiled,
-                  audit_report={'warnings':[],'fatal_errors':[],'rules_version':rulebook.version,'model_version':'V5 experimental'})
+                  audit_report={'warnings':[],'fatal_errors':[],'rules_version':rulebook.version,'model_version':'条件判断 1'})
+    from .calculation_logic import logic_guide
+    result['logic_snapshot'] = logic_guide(rulebook.version)
     projections = []
     def emit(event):
         if progress is not None:
@@ -710,6 +719,8 @@ def run_analysis(db_path, actor: Actor, case_id, provider, model, expected_revis
             store.append_context_event(actor, case_id, event_type="clarification_question",
                 content={**q, "analysis_run_id": result["analysis_run_id"]}, idempotency_key=ident("clarify"))
         result['chart']['comprehensive_analysis']['use_selection']=select_use_lines(result['chart'],selection,rulebook)
+        from .conditional_reasoning import evaluate_conditions
+        result['chart']['conditional_analysis']=evaluate_conditions(result['chart'],snapshot['input'],selection)
         facts = _facts(result["chart"], evidence, selection)
         facts.extend(buzhai.structural_facts(result['chart']))
         result["selection_note_reviews"] = review_selection_notes(selection, snapshot["input"], result["chart"])
@@ -729,14 +740,14 @@ def run_analysis(db_path, actor: Actor, case_id, provider, model, expected_revis
         emit({'analysis_run_id': result['analysis_run_id'], 'checkpoint': deepcopy(result),
               'report_timeout_seconds': REPORT_TIMEOUT_SECONDS})
         try:
-            result["report"] = call("report", question=question, accepted_interpretation=interpretation, unresolved_gaps=gaps,analysis_chart=result['chart'])
+            result["report"] = call("report", question=question, accepted_interpretation=interpretation, unresolved_gaps=gaps,analysis_chart={k:v for k,v in result['chart'].items() if k!='comprehensive_analysis'})
             result['user_report']=build_user_report(result['report'])
             result['report_status'] = {'mode':'ai'}
         except StageFailure as exc:
             result['audit_report']['warnings'].append({'stage':'report','code':exc.code,'message':exc.message,'fallback':'已保留原始预测，使用程序排版'})
             result['report_status'] = {'mode':'fallback','code':exc.code,
                 'message':'报告整理超时，已保留解卦结论和专业依据。' if exc.code=='timeout' else '报告整理未完成，已保留解卦结论和专业依据。'}
-        result['user_report']['model_info']={'rules_version':rulebook.version,'model_version':'V5 experimental','timing':'精确应期未实现','strength':'实验综合强度已启用','calendar':result['chart']['calendar']['status']}
+        result['user_report']['model_info']={'rules_version':rulebook.version,'model_version':'条件判断 1','timing':'精确应期未实现','strength':'实验评分仅供对照，不自动取用','calendar':result['chart']['calendar']['status'], 'logic_version':result['logic_snapshot']['logic_version']}
         return finish('completed')
     except Exception as exc:
         if started is None:
