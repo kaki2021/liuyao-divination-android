@@ -49,12 +49,14 @@ class CaseStore:
             self.db.executescript(Path(__file__).with_name('case_store.sql').read_text())
             from liuyao_app.profile_store import migrate
             migrate(self.db, backup_existing=backup_existing)
+            from liuyao_app.series_store import migrate as migrate_series
+            migrate_series(self.db)
         except Exception:
             self.db.close()
             raise
         # Database guards prevent accidental replacement of historical records.
         # Privileged retention/erasure workflows require a separately designed path.
-        for table in ('cases','case_revisions','context_events','analysis_runs','analysis_outcomes','ai_events','feedback','intake_failures'):
+        for table in ('cases','case_revisions','context_events','analysis_runs','analysis_outcomes','ai_events','feedback','intake_failures','case_series'):
             for operation in ('UPDATE','DELETE'):
                 self.db.execute(f"CREATE TRIGGER IF NOT EXISTS immutable_{table}_{operation.lower()} BEFORE {operation} ON {table} BEGIN SELECT RAISE(ABORT, 'append-only service history'); END")
 
@@ -98,10 +100,11 @@ class CaseStore:
                 'precision': 'subsecond' if actual and '.' in actual else ('second' if actual else 'unknown'),
                 'provenance': 'user_supplied' if actual else 'unknown'}
 
-    def create_case(self, actor, input_data, *, idempotency_key):
+    def create_case(self, actor, input_data, *, idempotency_key, parent_case_id=None, parent_revision_seq=None, parent_analysis_run_id=None):
         validation = validate_input(input_data)
         normalized = normalize_casting_input(input_data) if validation['valid'] else None
         def action():
+            if parent_case_id is not None:self._owned(actor,parent_case_id)
             recorded = self.clock()
             if not validation['valid']:
                 failure_id = ident('failure')
@@ -115,8 +118,12 @@ class CaseStore:
             case_id = ident('case')
             self.db.execute('INSERT INTO cases VALUES (?,?,?,?,?)', (case_id,actor.owner_id,actor.session_id,recorded,encoded(normalized)))
             self.db.execute('INSERT INTO case_revisions VALUES (?,?,?,?,?,?,?,?)', (case_id,1,ident('revision'),recorded,'initial','用户首次提交',encoded(normalized),encoded(self._time_context(normalized))))
+            from liuyao_app.series_store import link
+            link(self,actor,case_id,parent_case_id,parent_revision_seq,parent_analysis_run_id)
             return {'accepted':True,'case_id':case_id,'revision_seq':1,'recorded_at':recorded}
-        return self._write(actor,'create_case',idempotency_key,input_data,action)
+        payload = input_data if parent_case_id is None and parent_revision_seq is None and parent_analysis_run_id is None else {
+            'input':input_data,'parent_case_id':parent_case_id,'parent_revision_seq':parent_revision_seq,'parent_analysis_run_id':parent_analysis_run_id}
+        return self._write(actor,'create_case',idempotency_key,payload,action)
 
     def revise_case(self, actor, case_id, input_data, *, reason, expected_revision_seq, idempotency_key):
         validation = validate_input(input_data)
@@ -158,8 +165,10 @@ class CaseStore:
             if parent_run_id:self._run(actor,case_id,parent_run_id)
             rev=self.db.execute('SELECT * FROM case_revisions WHERE case_id=? ORDER BY revision_seq DESC LIMIT 1',(case_id,)).fetchone()
             if expected_revision_seq is not None and rev['revision_seq']!=expected_revision_seq:raise Conflict('question revision changed')
-            events=[self._decode_context(r) for r in self.db.execute('SELECT * FROM context_events WHERE case_id=? ORDER BY event_seq',(case_id,))]
-            snapshot={'case_id':case_id,'revision_seq':rev['revision_seq'],'input':json.loads(rev['input_json']),'time_context':json.loads(rev['time_context_json']),'context_events':events}
+            from liuyao_app.series_store import effective_context, snapshot_context
+            events=effective_context(self,actor,case_id)
+            snapshot={'case_id':case_id,'revision_seq':rev['revision_seq'],'input':json.loads(rev['input_json']),'time_context':json.loads(rev['time_context_json']),'context_events':events,
+                      'series_context':snapshot_context(self,actor,case_id)}
             profile_id=normalized_profile_id(snapshot['input'])
             if profile_id:
                 from liuyao_app.profile_store import get_profile

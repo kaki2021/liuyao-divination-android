@@ -37,7 +37,7 @@ const check=(name,value)=>{assert.ok(value,name);checks.push(name);console.log('
   },{data,context,options});
   await render(report,result);
   check('解卦结论页包含进一步交流输入框',await page.locator('#result-answer #context-form').isVisible()&&await page.locator('#feedback-section #context-form').count()===0&&await page.locator('#result-tab-answer').textContent()==='解卦结论'&&await page.locator('#context-title').textContent()==='进一步交流');
-  check('交流只保留下方输入框和发送按钮',await page.locator('.answer-followup-link,#context-save-only').count()===0&&await page.locator('#context-form button').count()===1&&await page.locator('#context-analyze').textContent()==='发送追问');
+  check('交流在下方提供发送追问和再起一卦',await page.locator('.answer-followup-link,#context-save-only').count()===0&&await page.locator('#context-form button').count()===2&&await page.locator('#context-analyze').textContent()==='发送追问'&&await page.locator('#cast-related').textContent()==='再起一卦');
   await page.locator('#result-tab-professional').click();
   const professional=page.locator('#professional-content');
   check('专业页使用表格展示意念与原文依据',await page.locator('table.professional-intent').count()===1&&(await professional.textContent()).includes('行动 / 目标')&&(await professional.textContent()).includes('原文依据'));

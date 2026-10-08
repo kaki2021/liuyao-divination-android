@@ -28,7 +28,7 @@
  function page(key,scroll=true){document.body.dataset.mobilePage=key;rulesPage.hidden=key!=='rules';nav.querySelectorAll('button').forEach(b=>{if(b.dataset.page===key)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});if(scroll)window.scrollTo({top:0,behavior:'smooth'});}
  page('work',false);
  new MutationObserver(()=>{if(document.body.dataset.mobilePage!=='rules')page('work',false);if(document.body.dataset.view==='input'&&$('case-state').textContent==='新案例')step(1,false);}).observe(document.body,{attributes:true,attributeFilter:['data-view']});
- $('new-case').addEventListener('click',()=>{if($('case-state').textContent==='新案例'){step(1,false);showDraw(0);drawButtons.forEach((b,i)=>b.textContent=['下卦','上卦','动爻'][i]);page('work');}});
+ document.addEventListener('liuyao:new-casting',()=>{step(1,false);showDraw(0);drawButtons.forEach((b,i)=>b.textContent=['下卦','上卦','动爻'][i]);page('work');});
  document.querySelector('.brand').addEventListener('click',e=>{if(phone.matches||document.body.dataset.mobilePage==='rules'){e.preventDefault();page('work');}});
  document.querySelectorAll('.professional-pager').forEach(x=>x.setAttribute('aria-label','翻页'));
  $('professional-content').addEventListener('click',e=>{if(phone.matches&&e.target.closest('.professional-pager button'))$('professional-content').scrollIntoView({block:'start',behavior:'smooth'});});

@@ -206,6 +206,11 @@
               },
               "person_profile_snapshot": {
                 "type": "object"
+              },
+              "series_context": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "带来源的系列背景及父卦参考；保留分析当时的快照，AI判断不是已确认事实。"
               }
             },
             "required": [

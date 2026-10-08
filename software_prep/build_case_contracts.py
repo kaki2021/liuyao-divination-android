@@ -27,6 +27,7 @@ time_context=obj({'actual_cast_time':null_or(D),'precision':{'enum':['second','s
 context_event=obj({'event_id':S,'case_id':S,'event_seq':{'type':'integer','minimum':1},'event_type':{'enum':['background','clarification_question','clarification_answer','intent_interpretation','user_correction','unresolved_notice','service_failure']},'recorded_at':D,'session_id':S,'content':OPAQUE})
 revision=obj({'case_id':S,'revision_seq':{'type':'integer','minimum':1},'revision_id':S,'recorded_at':D,'kind':{'enum':['initial','user_correction']},'reason':S,'input':ref('UserInput'),'time_context':time_context})
 snapshot=obj({'case_id':S,'revision_seq':{'type':'integer','minimum':1},'input':ref('UserInput'),'time_context':time_context,'context_events':array(ref('ContextEvent'))})
+snapshot['properties'].update(person_profile_snapshot={'type':'object'},series_context=OPAQUE)
 attempt=obj({'event_type':{'const':'ai_attempt'},'stage':S,'attempt_id':S,'raw_output':{'type':'string'},'parse_status':{'enum':['parsed','invalid_json','provider_error','not_parsed']},'validation_errors':array(ref('JsonValue')),'adopted_output':ref('JsonValue'),'adopted_output_digest':null_or(H),'model_run_metadata':OPAQUE})
 ai_event=obj({'event_id':S,'analysis_run_id':S,'recorded_at':D,'stage':S,'attempt_id':S,'attempt':attempt})
 result=obj({'status':{'enum':['completed','partial','unresolved','failed']},'chart_snapshot':ref('JsonValue'),'evidence':array(ref('JsonValue')),'report':ref('JsonValue'),'validation':OPAQUE,'unresolved':array(ref('JsonValue')),'error':ref('JsonValue')})

@@ -15,6 +15,7 @@
   <script src="/static/phone-chart.js" defer></script>
   <script src="/static/guidance.js" defer></script>
   <script src="/static/analysis-status.js" defer></script>
+  <script src="/static/series.js" defer></script>
   <script src="/static/app.js" defer></script>
   <script src="/static/mobile.js" defer></script>
 </head>
@@ -24,12 +25,12 @@
     <div class="header-meta"><span class="online-dot" aria-hidden="true"></span>本地工作台<button class="text-button" id="settings-open" type="button">模型设置 <span aria-hidden="true">↗</span></button></div>
   </header>
   <main class="workspace">
-    <aside class="history-panel" aria-label="案例档案">
-      <div class="section-heading"><h2>案例档案</h2><button class="icon-button" id="refresh-history" title="刷新案例" aria-label="刷新案例" type="button">↻</button></div>
-      <button class="new-case-button" id="new-case" type="button"><span aria-hidden="true">＋</span> 新建一卦</button>
-      <p class="small-note history-note">记录问题，留存判断，回看结果。</p>
+    <aside class="history-panel" aria-label="系列档案">
+      <div class="section-heading"><h2>系列档案</h2><button class="icon-button" id="refresh-history" title="刷新档案" aria-label="刷新档案" type="button">↻</button></div>
+      <button class="new-case-button" id="new-case" type="button"><span aria-hidden="true">＋</span> 新建系列</button>
+      <p class="small-note history-note">从总问到细问，留在同一系列里。</p>
       <div class="workspace-tools"><button type="button" class="secondary-button" id="profiles-open">人物档案</button><button type="button" class="secondary-button" id="rules-open">规则库</button></div>
-      <div id="history-list" class="history-list" aria-live="polite"><p class="empty-state">正在读取案例…</p></div>
+      <div id="history-list" class="history-list" aria-live="polite"><p class="empty-state">正在读取系列…</p></div>
       <div class="aside-foot"><span class="mini-seal">观</span><p>真念取用<br><span>察其关系，再论得失。</span></p></div>
     </aside>
     <div class="main-column">
@@ -45,6 +46,7 @@
         <button id="tab-feedback" class="case-tab" role="tab" aria-controls="feedback-section" aria-selected="false" tabindex="-1" type="button" disabled>后续反馈</button>
       </nav>
       <section id="input-section" role="tabpanel" aria-labelledby="tab-input">
+      <div id="related-draft" class="related-draft" hidden><div><strong>在本系列中细问</strong><p id="related-parent-question"></p><p class="small-note">共用系列背景，请重新记录这次的卦象与起卦时间。</p></div><button id="cancel-related" class="text-button" type="button">返回父卦</button></div>
       <form id="case-form" class="paper-card" novalidate>
         <div class="card-header"><div><span class="step-label">01 / 所问</span><h2 id="form-title">此刻，你想问什么？</h2></div><span class="soft-tag" id="case-state">新案例</span></div>
         <label class="sr-only" for="question">所问的问题</label>
@@ -75,11 +77,12 @@
       </form>
       </section>
       <section id="results-section" class="results-section" role="tabpanel" aria-labelledby="tab-results" hidden>
+        <section id="series-card" class="paper-card series-card" hidden><details id="series-details"><summary><span class="step-label">系列占问</span><strong id="series-title"></strong><span id="series-count" class="soft-tag"></span></summary><p class="small-note">选中一卦回看并继续交流；“再起一卦”会接在选中卦的下面。</p><ol id="series-tree" class="series-tree" aria-label="本系列的占问关系"></ol><details id="series-background" class="series-background"><summary>共用背景与补充</summary><p class="small-note">各卦的用户补充会一并提供给后续分析，保留出处和时间；前卦判断只是参考。</p><div id="series-context-list" class="event-list"></div></details><a id="export-series" class="text-button" download="六爻系列.json" href="#">导出整个系列 ↗</a></details></section>
         <div class="results-heading"><div><p class="eyebrow">观其象 · 明其用</p><h2 id="result-question">这次的排盘与解卦</h2></div><div class="result-actions"><button class="text-button" id="edit-case-input" type="button">修改输入</button><button class="text-button" id="open-feedback" type="button">记录后续反馈</button><a id="export-case" download="六爻案例.json" class="text-button" href="#">导出案例 ↗</a><a id="export-diagnostics" class="text-button" href="#" download="case_diagnostics.json" title="只含运行阶段、校验类别与模型信息，不含问题和背景原文">导出诊断 ↗</a></div></div>
         <div class="paper-card chart-card"><div class="chart-toolbar"><h3>本卦与变卦</h3><button type="button" class="text-button" id="show-current-chart">查看当前已保存排盘</button></div><p class="chart-context" id="chart-context">当前已保存输入的排盘</p><p class="chart-question" id="chart-question" hidden></p><div id="chart-person-info" class="chart-person-info" hidden></div><div id="calendar-summary" class="calendar-summary"></div><p id="body-summary" class="body-summary"></p><details id="calendar-details" class="calendar-details" hidden><summary>历法口径</summary><p id="calendar-convention"></p></details><div class="chart-summary" id="chart-summary"></div><p id="casting-record" class="casting-record" hidden></p><div class="table-scroll"><table class="chart-table chart-comparison"><caption class="sr-only">本卦与变卦逐爻对照，从上爻到初爻排列；六亲、世应和身位标记属于本卦</caption><thead><tr><th rowspan="2" scope="col">爻位</th><th rowspan="2" scope="col">六神</th><th colspan="4" scope="colgroup">本卦</th><th rowspan="2" scope="col">变化</th><th colspan="2" scope="colgroup">变卦</th></tr><tr><th scope="col">爻象</th><th scope="col">地支五行</th><th scope="col">六亲</th><th scope="col">世应与身位</th><th scope="col">爻象</th><th scope="col">地支五行</th></tr></thead><tbody id="chart-lines"></tbody></table></div><p class="small-note chart-note">本卦与变卦逐爻对照，动爻位置明确标出。</p></div>
         <section class="paper-card foundation-card" id="foundation-card" aria-labelledby="foundation-title"><div class="section-heading"><h3 id="foundation-title">基础分析</h3><span class="soft-tag">程序计算</span></div><p class="small-note">确定的规则由程序计算；解卦时，这些结果会一并交给 AI，结合所问进行判断。</p><div id="foundation-content"></div><details class="computed-v5"><summary>综合强度、动变与伏神</summary><div id="comprehensive-content"></div></details></section>
         <section class="paper-card analysis-card" id="analysis-card" aria-live="polite"><div class="section-heading"><h3>综合解卦</h3><div class="analysis-actions"><span id="analysis-status" class="soft-tag">尚未分析</span><button class="secondary-button" id="analyze-current-case" type="button">重新解卦</button></div></div><div class="run-history" id="run-history" hidden></div><div class="analysis-progress" id="analysis-progress" hidden><span class="spinner" aria-hidden="true"></span><p id="analysis-progress-text">正在分析…</p></div><div id="analysis-content"><p class="empty-state">卦象已经排好。选择模型后，可以进一步梳理问题。</p></div><details id="audit-report" hidden><summary>研究审计</summary><div id="audit-content"></div></details><details id="ai-raw-replies" class="ai-raw-replies" hidden><summary>查看所选分析的 AI 原始回复</summary><p id="ai-raw-replies-context" class="small-note"></p><p class="small-note">每个阶段先生成一份回复，结构无法读取时自动修复一次；依据与解释问题另存研究审计。重新解卦会新增一次独立分析；这里的“首次生成／自动修复”是所选分析内的处理过程。</p><p class="small-note">未通过校验的草稿不作为解卦结论；正文可能包含本次问题和背景，仅在本机查看，复制分享前请自行检查。</p><div id="ai-raw-replies-content"></div></details></section>
-        <section id="context-card" class="paper-card follow-up-card" aria-labelledby="context-title"><h3 id="context-title">进一步交流</h3><p class="small-note">写下追问或补充信息，结合本次卦象继续解读，回复显示在上方。</p><form id="context-form"><label class="sr-only" for="context-text">追问或补充信息</label><textarea id="context-text" maxlength="5000" rows="3" placeholder="例如：对方审批可能延迟，这会影响签约吗？"></textarea><div class="context-actions"><button class="primary-button" type="submit" id="context-analyze">发送追问</button></div></form><details id="context-history" class="context-history" hidden><summary>已保存的追问与补充</summary><div id="context-list" class="event-list"></div></details></section>
+        <section id="context-card" class="paper-card follow-up-card" aria-labelledby="context-title"><h3 id="context-title">进一步交流</h3><p class="small-note">写下想问的内容：发送追问会结合此卦继续解读；再起一卦会在本系列中细问。补充会保留来源并共用于本系列。</p><form id="context-form"><label class="sr-only" for="context-text">追问或补充信息</label><textarea id="context-text" maxlength="5000" rows="3" placeholder="例如：对方审批可能延迟，这会影响签约吗？"></textarea><div class="context-actions"><button class="primary-button" type="submit" id="context-analyze">发送追问</button><button class="secondary-button" type="button" id="cast-related">再起一卦</button></div></form><details id="context-history" class="context-history" hidden><summary>已保存的追问与补充</summary><div id="context-list" class="event-list"></div></details></section>
       </section>
       <section id="feedback-section" role="tabpanel" aria-labelledby="tab-feedback" hidden>
         <div class="results-heading"><div><p class="eyebrow">留存进展 · 回看判断</p><h2>后续反馈</h2></div><button class="text-button" id="feedback-return" type="button">返回排盘与解卦</button></div>

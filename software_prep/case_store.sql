@@ -48,3 +48,17 @@ CREATE TABLE IF NOT EXISTS idempotency (
     request_digest TEXT NOT NULL, response_json TEXT NOT NULL,
     PRIMARY KEY(owner_id, operation, idempotency_key)
 );
+-- A series is rooted in an existing case. Links are immutable; each child keeps
+-- the parent revision and analysis that the user was viewing when branching.
+CREATE TABLE IF NOT EXISTS case_series (
+    case_id TEXT PRIMARY KEY REFERENCES cases(case_id),
+    series_id TEXT NOT NULL REFERENCES cases(case_id),
+    parent_case_id TEXT REFERENCES cases(case_id),
+    parent_revision_seq INTEGER,
+    parent_analysis_run_id TEXT REFERENCES analysis_runs(analysis_run_id),
+    CHECK ((parent_case_id IS NULL AND parent_revision_seq IS NULL AND parent_analysis_run_id IS NULL AND series_id=case_id)
+        OR (parent_case_id IS NOT NULL AND parent_revision_seq IS NOT NULL AND case_id<>parent_case_id)),
+    FOREIGN KEY(parent_case_id,parent_revision_seq) REFERENCES case_revisions(case_id,revision_seq)
+);
+CREATE INDEX IF NOT EXISTS case_series_root ON case_series(series_id);
+CREATE INDEX IF NOT EXISTS case_series_parent ON case_series(parent_case_id);

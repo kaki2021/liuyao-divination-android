@@ -22,6 +22,7 @@ from .config import ROOT, load_env, data_directory, initialize_configuration, co
 from .instance_lock import InstanceLock
 from .runtime_identity import APP_ID, CASTING_METHODS, app_build_id
 from case_store import Actor, CaseStore, AccessDenied, Conflict, content_digest
+from . import series_store
 from .pipeline import calculate_chart
 from .rulebook import (load_rules, read_workbook, export_workbook, save_rules,
                        RulesNotInstalled, LOCK as RULE_LOCK)
@@ -416,18 +417,27 @@ class Application:
     def case_detail(self, actor, case_id):
         store=self.store()
         try:
+            store.db.execute('BEGIN')
             case=store.export_case(actor,case_id)
+            relation=series_store.relation(store,actor,case_id)
+            series=series_store.detail(store,actor,relation['series_id'])
+            context=series_store.effective_context(store,actor,case_id)
+            live_series_context=series_store.snapshot_context(store,actor,case_id)
+            store.db.execute('COMMIT')
         finally:store.close()
         current=case['revisions'][-1]
         runs=case['analysis_runs']
         latest=runs[-1] if runs else None
         active=self.active(actor,case_id)
         user_types={'background','clarification_answer','user_correction'}
-        current_context=[e['event_id'] for e in case['context_events'] if e['event_type'] in user_types]
+        current_context=[e['event_id'] for e in context if e['event_type'] in user_types]
         analyzed_context=[e['event_id'] for e in latest['input_snapshot']['context_events'] if e['event_type'] in user_types] if latest else []
-        return {'case':case,'chart':calculate_chart(current['input'],load_rules(self.rules_directory)),
+        series_current=(latest['input_snapshot'].get('series_context') == live_series_context
+                        or ('series_context' not in latest['input_snapshot'] and case_id==relation['series_id']
+                            and not live_series_context['shared_person_contexts'])) if latest else False
+        return {'case':case,'series':series,'chart':calculate_chart(current['input'],load_rules(self.rules_directory)),
                 'result':latest['outcome']['result'].get('report') if latest and latest['outcome'] else None,
-                'report_is_current':bool(latest and latest['outcome'] and latest['outcome']['result'].get('report') and latest['revision_seq']==current['revision_seq'] and analyzed_context==current_context),
+                'report_is_current':bool(latest and latest['outcome'] and latest['outcome']['result'].get('report') and latest['revision_seq']==current['revision_seq'] and analyzed_context==current_context and series_current),
                 'active_job_id':active[0]['job_id'] if active else None}
 
     def list_cases(self, actor):
@@ -547,6 +557,27 @@ class Handler(BaseHTTPRequestHandler):
             if not mutation:
                 if path=='/api/config':self.send_json(app.config());return
                 if path=='/api/cases':self.send_json({'cases':app.list_cases(actor)});return
+                if path=='/api/series':
+                    store=app.store()
+                    try:
+                        store.db.execute('BEGIN')
+                        result=series_store.list_series(store,actor)
+                        store.db.execute('COMMIT')
+                    finally:store.close()
+                    self.send_json({'series':result});return
+                if len(parts) in (3,4) and parts[:2]==['api','series']:
+                    store=app.store()
+                    try:
+                        store.db.execute('BEGIN')
+                        result=series_store.detail(store,actor,parts[2])
+                        if len(parts)==4 and parts[3]=='export':
+                            result={'format':'liuyao-series-v1','series':result,
+                                    'cases':[store.export_case(actor,n['case_id']) for n in result['nodes']]}
+                        store.db.execute('COMMIT')
+                    finally:store.close()
+                    if len(parts)==3:self.send_json(result);return
+                    if parts[3]=='export':
+                        self.send_json(result,extra={'Content-Disposition':'attachment; filename="liuyao-series.json"'});return
                 if path=='/api/profiles':
                     store=app.store()
                     try: profiles=list_profiles(store,actor)
@@ -636,12 +667,16 @@ class Handler(BaseHTTPRequestHandler):
                         except ValueError as exc:raise ApiError(422,'INVALID_RULEBOOK',str(exc))
                     self.send_json({'version':book.version,'rule_count':len(book.rows)});return
                 if path=='/api/cases':
-                    exact_fields(body,('input',),('input',))
+                    exact_fields(body,('input','parent_case_id','parent_revision_seq','parent_analysis_run_id'),('input',))
+                    if body.get('parent_case_id') is not None:text_field(body['parent_case_id'],160)
+                    if body.get('parent_revision_seq') is not None:revision_field(body['parent_revision_seq'])
+                    if body.get('parent_analysis_run_id') is not None:text_field(body['parent_analysis_run_id'],160)
                     # Check before writing so attempts made before first rule
                     # installation cannot leave duplicate case records.
                     book=load_rules(app.rules_directory)
                     store=app.store()
-                    try:result=store.create_case(actor,body['input'],idempotency_key=idem)
+                    try:result=store.create_case(actor,body['input'],idempotency_key=idem,
+                        **{k:body[k] for k in ('parent_case_id','parent_revision_seq','parent_analysis_run_id') if k in body})
                     finally:store.close()
                     if not result['accepted']:
                         self.send_json({'error':{'code':'INVALID_INPUT','message':'请检查问题及所选起卦方式的记录。','details':result['errors']},'failure_id':result['failure_id']},422);return

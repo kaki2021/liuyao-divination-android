@@ -2,6 +2,21 @@
 
 复核日期：2026-09-22。
 
+## 系列档案增量复核（2026-10-08）
+
+档案按系列归组，支持在选中卦下再起一卦及继续交流。旧案例成为独立系列起点；用户背景和补充在系列内共享并保留来源。分析冻结当时的共享上下文和所选父卦参考，父卦 AI 判断不进入本次用户事实；共享背景更新后，旧报告显示为历史分析。
+
+```bash
+PYTHONPATH=software_prep:. python -m unittest liuyao_app.test_series software_prep.test_case_store liuyao_app.test_response_compat liuyao_app.test_runtime_contract liuyao_app.test_selection_context liuyao_app.test_selection_projection liuyao_app.test_rule_installation
+node android/tests/series_model.cjs
+```
+
+Python 共 102 项：101 项通过，1 项因缺少可选 `jsonschema` 跳过。系列用例覆盖迁移重开、父子及多层分支、独立系列隔离、用户补充及人物背景共享与出处、不可回写的旧快照、所选父卦的条件和边界、跨 owner / 跨案例引用拒绝、幂等重试、新旧报告在共享背景变更后的状态、整系列导出及实际模型请求中的系列参考与审计摘要。Node 使用实际前端系列模块，验证新卦不会继承旧卦象、起卦时间、原时点年龄和专题输入；追问文字与人物标识保留，背景继续作为带来源的系列资料共用，父卦来自所选分析，树状分支顺序正确且长链遍历不依赖递归。
+
+前端及浏览器检查脚本语法检查通过。浏览器布局与点击回归、截图和 APK 实机验收未在本轮运行；当前环境无法启动受限的浏览器，也缺少 Android 编译环境。下方完整规则和旧构建结果是先前复核记录，不代表本次系列功能已完成这些验收。
+
+`npm --prefix android run build:web` 与 `python android/prepare.py` 通过：11 个脚本编译至 Chrome 58 语法目标，公开 Android 资源包 748 个文件、776367 字节；SHA256 为 `7563457dd75f40f0fb1eb9c067018c86ec120ad1faa31d4968f5cd8745ca7121`。
+
 ## 本次公开源码复核
 
 ### 公开模式与完整规则模式

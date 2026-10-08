@@ -192,6 +192,15 @@ def _evidence(snapshot, known_at):
     topic = buzhai.context_evidence(snapshot['input'], known_at)
     if topic is not None:
         evidence.append(topic)
+    for source in snapshot.get('series_context',{}).get('shared_person_contexts',[]):
+        person=source['person_info']
+        details=[]
+        if person.get('relationship'):details.append('该次所述关系：'+person['relationship'])
+        if person.get('background'):details.append('该次人物背景：'+person['background'])
+        if details:
+            evidence.append({'evidence_id':'SERIES_PERSON_'+source['case_id']+'_'+str(source['revision_seq']),
+                'text':'同系列占问「'+source['question']+'」中的用户资料；仅对该次所述对象适用。'+ '；'.join(details),
+                'origin':'user_background','known_at':source['recorded_at']})
     for event in snapshot["context_events"]:
         if event["event_type"] not in ("background", "clarification_answer", "user_correction"):
             continue
@@ -201,6 +210,8 @@ def _evidence(snapshot, known_at):
         if text is not None:
             if len(text) > 10000:
                 raise StageFailure("CONTEXT_TOO_LONG", "单条背景内容过长，请整理当前问题的相关事实。", "intent")
+            if event['case_id'] != snapshot['case_id']:
+                text = '[同系列占问 '+event['case_id']+' 中的用户补充；按其来源和本次问题判断是否适用] '+text
             evidence.append({"evidence_id": event["event_id"], "text": text,
                 "origin": "clarification_answer" if event["event_type"] == "clarification_answer" else "user_background",
                 "known_at": event["recorded_at"]})
@@ -390,12 +401,17 @@ def _semantic_guards(stage, output, server_input):
 
 
 def _stage_call(store, actor, case_id, run_id, stage, server_input, pack,
-                provider, model, provider_call, progress, audit_warnings=None):
+                provider, model, provider_call, progress, audit_warnings=None, series_context=None):
     audit_warnings = audit_warnings if audit_warnings is not None else []
     input_schema=deepcopy(pack['stages'][stage]['input_schema'])
     if stage=='report': input_schema['properties']['analysis_chart']={'type':'object'}
     check_schema(server_input, input_schema)
     prompt = runtime_prompt(stage, pack, server_input)
+    from .series_store import prompt_reference
+    reference = prompt_reference(series_context)
+    if len(reference) > 65536:
+        raise StageFailure('CONTEXT_TOO_LONG', '本系列背景过长，全部记录已保留，请缩小本次分析范围。', stage)
+    prompt += reference
     repair_context = None
     last_error = "invalid model JSON"
     deadline = time.monotonic() + REPORT_TIMEOUT_SECONDS if stage == 'report' else None
@@ -408,6 +424,8 @@ def _stage_call(store, actor, case_id, run_id, stage, server_input, pack,
         metadata = {"provider": provider, "model": model, "stage_input": server_input,
                     "stage_input_digest": content_digest(server_input), "system_prompt_digest": hashlib.sha256(prompt.encode()).hexdigest(),
                     "system_prompt": prompt, "stage_prompt_digest": prompt_digest(pack, stage), "attempt_number": attempt}
+        if series_context is not None:
+            metadata['series_context_digest'] = content_digest(series_context)
         if repair_context is not None:
             metadata["repair_of_attempt"] = attempt - 1
             metadata["repair_validation_error"] = repair_context["validation_error"]
@@ -669,7 +687,7 @@ def run_analysis(db_path, actor: Actor, case_id, provider, model, expected_revis
                            "catalog_status": rule_table[r["rule_id"]]["status"],
                            "implementation_status": rule_table[r["rule_id"]]["implementation_status"]} for r in projected_rules]})
             output = _stage_call(store, actor, case_id, result["analysis_run_id"], stage, server_input,
-                                 pack, provider, model, provider_call, emit, result["audit_report"]["warnings"])
+                                 pack, provider, model, provider_call, emit, result["audit_report"]["warnings"], snapshot.get('series_context'))
             result["stage_outputs"][stage] = output
             return output
         def unresolved(output):

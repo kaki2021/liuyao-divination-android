@@ -43,6 +43,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   const STAGES = { intent_clarification: "正在梳理所问与真念", intent: "正在梳理所问与真念", selection: "正在分析取用关系", use_spirit_selection: "正在分析取用关系", use_spirit: "正在分析取用关系", interpretation: "正在核对关系与依据", report: "正在整理分析报告", report_generation: "正在整理分析报告" };
   const state = { config: null, caseId: null, revision: 0, input: null, chart: null, runs: [], runId: null, reportCurrent: true, busy: false, analyzing: false, loadToken: 0, rawReplyToken: 0, rawReplyLoaded: false, originalTime: null, originalTimeLocal: null, originalCasting: null, view: "input", pendingContext: null };
   let runSelect = null, currentJob = null, wakePoll = null, rawLoading = false, rawSignature = null, lastRawCheck = 0, rawReloadPending = false;
+  state.seriesId = null;
+  state.series = null;
+  state.branchParent = null;
+  state.pendingCreate = null;
+  const seriesVisits = /* @__PURE__ */ new Map();
   function node(tag, className, text) {
     const el = document.createElement(tag);
     if (className) el.className = className;
@@ -83,12 +88,12 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   function uuid() {
     return window.LiuyaoCompat.requestId();
   }
-  async function api(path, { method = "GET", data } = {}) {
+  async function api(path, { method = "GET", data, idempotencyKey } = {}) {
     var _a2, _b;
     const headers = { "X-App-Request": "1", Accept: "application/json" };
     if (method !== "GET") {
       headers["Content-Type"] = "application/json";
-      headers["X-Idempotency-Key"] = uuid();
+      headers["X-Idempotency-Key"] = idempotencyKey || uuid();
     }
     const response = await new Promise((resolve, reject) => {
       const request = new XMLHttpRequest();
@@ -115,7 +120,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
   function setBusy(value) {
     state.busy = value;
-    document.querySelectorAll("#case-form button, #case-form input, #case-form textarea, #case-form select, #context-form button, #feedback-form button, #new-case, .history-item").forEach((el) => {
+    document.querySelectorAll("#case-form button, #case-form input, #case-form textarea, #case-form select, #context-form button, #feedback-form button, #new-case, #cancel-related, .history-item, .series-node").forEach((el) => {
       el.disabled = value;
     });
     updatePersonFields();
@@ -430,9 +435,9 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     $("revision-reason").value = "";
     updateCastingMode();
   }
-  function resetCase() {
-    if (state.busy) return;
-    if (!mayDiscard()) return;
+  function resetCase({ transferContext = false } = {}) {
+    if (state.busy) return false;
+    if (!mayDiscard({ transferContext })) return false;
     window.AnalysisStatus.clear();
     currentJob = null;
     state.loadToken++;
@@ -443,6 +448,12 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     state.runs = [];
     state.runId = null;
     state.pendingContext = null;
+    state.seriesId = null;
+    state.series = null;
+    state.branchParent = null;
+    state.pendingCreate = null;
+    renderBranchDraft();
+    $("series-card").hidden = true;
     resetRawReplies();
     fillInput(null);
     $("results-section").hidden = true;
@@ -456,37 +467,40 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     renderHistoryActive();
     showView("input");
     $("question").focus();
+    document.dispatchEvent(new Event("liuyao:new-casting"));
+    persistDraft();
+    return true;
   }
-  function mayDiscard() {
+  function mayDiscard({ transferContext = false } = {}) {
     let dirty = false;
     try {
       dirty = hasEnteredData() && !inputsEqual(getInput(false), state.input);
     } catch (_) {
       dirty = true;
     }
-    dirty = dirty || Boolean($("context-text").value.trim() || $("feedback-text").value.trim());
+    dirty = dirty || Boolean(!transferContext && $("context-text").value.trim() || $("feedback-text").value.trim());
     return !dirty || window.confirm("还有未完成的输入，确定离开这次案例吗？");
   }
   async function refreshHistory() {
-    const result = await api("/api/cases");
+    const result = await api("/api/series");
     const list = $("history-list");
     clear(list);
-    if (!(result.cases || []).length) {
-      list.append(node("p", "empty-state", "还没有案例。第一卦，从这里开始。"));
+    if (!(result.series || []).length) {
+      list.append(node("p", "empty-state", "还没有系列。第一卦，从这里开始。"));
       return;
     }
-    const cases = [...result.cases].sort((a, b) => String(b.recorded_at || "").localeCompare(String(a.recorded_at || "")));
-    cases.forEach((item) => {
+    result.series.forEach((item) => {
       const button = node("button", "history-item");
       button.type = "button";
-      button.dataset.caseId = item.case_id;
+      button.dataset.seriesId = item.series_id;
+      button.dataset.caseId = item.latest_case_id;
       button.disabled = state.busy;
-      button.append(node("span", "history-question", item.question || "未命名的问题"));
+      button.append(node("span", "history-question", item.title || "未命名的系列"));
       const meta = node("span", "history-meta");
-      meta.append(node("span", "", dateText(item.recorded_at)), node("span", "", STATUS[item.status] || "已记录"));
+      meta.append(node("span", "", dateText(item.updated_at)), node("span", "", "".concat(item.case_count, " 卦")));
       button.append(meta);
       button.addEventListener("click", () => {
-        if (!state.busy && mayDiscard()) loadCase(item.case_id).catch((error) => banner(getError(error), "error"));
+        if (!state.busy && mayDiscard()) loadCase(seriesVisits.get(item.series_id) || item.latest_case_id).catch((error) => banner(getError(error), "error"));
       });
       list.append(button);
     });
@@ -494,17 +508,99 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
   function renderHistoryActive() {
     document.querySelectorAll(".history-item").forEach((el) => {
-      el.classList.toggle("active", el.dataset.caseId === state.caseId);
-      if (el.dataset.caseId === state.caseId) el.setAttribute("aria-current", "true");
+      const active = el.dataset.seriesId === state.seriesId;
+      el.classList.toggle("active", active);
+      if (active) el.setAttribute("aria-current", "true");
       else el.removeAttribute("aria-current");
     });
+  }
+  function renderBranchDraft() {
+    $("related-draft").hidden = !state.branchParent;
+    $("related-parent-question").textContent = state.branchParent ? "接在「".concat(state.branchParent.question, "」下面") : "";
+    if (state.branchParent) $("form-title").textContent = "这次想细问什么？";
+  }
+  function startRelatedCase() {
+    var _a2;
+    if (state.busy || !state.caseId) return;
+    const draft = window.LiuyaoSeries.relatedDraft(
+      state,
+      $("context-text").value,
+      (_a2 = document.querySelector('input[name="casting-method"]:checked')) == null ? void 0 : _a2.value
+    );
+    const series = state.series;
+    if (!resetCase({ transferContext: true })) return;
+    state.branchParent = draft.parent;
+    state.series = series;
+    state.seriesId = (series == null ? void 0 : series.series_id) || draft.parent.caseId;
+    fillInput(draft.input);
+    document.querySelector('input[name="casting-method"][value="'.concat(draft.method, '"]')).checked = true;
+    updateCastingMode();
+    onInputChange();
+    renderBranchDraft();
+    renderHistoryActive();
+    showView("input");
+    $("question").focus();
+    persistDraft();
+  }
+  function renderSeries(series) {
+    $("series-card").hidden = !series;
+    if (!series) return;
+    const changed = $("series-card").dataset.seriesId !== series.series_id;
+    $("series-card").dataset.seriesId = series.series_id;
+    $("series-title").textContent = series.title;
+    $("series-count").textContent = "".concat(series.case_count, " 卦");
+    if (changed || Number($("series-card").dataset.caseCount || 0) < 2 && series.case_count > 1) $("series-details").open = series.case_count > 1;
+    $("series-card").dataset.caseCount = String(series.case_count);
+    $("export-series").href = "/api/series/".concat(encodeURIComponent(series.series_id), "/export");
+    const numbers = new Map(series.nodes.map((item, index) => [item.case_id, index + 1]));
+    clear($("series-tree"));
+    window.LiuyaoSeries.orderedNodes(series.nodes).forEach(({ item, depth, number, parentNumber }) => {
+      const row = node("li");
+      row.style.marginLeft = "".concat(Math.min(depth, 8) * 12, "px");
+      const button = node("button", "series-node");
+      button.type = "button";
+      button.dataset.caseId = item.case_id;
+      button.disabled = state.busy;
+      button.append(node("span", "series-node-question", "".concat(number, ". ").concat(item.question)));
+      button.append(node("span", "series-node-meta", "".concat(depth ? "细问 · 接第 ".concat(parentNumber, " 卦") : "总问", " · ").concat(STATUS[item.status] || "已记录", " · ").concat(dateText(item.recorded_at))));
+      if (item.case_id === state.caseId) {
+        button.classList.add("active");
+        button.setAttribute("aria-current", "true");
+      }
+      button.onclick = () => {
+        if (!state.busy && item.case_id !== state.caseId && mayDiscard()) loadCase(item.case_id).catch((error) => banner(getError(error), "error"));
+      };
+      row.append(button);
+      $("series-tree").append(row);
+    });
+    const context = $("series-context-list");
+    clear(context);
+    (series.shared_person_contexts || []).forEach((source) => {
+      const person = source.person_info;
+      context.append(node("p", "event-item", [
+        "第 ".concat(numbers.get(source.case_id), " 卦中记录的人物资料"),
+        { self: "问自己", other: "问他人", unspecified: "涉及多人或未指定" }[person.subject],
+        person.querent_age === void 0 ? "" : "原起卦时问卦人 ".concat(person.querent_age, " 岁"),
+        person.subject_age === void 0 ? "" : "原起卦时所问对象 ".concat(person.subject_age, " 岁"),
+        person.relationship,
+        person.background
+      ].filter(Boolean).join(" · ")));
+    });
+    (series.shared_context_events || []).forEach((event) => {
+      const text = readable(event.content);
+      if (!text) return;
+      const row = node("p", "event-item");
+      row.append(node("time", "", dateText(event.recorded_at)), node("strong", "", "来自第 ".concat(numbers.get(event.case_id), " 卦")), node("span", "", text));
+      context.append(row);
+    });
+    if (!context.childElementCount) context.append(node("p", "empty-state", "尚无背景补充。各次占问的关系会随分析一并提供。"));
   }
   function latestInput(record) {
     var _a2, _b;
     return ((_b = (_a2 = record.revisions) == null ? void 0 : _a2.at(-1)) == null ? void 0 : _b.input) || record.original_input || record.input || {};
   }
   async function loadCase(caseId, { keepForm = false, quiet = false, keepView = false } = {}) {
-    var _a2, _b;
+    var _a2, _b, _c;
     const token = ++state.loadToken;
     const payload = await api("/api/cases/".concat(encodeURIComponent(caseId)));
     if (token !== state.loadToken) return;
@@ -521,6 +617,13 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     state.input = latestInput(record);
     state.chart = payload.chart || record.chart;
     state.runs = record.analysis_runs || [];
+    state.branchParent = null;
+    state.pendingCreate = null;
+    state.series = payload.series || null;
+    state.seriesId = ((_c = payload.series) == null ? void 0 : _c.series_id) || caseId;
+    seriesVisits.set(state.seriesId, caseId);
+    renderBranchDraft();
+    renderSeries(state.series);
     state.reportCurrent = payload.report_is_current !== false;
     if (!keepForm) fillInput(state.input);
     $("form-title").textContent = "回看这次所问";
@@ -980,6 +1083,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     });
   }
   async function saveCase() {
+    var _a2;
     const input = getInput();
     if (state.caseId && inputsEqual(input, state.input)) return state.caseId;
     let payload;
@@ -991,7 +1095,18 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         throw new Error("请写一句修改原因，便于以后回看。");
       }
       payload = await api("/api/cases/".concat(encodeURIComponent(state.caseId), "/revisions"), { method: "POST", data: { input, reason, expected_revision_seq: state.revision } });
-    } else payload = await api("/api/cases", { method: "POST", data: { input } });
+    } else {
+      const parent = state.branchParent;
+      const data = __spreadValues({ input }, parent ? {
+        parent_case_id: parent.caseId,
+        parent_revision_seq: parent.revision,
+        parent_analysis_run_id: parent.analysisRunId
+      } : {});
+      const signature = JSON.stringify(data);
+      if (((_a2 = state.pendingCreate) == null ? void 0 : _a2.signature) !== signature) state.pendingCreate = { signature, key: uuid() };
+      persistDraft();
+      payload = await api("/api/cases", { method: "POST", data, idempotencyKey: state.pendingCreate.key });
+    }
     state.caseId = payload.case_id || state.caseId;
     state.revision = payload.revision_seq || state.revision + 1;
     state.input = input;
@@ -1269,6 +1384,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         if (kind === "context") state.pendingContext = { caseId, text };
       }
       await loadCase(caseId, { keepForm: true, quiet: true, keepView: true });
+      await refreshHistory();
       if (kind === "context" && reanalyze) {
         const job = await analyzeSavedCase(caseId);
         if (!job || job.status === "failed") return;
@@ -1312,6 +1428,10 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     onInputChange();
   });
   $("new-case").addEventListener("click", resetCase);
+  $("cast-related").addEventListener("click", startRelatedCase);
+  $("cancel-related").addEventListener("click", () => {
+    if (!state.busy && state.branchParent && mayDiscard()) loadCase(state.branchParent.caseId).then(persistDraft).catch((error) => banner(getError(error), "error"));
+  });
   $("show-current-chart").addEventListener("click", () => renderChart(state.chart, state.input));
   $("ai-raw-replies").addEventListener("toggle", () => loadRawReplies());
   document.addEventListener("visibilitychange", () => {
@@ -1395,7 +1515,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       if (el.type === "file") return;
       fields[el.id || el.name + "::" + el.value] = { value: el.value, checked: el.checked };
     });
-    window.LiuyaoAndroid.saveDraft(JSON.stringify({ caseId: state.caseId, fields, view: state.view }));
+    window.LiuyaoAndroid.saveDraft(JSON.stringify({ caseId: state.caseId, branchParent: state.branchParent, pendingCreate: state.pendingCreate, fields, view: state.view }));
   }
   let draftTimer;
   document.addEventListener("input", () => {
@@ -1420,7 +1540,17 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       const draft = JSON.parse(window.LiuyaoAndroid.readDraft() || "null");
       if (!draft) return;
       if (draft.caseId) await loadCase(draft.caseId, { quiet: true });
+      else if (draft.branchParent) {
+        const parent = await api("/api/cases/".concat(encodeURIComponent(draft.branchParent.caseId)));
+        state.branchParent = draft.branchParent;
+        state.series = parent.series;
+        state.seriesId = parent.series.series_id;
+        fillInput(null);
+        renderBranchDraft();
+        renderHistoryActive();
+      }
       const fields = draft.fields || {};
+      if (!draft.caseId) state.pendingCreate = draft.pendingCreate || null;
       document.querySelectorAll("#case-form input,#case-form textarea,#case-form select,#context-text,#feedback-form input,#feedback-form textarea,#feedback-form select").forEach((el) => {
         const f = fields[el.id || el.name + "::" + el.value];
         if (f && el.type !== "file") {
