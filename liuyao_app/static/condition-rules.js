@@ -23,7 +23,7 @@
   }
   function detail(){
     ++request;const r=guide?.rules.find(r=>r.id===selected),box=$('condition-detail');if(!r)return;
-    box.replaceChildren(node('h3',r.name),table(['项目','说明'],[['适用前提',r.scope],['处理结果',r.policy],['实现范围',r.implementation]],'rule-pairs'));
+    box.replaceChildren(node('h3',r.name),table(['项目','说明'],r.details||[['适用范围',r.scope],['判断原则',r.policy]],'rule-pairs'));
     const checked=current()?.checks.find(c=>c.rule_id===r.id);
     if(checked){box.append(node('p','当前显示卦盘：'+model.label(checked.status),'condition-status '+checked.status));box.append(table(['条件','状态'],checked.conditions.map(c=>{const cell=node('div');cell.append(node('span',model.label(c.status),'condition-status '+c.status));if(c.note)cell.append(node('p',c.note,'small-note'));return [c.label,cell];}),'rule-pairs'));}
     else box.append(node('p','保存卦盘后可查看本次条件。以下也可用固定演示卦试算。','small-note'));

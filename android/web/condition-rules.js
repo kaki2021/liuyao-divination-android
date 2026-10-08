@@ -76,7 +76,7 @@
     ++request;
     const r = guide == null ? void 0 : guide.rules.find((r2) => r2.id === selected), box = $("condition-detail");
     if (!r) return;
-    box.replaceChildren(node("h3", r.name), table(["项目", "说明"], [["适用前提", r.scope], ["处理结果", r.policy], ["实现范围", r.implementation]], "rule-pairs"));
+    box.replaceChildren(node("h3", r.name), table(["项目", "说明"], r.details || [["适用范围", r.scope], ["判断原则", r.policy]], "rule-pairs"));
     const checked = (_a = current()) == null ? void 0 : _a.checks.find((c) => c.rule_id === r.id);
     if (checked) {
       box.append(node("p", "当前显示卦盘：" + model.label(checked.status), "condition-status " + checked.status));

@@ -121,7 +121,7 @@ class ConditionalReasoningTests(unittest.TestCase):
         g=logic_guide();self.assertIsNone(g['parameter_version']);self.assertEqual(len(g['rules']),8)
         for name,digest in g['code_manifest'].items():self.assertEqual(digest,hashlib.sha256((ROOT/name).read_bytes()).hexdigest())
         text=logic_markdown(g)
-        for needed in ['世身位置','旬空','多现保留','满足、不满足或未知','作用先后','实验评分','SHA256']:self.assertIn(needed,text)
+        for needed in ['世身位置','旬空','同类六亲','满足、不满足或未知','作用先后','实验评分','SHA256']:self.assertIn(needed,text)
 
     def test_live_model_uses_conditions_and_freezes_logic_with_history(self):
         with tempfile.TemporaryDirectory() as d:

@@ -15,11 +15,11 @@ from .day_month_analysis import element_relation, xun_empty, clash, combine, REL
 MODEL_VERSION = '条件判断 1'
 RULES = (
     ('functional_use', '按用途取用', '取用', '按原问中的对象、用途和关切匹配六亲或主体参照。',
-     '用途明确后定位；同类多现保留候选，不按实验分选中最高者。', ['interpretation.functional_role']),
+     '同类爻有多个时，逐一列出并说明取舍依据。', ['interpretation.functional_role']),
     ('target_scope', '围绕本问核对作用', '作用', '先明确本问目标，再列来源对目标的候选关系。',
      '结构关系不等于有效作用；来源状态与目标优先级分别核对。', ['interpretation.target_effects']),
-    ('change_empty', '原爻旬空与动爻化空分开', '空破', '原爻支和变支分别与起卦日的旬空比较。',
-     '识别为空时记录状态；对目标的影响和解除条件留待有依据的判断，不固定扣分。', []),
+    ('change_empty', '原爻旬空与动爻化空分开', '空破', '根据起卦日的旬空，分别核对原爻地支与动爻所化地支。',
+     '原爻旬空表示原爻地支为空；化空表示动爻所化的地支为空，两者分别记录。', []),
     ('form_context', '三形结合整体判断', '形害', '配对存在后，仍需独立判断整体趋势及与目标的关系。',
      '只列形的类别和条件；不凭形标签判吉凶，也不循环证明整体趋势。', ['interpretation.three_forms_context']),
     ('harm_direction', '六害分类型与方向', '形害', '识别恩间或害间，区分来源、目标和涉及的合支。',
@@ -64,8 +64,9 @@ def rule_guide():
     for key, name, scene, scope, policy, ids in RULES:
         evidence = [{'title': sources[by_id[i]['source_id']]['title'], 'locator': by_id[i]['source_locator'],
                      'statement': by_id[i]['statement'], 'rule_id': i} for i in ids]
+        detail_labels = ('识别方法', '含义区别') if key == 'change_empty' else ('适用范围', '判断原则')
         entries.append({'id': key, 'name': name, 'scene': scene, 'scope': scope, 'policy': policy,
-                        'sources': evidence, 'implementation': '已实现结构与条件核对；具体解释仍需条件判断'})
+                        'details': [[detail_labels[0], scope], [detail_labels[1], policy]], 'sources': evidence})
     return {'model_version': MODEL_VERSION, 'version': logic_digest(), 'rules': entries,
             'statuses': {'satisfied': '满足', 'unsatisfied': '不满足', 'unknown': '未知'},
             'note': '每条规则的状态表示适用前提，不表示已发生的作用或事情成败。'}
@@ -128,10 +129,10 @@ def evaluate_conditions(chart, input_data, selection=None):
         checks.append({'rule_id': key, 'name': name, 'conditions': conditions, 'status': conjunction(conditions), 'result': result})
     check('functional_use', [condition('purpose', '本次用途已明确', bool(selected) if selection else None,
                                        '取用阶段的功能理解属于 AI 候选解释。', 'analysis_pending'),
-                             condition('one_line', '具体用神有唯一匹配', True if len(matches) == 1 else None,
-                                       '多现候选需有用途及位置依据；不按实验分强选。',
+                             condition('one_line', '本问对应的爻已唯一确定', True if len(matches) == 1 else None,
+                                       '同类六亲对应多个爻时，需结合用途与位置说明各爻的采用条件。',
                                        'analysis_pending' if not selected else 'system_criteria')],
-          '唯一匹配只完成结构定位；多现保留所有位置。')
+          '只有一个对应爻时可定位；有多个对应爻时分别列出，采用条件另行判断。')
     effects = []
     for target in matches:
         for source in lines:

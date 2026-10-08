@@ -41,7 +41,7 @@ def logic_guide(parameter_version=None):
                 {'title': '状态与条件', 'formula': '旬空=日柱所属十日旬未纳入的两支；原爻与变支分别匹配',
                  'detail': '月破与日冲：两支序号差取模12等于6；六合查六对支。月令分类只记录旺相休囚死，不代替综合旺衰。每条规则逐条件为满足、不满足或未知：任一不满足则整条不满足，否则含未知则未知，全满足才标满足；满足仅表示适用前提。'},
                 {'title': '取用与相关作用', 'formula': '用途 → 功能六亲或主体参照 → 本卦匹配，缺位再列本宫伏神',
-                 'detail': '唯一匹配可定位；多现保留所有同类候选。只列来源对本问目标的候选关系；静爻日冲不一律当有效暗动，作用先后未知时不宣布全部同时生效。无0—10分自动取用。'},
+                 'detail': '本问所用的六亲只对应一个爻时可以定位；同类六亲对应多个爻时，分别列出各爻及其采用条件。例如本问取父母爻而卦中有两个父母爻时，需说明各自与所问对象的关系，依据不足则保持未确定。只列来源对本问目标的候选关系；静爻日冲不一律当有效暗动，作用先后未知时不宣布全部同时生效。实验分不用于自动选定某爻。'},
                 {'title': '解释与报告', 'formula': '结构事实＋用户资料＋适用原理＋条件缺口 → AI条件解释',
                  'detail': 'AI不得改写盘面或把未知条件填成满足。分别写目标成败与主体得失；key_conditions和limits随结论保存，在专业分析展示。研究审计及原始回复在Log。'}],
             'tables': [
@@ -72,7 +72,9 @@ def logic_markdown(guide):
         lines.append('')
     lines += ['## 条件规则', '']
     for rule in guide['rules']:
-        lines += ['### '+rule['name'], '', '前提：'+rule['scope'], '', '处理：'+rule['policy'], '']
+        lines += ['### '+rule['name'], '']
+        for label, value in rule.get('details', [['适用范围', rule['scope']], ['判断原则', rule['policy']]]):
+            lines += [label+'：'+value, '']
         lines += ['出处：'+s['title']+'；'+s['locator']+'。'+s['statement'] for s in rule['sources']]
         if not rule['sources']:
             lines.append('本项是软件结构识别或能力边界，不代表原书给出了完整判断算法。')
