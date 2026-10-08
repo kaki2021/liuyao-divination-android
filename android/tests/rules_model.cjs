@@ -1,0 +1,26 @@
+// Production rule filtering and draft validation; no browser or private rulebook.
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const context={window:{}};
+vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../../liuyao_app/static/rules-ui.js'),'utf8'),context);
+const {model}=context.window.RuleWorkbench,plain=x=>JSON.parse(JSON.stringify(x));
+const base={id:'BASE_SCORE',name:'共同起点',kind:'base',condition:'每个爻',meaning:'分别计分',type:'number',min:0,max:10,value:5,enabled:true,required:true};
+const rules=[base,...Array.from({length:14},(_,i)=>({...base,id:'ROW_'+i,name:'月令 '+i,kind:'points',required:false}))];
+const frozen=JSON.stringify(rules);
+assert.equal(model.page(rules,'','',0).rows.length,7);
+assert.equal(model.page(rules,'','',2).rows.length,1);
+assert.equal(model.page(rules,'','',99).page,2);
+assert.equal(model.page(rules,'','',-1).page,0);
+assert.equal(model.page(rules,' base_score ','',2).rows[0].id,'BASE_SCORE');
+assert.equal(model.page(rules,'分别计分','points',0).total,14);
+assert.deepEqual(plain(model.page(rules,'不匹配','',0)),{rows:[],total:0,pages:1,page:0});
+assert.deepEqual(plain(model.draft(base,'0',true)),{rule_id:'BASE_SCORE',value:0,enabled:true});
+for(const raw of ['', ' ', 'NaN', 'Infinity', '-1', '11'])assert.throws(()=>model.draft(base,raw,true));
+assert.throws(()=>model.draft(base,'5',false),/必要/);
+const toggle={...base,kind:'switch',value:1,required:false};
+assert.equal(model.draft(toggle,'99',false).value,1);
+assert.equal(model.value({...toggle,enabled:false}),'已停用');
+const branch={...base,type:'branch',kind:'branch',value:'子'};
+assert.equal(model.draft(branch,'亥',true).value,'亥');
+for(const raw of ['', '子丑', 'A'])assert.throws(()=>model.draft(branch,raw,true));
+assert.equal(JSON.stringify(rules),frozen);
+console.log('PASS rules filtering, pagination, typed drafts, switches and required parameters');

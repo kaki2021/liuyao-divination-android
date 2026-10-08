@@ -1,4 +1,6 @@
 var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __propIsEnum = Object.prototype.propertyIsEnumerable;
@@ -14,6 +16,7 @@ var __spreadValues = (a, b) => {
     }
   return a;
 };
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 (() => {
   "use strict";
   const $ = (id) => document.getElementById(id);
@@ -156,63 +159,66 @@ var __spreadValues = (a, b) => {
     }
   });
   function showRuleContent(value) {
-    document.querySelector(".rules-primer").hidden = !value;
     document.querySelector(".rule-browser").hidden = !value;
+    $("rules-empty").hidden = value;
     $("rules-export").hidden = !value;
   }
   async function loadRules() {
+    ++previewRequest;
     const status = await api("/api/rules");
     if (!status.installed) {
       guide = null;
       rulesVersion = "";
       showRuleContent(false);
-      $("rules-version").textContent = "尚未安装规则包。导入后才能排盘和解卦。";
+      $("rules-version").textContent = "尚未安装规则包 · 使用原理可直接阅读";
+      if ($("parameter-tab").getAttribute("aria-pressed") === "true") window.RuleWorkbench.show("package");
       return false;
     }
     guide = await api("/api/rules/guide");
+    const kinds = new Map(guide.kinds.map((k, i) => [k.id, i]));
+    guide.rules.sort((a, b) => kinds.get(a.kind) - kinds.get(b.kind) || a.id.localeCompare(b.id));
     rulesVersion = guide.version;
     showRuleContent(true);
-    window.RuleGuideUI.overview(guide);
-    $("rules-version").textContent = "".concat(guide.rules.length, " 项参数 · 修改后仅用于新的分析");
-    $("rules-rationale").textContent = guide.rationale;
-    $("rules-formulas").replaceChildren();
-    guide.formulas.forEach((f, i) => {
-      const block = node("section", "");
-      block.append(node("h4", i + 1 + ". " + f.title), node("p", f.formula, "formula"), node("p", f.detail, "small-note"));
-      $("rules-formulas").append(block);
-    });
-    const category = $("rule-category").value;
-    $("rule-category").replaceChildren(node("option", "全部类别"));
-    $("rule-category").firstChild.value = "";
-    [...new Set(guide.rules.map((r) => r.category))].forEach((c) => {
-      $("rule-category").append(node("option", c));
-    });
-    $("rule-category").value = category;
-    renderRules();
-    selectRule(selectedRule || "BASE_SCORE");
+    window.RuleWorkbench.overview(guide);
+    $("rules-version").textContent = "".concat(guide.rules.length, " 项参数 · ").concat(guide.version);
+    if (!guide.rules.some((r) => r.id === selectedRule)) selectedRule = "BASE_SCORE";
+    refreshRules();
     return true;
   }
   function renderRules() {
-    const query = $("rule-search").value.trim().toLowerCase(), category = $("rule-category").value;
-    const rows = guide.rules.filter((r) => {
-      var _a;
-      return (!category || r.category === category) && (!((_a = $("rule-kind")) == null ? void 0 : _a.value) || r.kind === $("rule-kind").value) && (!query || [r.id, r.name, r.condition, r.meaning].join(" ").toLowerCase().includes(query));
-    });
-    const pages = Math.max(1, Math.ceil(rows.length / 7));
-    rulePage = Math.min(rulePage, pages - 1);
-    $("rule-list").replaceChildren();
-    rows.slice(rulePage * 7, rulePage * 7 + 7).forEach((r) => {
+    if (!guide) return;
+    const { table, model } = window.RuleWorkbench, page = model.page(guide.rules, $("rule-search").value, $("rule-kind").value, rulePage);
+    rulePage = page.page;
+    const list = table(["参数", "当前值"], page.rows.map((r) => {
       const b = node("button", "", "rule-item");
       b.type = "button";
       b.setAttribute("aria-pressed", String(r.id === selectedRule));
-      b.append(node("span", r.name), node("small", r.kind_label + " · " + r.id), node("b", r.kind === "switch" ? r.enabled ? "已启用" : "已停用" : String(r.value) + (r.enabled ? "" : " · 停用")));
-      b.addEventListener("click", () => selectRule(r.id));
-      $("rule-list").append(b);
+      b.setAttribute("aria-controls", "rule-detail");
+      b.append(node("span", r.name), node("small", r.id));
+      b.addEventListener("click", () => {
+        selectRule(r.id);
+        if (window.matchMedia("(max-width:760px)").matches) $("rule-detail").scrollIntoView({ block: "start", behavior: "smooth" });
+      });
+      return [b, model.value(r)];
+    }), "rule-parameter-table");
+    [...list.querySelectorAll("tbody tr")].forEach((tr, i) => {
+      tr.dataset.selected = String(page.rows[i].id === selectedRule);
     });
-    if (!rows.length) $("rule-list").append(node("p", "没有匹配的参数。", "empty-state"));
-    $("rule-page").textContent = "".concat(rulePage + 1, " / ").concat(pages, " · ").concat(rows.length, " 项");
+    $("rule-list").replaceChildren(page.rows.length ? list : node("p", "没有匹配的参数。", "empty-state"));
+    $("rule-page").textContent = "".concat(rulePage + 1, " / ").concat(page.pages, " · ").concat(page.total, " 项");
     $("rule-prev").disabled = rulePage === 0;
-    $("rule-next").disabled = rulePage === pages - 1;
+    $("rule-next").disabled = rulePage === page.pages - 1;
+  }
+  function refreshRules() {
+    if (!guide) return;
+    const page = window.RuleWorkbench.model.page(guide.rules, $("rule-search").value, $("rule-kind").value, rulePage);
+    rulePage = page.page;
+    if (page.rows.length) selectRule(page.rows.some((r) => r.id === selectedRule) ? selectedRule : page.rows[0].id);
+    else {
+      ++previewRequest;
+      renderRules();
+      $("rule-detail").replaceChildren(node("p", "没有匹配的参数，请调整筛选条件。", "empty-state"));
+    }
   }
   function selectRule(id) {
     ++previewRequest;
@@ -220,19 +226,14 @@ var __spreadValues = (a, b) => {
     const r = guide.rules.find((r2) => r2.id === id);
     if (!r) return;
     renderRules();
-    const box = $("rule-detail");
-    box.replaceChildren(node("p", r.category + " / " + r.id, "eyebrow"), node("h3", r.name), node("p", r.kind_label + " · " + r.source_type, "rule-type-label"), node("p", r.affects, "topic-help"));
-    for (const [label2, text] of [["什么时候生效", r.condition], ["参数是什么意思", r.meaning], ["怎么算", r.formula], ["改了会怎样", r.increase], ["举个例子", r.example], ["为什么这样设", r.rationale], ["数值依据与适用范围", r.source_note]]) {
-      const p = node("section", "", "rule-explanation");
-      p.append(node("h4", label2), node("p", text, label2 === "怎么算" ? "formula" : ""));
-      box.append(p);
-    }
-    window.RuleGuideUI.attachLedger(box, { rule: r, api, version: rulesVersion, input: analysisInput });
+    const { table, fold, model } = window.RuleWorkbench, box = $("rule-detail");
+    box.replaceChildren(node("p", r.id, "eyebrow"), node("h3", r.name), node("p", r.kind_label + " · " + r.category, "rule-type-label"));
+    box.append(table(["项目", "说明"], [["作用范围", r.affects], ["生效条件", r.condition], ["计算方式", r.formula]], "rule-pairs"));
     const form = node("form", "", "rule-trial");
-    form.append(node("h4", "研究试调（选用）"), node("p", r.tuning_note, "small-note"));
-    const label = node("label", "试算参数值");
+    form.append(node("h4", "试调这一项"));
+    const valueCell = node("div"), label = node("label", "试调值", "sr-only");
     label.htmlFor = "trial-value";
-    const input = node(r.type === "branch" ? "select" : "input", "");
+    const input = node(r.type === "branch" ? "select" : "input");
     input.id = "trial-value";
     if (r.type === "branch") for (const b of "子丑寅卯辰巳午未申酉戌亥") input.append(node("option", b));
     else {
@@ -243,51 +244,83 @@ var __spreadValues = (a, b) => {
     }
     input.value = r.value;
     input.disabled = r.kind === "switch";
+    input.hidden = r.kind === "switch";
     input.required = true;
-    form.append(label, input);
-    const checkLabel = node("label", "", "checkbox-line"), check = node("input", "");
+    valueCell.append(label, input);
+    if (r.kind === "switch") valueCell.append(node("span", "通过启用切换"));
+    const checkLabel = node("label", "", "checkbox-line"), check = node("input");
     check.type = "checkbox";
     check.id = "trial-enabled";
     check.checked = r.enabled;
     check.disabled = r.required;
-    checkLabel.append(check, document.createTextNode("启用此项" + (r.required ? "（必要参数）" : "")));
-    form.append(checkLabel, node("p", r.kind === "switch" ? "该项通过“启用”控制；数值 1 不计分。" : r.type === "branch" ? "选择一个地支。" : "允许范围 ".concat(r.min, " 至 ").concat(r.max, "；当前值 ").concat(r.value, "。"), "small-note"));
-    const button = node("button", "比较修改前后", "primary-button");
+    checkLabel.append(check, document.createTextNode(r.required ? "启用（必要）" : "启用"));
+    form.append(table(["设置", "当前", "试调"], [["参数值", r.kind === "switch" ? "不计分" : String(r.value), valueCell], ["状态", r.enabled ? "启用" : "停用", checkLabel]], "rule-values"));
+    form.append(node("p", r.kind === "switch" ? "结构开关只改变识别结果。" : r.type === "branch" ? "地支约定可能改变动变标记。" : "允许范围 ".concat(r.min, " ～ ").concat(r.max, "。"), "small-note"));
+    form.append(node("p", analysisInput ? "试算对象：当前显示卦盘（按当前规则计算）" : "试算对象：固定演示卦，非你的案例", "small-note"));
+    const actions = node("div", "", "rule-trial-actions"), button = node("button", "试算对比", "primary-button"), reset = node("button", "恢复当前值", "secondary-button");
     button.type = "submit";
-    const output = node("div", "");
+    reset.type = "button";
+    actions.append(button, reset);
+    const draftStatus = node("p", "与当前设置一致", "small-note");
+    draftStatus.id = "trial-draft-status";
+    draftStatus.setAttribute("role", "status");
+    const output = node("div");
     output.id = "rule-trial-result";
     output.setAttribute("role", "status");
-    form.append(button, output);
+    form.append(draftStatus, actions, output);
     box.append(form);
+    function invalidate() {
+      ++previewRequest;
+      output.replaceChildren();
+      const changed = String(input.value) !== String(r.value) || check.checked !== r.enabled;
+      draftStatus.textContent = changed ? "有试调改动 · 尚未试算" : "与当前设置一致";
+    }
+    input.addEventListener("input", invalidate);
+    input.addEventListener("change", invalidate);
+    check.addEventListener("change", invalidate);
+    reset.onclick = () => {
+      input.value = r.value;
+      check.checked = r.enabled;
+      invalidate();
+    };
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      button.disabled = true;
       const request = ++previewRequest;
-      output.replaceChildren(node("p", "正在计算…"));
+      button.disabled = reset.disabled = true;
+      output.replaceChildren(node("p", "正在试算…"));
       try {
-        const payload = { rule_id: r.id, value: r.type === "branch" ? input.value : Number(input.value), enabled: check.checked, expected_version: rulesVersion };
+        const payload = __spreadProps(__spreadValues({}, model.draft(r, input.value, check.checked)), { expected_version: rulesVersion });
         if (analysisInput) payload.input = analysisInput;
         const result = await api("/api/rules/preview", payload);
         if (request !== previewRequest) return;
+        draftStatus.textContent = "已完成对比 · 试调值未保存";
         window.RuleGuideUI.comparison(output, result);
       } catch (e2) {
         if (request === previewRequest) output.replaceChildren(node("p", e2.message));
       } finally {
-        button.disabled = false;
+        button.disabled = reset.disabled = false;
       }
     });
+    window.RuleGuideUI.attachLedger(box, { rule: r, api, version: rulesVersion, input: analysisInput });
+    const explanation = fold("参数含义、调整影响与依据");
+    explanation.append(table(["项目", "说明"], [["含义", r.meaning], ["调整影响", r.increase], ["示例", r.example], ["设定理由", r.rationale], ["数值依据", r.source_note]], "rule-pairs"));
+    box.append(explanation);
+    const save = node("button", "保存试调的方法", "text-button");
+    save.type = "button";
+    save.onclick = () => window.RuleWorkbench.show("package");
+    box.append(save);
   }
-  for (const id of ["rule-search", "rule-category"]) $(id).addEventListener(id === "rule-search" ? "input" : "change", () => {
+  for (const id of ["rule-search", "rule-kind"]) $(id).addEventListener(id === "rule-search" ? "input" : "change", () => {
     rulePage = 0;
-    if (guide) renderRules();
+    refreshRules();
   });
   $("rule-prev").addEventListener("click", () => {
     rulePage--;
-    renderRules();
+    refreshRules();
   });
   $("rule-next").addEventListener("click", () => {
     rulePage++;
-    renderRules();
+    refreshRules();
   });
   $("rules-open").addEventListener("click", async () => {
     window.MobileUI.openRules();
@@ -436,9 +469,10 @@ var __spreadValues = (a, b) => {
   }
   window.LiuyaoV5 = { refreshRuleList() {
     rulePage = 0;
-    if (guide) renderRules();
+    refreshRules();
   }, setProfile, selectSelf, renderComprehensive, renderAudit, setAnalysisContext(input) {
     analysisInput = input;
+    if (guide && !$("rules-page").hidden) refreshRules();
   } };
   loadProfiles().catch(() => {
   });

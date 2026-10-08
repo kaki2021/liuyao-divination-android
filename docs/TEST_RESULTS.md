@@ -2,6 +2,22 @@
 
 复核日期：2026-09-22。
 
+## 规则工作台增量复核（2026-10-08）
+
+规则页合并为「参数调校／使用原理／规则包」。强度、乘数、分界、候选排序和结构识别共用参数表与单项试算；列表只显示「参数／当前值」，保留类型筛选。使用流程、评分机制、通用及卜宅原理集中用表格阅读，原文和适用边界保留折叠入口。试算不写入规则，持久修改继续采用 XLSX 导出／导入。补充说明化空的单项权重固定、其他条件与最终强度可变，未改计分算法。
+
+```bash
+node android/tests/rules_model.cjs
+node android/tests/series_model.cjs
+PYTHONPATH=software_prep:. python -m unittest liuyao_app.test_guidance.GuidanceTests.test_public_principles_include_scoring_without_installed_rules liuyao_app.test_guidance.GuidanceTests.test_checked_sources_keep_quotes_separate_from_software_guidance liuyao_app.test_guidance.GuidanceTests.test_parameter_preview_is_read_only_and_traces_match_the_engine liuyao_app.test_series software_prep.test_case_store liuyao_app.test_response_compat liuyao_app.test_runtime_contract liuyao_app.test_selection_context liuyao_app.test_selection_projection liuyao_app.test_rule_installation
+```
+
+105 项 Python 检查中 104 项通过，1 项因可选 `jsonschema` 缺失跳过。新增检查使用公开占位规则验证试算与实际计算贡献一致，参数库和输入不被修改；未安装私有规则也能读取评分机制、出处与使用流程。实际 HTTP 入口的使用／卜宅原理读取、HTML ID 唯一性和资源引用检查通过。
+
+生产参数模块的筛选、分页边界、数值／地支校验、必要项与识别开关检查通过；源码及 Chrome 58 编译版本的纯参数行为一致。前端及两份浏览器回归脚本语法检查通过。浏览器脚本已适配合并后的栏目、计算表、恢复当前值与规则包管理，本轮未运行浏览器布局、点击、截图或 APK 真机检查；预览图片为布局示意、示例数据。
+
+`npm --prefix android run build:web` 通过，12 个脚本编译至 Chrome 58；`python android/prepare.py` 通过，公开资源包 750 个文件、780248 字节。ZIP CRC、资源与源码／编译脚本一致、未混入私有规则及 SHA256 检查通过；SHA256 为 `a7cc7d0149cf18c721f8b92830da48436a6cfa78d287741b3dec4ebe91d38857`。
+
 ## 系列档案增量复核（2026-10-08）
 
 档案按系列归组，支持在选中卦下再起一卦及继续交流。旧案例成为独立系列起点；用户背景和补充在系列内共享并保留来源。分析冻结当时的共享上下文和所选父卦参考，父卦 AI 判断不进入本次用户事实；共享背景更新后，旧报告显示为历史分析。

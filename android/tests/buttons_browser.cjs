@@ -64,14 +64,13 @@ const check=(name,value)=>{assert.ok(value,name);checks.push(name);console.log('
 
  await page.locator('#rule-next').click();check('规则下一页可用',(await page.locator('#rule-page').textContent()).startsWith('2 /'));
  await page.locator('#rule-prev').click();await page.locator('#rule-search').fill('BASE_SCORE');check('规则搜索可用',await page.locator('#rule-list .rule-item').count()===1);
- await page.locator('#rule-list .rule-item').click();await page.locator('#trial-value').fill('6');await page.locator('.rule-trial button').click();
- await page.waitForFunction(()=>document.querySelectorAll('#rule-trial-result tr').length===7);check('修改参数值后可试算',await page.locator('#rule-trial-result tr').count()===7);
- await page.locator('#rules-page a[download]').click();check('规则导出连接原生接口',await page.evaluate(()=>nativeCalls.some(c=>c[0]==='export'&&c[1].endsWith('/api/rules/export'))));
+ await page.locator('#rule-list .rule-item').click();await page.locator('#trial-value').fill('6');await page.locator('.rule-trial button[type="submit"]').click();
+ await page.waitForFunction(()=>document.querySelectorAll('#rule-trial-result .trial-table tbody tr').length===6);check('修改参数值后可试算',await page.locator('#rule-trial-result .trial-table tbody tr').count()===6);
+ await page.locator('#package-tab').click();await page.locator('#rules-export').click();check('规则导出连接原生接口',await page.evaluate(()=>nativeCalls.some(c=>c[0]==='export'&&c[1].endsWith('/api/rules/export'))));
  const xlsx=await (await page.request.get(url+'/api/rules/export')).body();check('导出的规则表是有效文件',xlsx.subarray(0,2).toString()==='PK');
- await page.locator('#rules-file').locator('..').locator('summary').click();
  await page.locator('#rules-file').setInputFiles({name:'rules.xlsx',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',buffer:xlsx});await page.locator('#rules-import').click();
  await page.waitForFunction(()=>document.querySelector('#rules-message').textContent.includes('校验通过'));check('导出的规则可再次导入',true);
- await page.getByRole('button',{name:'卜宅原理 · 10 条',exact:true}).click();await page.waitForFunction(()=>document.querySelectorAll('.principle-entry').length===10);check('10条卜宅原理保留',await page.locator('.principle-entry').count()===10);
+ await page.locator('#usage-tab').click();await page.waitForFunction(()=>document.querySelector('#usage-panel').dataset.loaded==='true');await page.locator('#residence-principles>summary').click();check('10条卜宅原理并入原理表',await page.locator('.principle-entry').count()===10);
  await page.screenshot({path:path.join(output,'phone-rules.png'),fullPage:false});
  await page.locator('#rules-back').click();
  await page.locator('#mobile-history').click();await page.locator('#profiles-open').click();await page.locator('#profile-name').fill('本人');await page.locator('#profile-birth_date').fill('1994-06-12');await page.waitForFunction(()=>document.querySelector('#birth-pillars').textContent.includes('甲戌'));

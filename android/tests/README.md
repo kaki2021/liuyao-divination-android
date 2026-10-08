@@ -18,4 +18,8 @@
 
 使用 `node tests/guidance_browser.cjs` 检查提问说明、四类卜宅引导、案例持久化、九类参数筛选、实际卦盘计分、只读试算及手机宽度。测试使用本地合成数据，不把教学例子发给模型。
 
+规则工作台只有「参数调校／使用原理／规则包」三个栏目。参数列表只显示参数及当前值，保留类型筛选；选中后的当前值与试调值并排，恢复当前值或再次编辑会清除旧对比。通用与卜宅原理并入使用原理表，出处按需展开。试算不保存，持久调整仍通过导出并重新导入 XLSX 完成。
+
+使用 `node tests/rules_model.cjs` 检查生产代码的筛选、分页边界、数值／地支输入、必要参数与识别开关，无需浏览器或私有规则。仓库根目录运行 `PYTHONPATH=software_prep:. python -m unittest liuyao_app.test_guidance.GuidanceTests.test_public_principles_include_scoring_without_installed_rules liuyao_app.test_guidance.GuidanceTests.test_parameter_preview_is_read_only_and_traces_match_the_engine`，检查未安装规则时的原理内容，以及试算贡献与计算引擎一致、原规则和输入不被修改。使用公开占位参数，不验证真实占断效果。
+
 公开源码的最新复核结果见 `../../docs/TEST_RESULTS.md`。本目录保留可复跑脚本，不提交带本机路径的原始运行日志。

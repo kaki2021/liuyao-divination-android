@@ -17,8 +17,8 @@ const check=(name,condition)=>{assert.ok(condition,name);checks.push(name);conso
  check('提问引导区分先谋与诊断',(await page.locator('#question-guidance').textContent()).includes('诊断前不必编造整改方案'));
  await page.locator('#question-guidance button').click();await page.waitForFunction(()=>document.querySelector('#usage-panel').dataset.loaded==='true');
  check('使用方法打开独立规则页面',await page.locator('#usage-panel').isVisible());
- check('九条原理有原文短引及核对范围',await page.locator('#usage-panel>.guide-details').count()===10&&(await page.locator('#usage-panel').textContent()).includes('已于 2026-09-20 核对'));
- await page.locator('#usage-panel>.guide-details').filter({hasText:'先认真谋划，再卜疑处'}).locator('summary').first().click();
+ check('九条通用原理有原文短引及核对范围',await page.locator('#general-principles .principle-source').count()===9&&(await page.locator('#usage-panel').textContent()).includes('已于 2026-09-20 核对'));
+ await page.locator('#general-principles>summary').click();
  check('短引与软件采用方式分开显示',await page.locator('#usage-panel blockquote').count()===9&&(await page.locator('#usage-panel').textContent()).includes('软件怎样采用'));
  await page.screenshot({path:path.join(output,'source-guide.png')});
  await page.locator('#rules-back').click();check('阅读引导不改写问题',await page.locator('#question').inputValue()===q);
@@ -38,22 +38,23 @@ const check=(name,condition)=>{assert.ok(condition,name);checks.push(name);conso
  const saved=await(await page.request.get(url+'/api/cases/'+cid)).json();
  check('卜宅阶段及真实方案随案例保存',saved.case.revisions.at(-1).input.buzhai.stage==='diagnosis'&&saved.case.revisions.at(-1).input.buzhai.proposal==='保留已填写的真实方案');
  check('教学例子未混入案例',!JSON.stringify(saved.case).includes('不会自动填入案例'));
- await page.locator('#mobile-rules').click();await page.getByRole('button',{name:'评分参数',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#rule-detail').textContent.includes('共同起点'));
+ await page.locator('#mobile-rules').click();await page.locator('#parameter-tab').click();await page.waitForFunction(()=>document.querySelector('#rule-detail').textContent.includes('共同起点'));
  check('基础分明确给六个爻分别计分',(await page.locator('#rule-detail').textContent()).includes('六个爻分别'));
- await page.getByRole('button',{name:'为什么初始是 5 分？',exact:true}).click();check('说明5分是人为中点及缺少校准',(await page.locator('#score-overview').textContent()).includes('尚无案例校准证明'));
+ await page.locator('#usage-tab').click();await page.locator('#score-overview>summary').click();check('说明5分是人为中点及缺少校准',(await page.locator('#score-overview').textContent()).includes('尚无案例校准证明'));await page.locator('#parameter-tab').click();
  await page.locator('#rule-kind').selectOption('threshold');check('可按标签分界筛选',await page.locator('#rule-list .rule-item').count()===2);
  await page.locator('#rule-kind').selectOption('');await page.locator('#rule-search').fill('BASE_SCORE');await page.locator('#rule-list button').first().click();
  await page.locator('#rule-calculation>summary').click();await page.waitForFunction(()=>document.querySelector('#rule-calculation .score-ledger'));
  check('账单使用当前卦而非偷偷用示例',(await page.locator('#rule-calculation').textContent()).includes('当前显示卦盘'));
- check('实际账单逐步展示起点自身作用合计',(await page.locator('#rule-calculation').textContent()).includes('③ 其他来源对本爻的作用')&&(await page.locator('#rule-calculation').textContent()).includes('④ 合成最终强度'));
+ check('计算表展示起点自身外来作用与合计',(await page.locator('#rule-calculation').textContent()).includes('外来作用合计')&&(await page.locator('#rule-calculation').textContent()).includes('最终强度'));
  for(let p=1;p<=6;p++){await page.locator('#rule-calculation select').selectOption(String(p));check('可以逐爻切换账单 '+p,(await page.locator('#rule-calculation .score-ledger').textContent()).includes(`只计算第 ${p} 爻`));}
  await page.locator('#rule-calculation select').selectOption('5');await page.locator('#rule-detail').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,'score-ledger.png')});
- const before=await(await page.request.get(url+'/api/rules')).json();await page.locator('#trial-value').fill('4');await page.locator('.rule-trial button').click();await page.waitForFunction(()=>document.querySelector('#rule-trial-result .trial-table'));
+ const before=await(await page.request.get(url+'/api/rules')).json();await page.locator('#trial-value').fill('4');await page.locator('.rule-trial button[type="submit"]').click();await page.waitForFunction(()=>document.querySelector('#rule-trial-result .trial-table'));
  const after=await(await page.request.get(url+'/api/rules')).json();check('试调未保存模型参数',before.digest===after.digest);
- check('试调给出六爻对比及前后完整账单',await page.locator('#rule-trial-result table tr').count()===7&&(await page.locator('#rule-trial-result').textContent()).includes('调整后完整账单'));
- await page.locator('#rule-search').fill('ENABLE_TRIPLE_COMBINE');await page.locator('#rule-list button').first().click();check('识别开关不允许用数值加减',await page.locator('#trial-value').isDisabled());await page.locator('#trial-enabled').uncheck();await page.locator('.rule-trial button').click();await page.waitForFunction(()=>document.querySelector('#rule-trial-result').textContent.includes('比较结构识别'));
+ check('试调给出六爻对比及前后明细',await page.locator('#rule-trial-result .trial-table tbody tr').count()===6&&(await page.locator('#rule-trial-result').textContent()).includes('试调计算明细'));
+ await page.locator('.rule-trial button[type="button"]').click();check('恢复当前值清除旧对比',await page.locator('#trial-value').inputValue()==='5'&&await page.locator('#rule-trial-result').textContent()==='');
+ await page.locator('#rule-search').fill('ENABLE_TRIPLE_COMBINE');await page.locator('#rule-list button').first().click();check('识别开关不允许用数值加减',await page.locator('#trial-value').isDisabled());await page.locator('#trial-enabled').uncheck();await page.locator('.rule-trial button[type="submit"]').click();await page.waitForFunction(()=>document.querySelector('#rule-trial-result').textContent.includes('比较结构识别'));
  check('结构参数试算显示结构差异入口',(await page.locator('#rule-trial-result').textContent()).includes('比较结构识别与动变标记'));
- for(const width of [320,360,390,412]){await page.setViewportSize({width,height:844});check('评分说明无横向溢出 '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.locator('#usage-tab').click();check('使用原理无横向溢出 '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.getByRole('button',{name:'评分参数',exact:true}).click();}
+ for(const width of [320,360,390,412]){await page.setViewportSize({width,height:844});check('调参表无横向溢出 '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.locator('#usage-tab').click();check('使用原理无横向溢出 '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.locator('#package-tab').click();check('规则包无横向溢出 '+width,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.locator('#parameter-tab').click();}
  await page.setViewportSize({width:390,height:844});await page.locator('#rules-back').click();await page.locator('#edit-case-input').click();await page.locator('.mobile-step-back').click();await page.locator('#buzhai-details').evaluate(x=>x.open=true);await page.locator('#buzhai-stage-help').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,'buzhai-guide.png')});
  check('阅读与试算没有前端异常',errors.length===0);
  fs.writeFileSync(path.join(output,'browser_results.json'),JSON.stringify({status:'passed',checks,errors,live_api_calls:0,fixture:'真实打包资源，本地HTTP，浏览器原生桥接替身'},null,2));console.log(JSON.stringify({status:'passed',checks:checks.length}));

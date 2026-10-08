@@ -11,7 +11,7 @@ import zipfile
 from unittest.mock import patch
 import http.server
 from .learning_guide import usage_guide
-from .rule_explanations import rule_guide, preview_rule, score_trace, KINDS
+from .rule_explanations import rule_guide, preview_rule, score_trace, scoring_guide, KINDS
 from .rulebook import load_rules, RuleBook, compile_rules, export_workbook, read_workbook
 from .pipeline import calculate_chart, run_analysis
 from .test_v5 import INPUT, LINES, NewReportProvider
@@ -21,6 +21,35 @@ from .server import Application
 from case_store import CaseStore, Actor
 
 class GuidanceTests(unittest.TestCase):
+    def test_parameter_preview_is_read_only_and_traces_match_the_engine(self):
+        from .test_rule_installation import public_placeholder_rows
+        book=RuleBook(compile_rules(public_placeholder_rows()))
+        original=copy.deepcopy(book.compiled)
+        data={'lines':LINES,'actual_cast_time':'2026-09-18T12:00:00+08:00'}
+        saved=copy.deepcopy(data)
+        result=preview_rule(book,'BASE_SCORE',4,True,data)
+        self.assertFalse(result['saved'])
+        self.assertIn('当前显示卦盘',result['example'])
+        self.assertEqual(len(result['before']),6)
+        self.assertEqual(len(result['after']),6)
+        for key,trace_key in [('before','before_trace'),('after','after_trace')]:
+            for line,trace in zip(result[key],result[trace_key]):
+                self.assertEqual(line['score'],trace['score'])
+                self.assertEqual(line['level'],trace['level'])
+                contributions=trace['local_items']+trace['incoming_items']
+                self.assertEqual(round(trace['base']+sum(c['value'] for c in contributions),3),trace['raw_score'])
+        self.assertEqual(book.compiled,original)
+        self.assertEqual(data,saved)
+
+    def test_public_principles_include_scoring_without_installed_rules(self):
+        with patch('liuyao_app.rulebook.load_rules',side_effect=AssertionError('must not load a private rulebook')):
+            g=usage_guide()
+        self.assertEqual(g['scoring'],scoring_guide())
+        self.assertEqual(len(g['scoring']['kinds']),9)
+        self.assertEqual(len(g['scoring']['formulas']),6)
+        self.assertNotIn('rules',g['scoring'])
+        self.assertIn('再起一卦',g['workflow'][-1]['text'])
+
     def test_checked_sources_keep_quotes_separate_from_software_guidance(self):
         g=usage_guide()
         self.assertEqual(len(g['rules']),9)

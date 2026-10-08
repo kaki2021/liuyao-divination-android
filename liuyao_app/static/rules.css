@@ -1,0 +1,47 @@
+/* Consolidated rules workbench; loaded after the existing mobile styles. */
+.rules-page>h2{margin:10px 0 8px}.rules-page #rules-version{margin:0 0 20px}
+.rules-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-gap:4px;gap:4px;padding:4px;margin:20px 0;background:#e8ece2;border:1px solid var(--line);border-radius:12px}
+.rules-tabs button{min-width:0;min-height:44px;background:transparent;border:0;border-radius:8px;font:inherit;font-size:14px;color:var(--muted);cursor:pointer;padding:9px 6px}
+.rules-tabs button[aria-pressed=true]{background:var(--paper);color:var(--ink);box-shadow:0 1px 4px #253e3b13;font-weight:600}
+.rules-page #rules-message:empty{display:none}.rules-page #rules-message{font-size:13px;padding:10px 12px;background:#edf2e8;border-radius:8px}
+.rules-page .rule-browser{grid-template-columns:minmax(270px,.9fr) minmax(0,1.1fr);grid-gap:24px;gap:24px;margin:20px 0}
+.rule-catalog,.rules-page #rule-detail{min-width:0}
+.rule-filters{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-gap:12px;gap:12px;margin-bottom:12px}
+.rules-page .rule-filters label{font-size:12px;margin:0 0 6px}.rules-page .rule-filters input,.rule-filters select{margin:0;width:100%;min-width:0}
+.rules-page .rule-table{width:100%;table-layout:fixed;border-collapse:collapse;border:1px solid var(--line);border-radius:10px;font-size:13px;background:var(--paper);margin:12px 0}
+.rules-page .rule-table th,.rules-page .rule-table td{text-align:left;vertical-align:top;padding:11px 10px;border-bottom:1px solid var(--line);word-wrap:break-word;overflow-wrap:anywhere;white-space:normal;line-height:1.65}
+.rules-page .rule-table th{font-size:12px;background:#edf0e7;color:#65716a;font-weight:500}
+.rules-page .rule-table p{margin:0}.rules-page .rule-table .rule-fold{margin:8px 0 0;padding:0;border:0;border-radius:0;background:transparent}
+.rules-page .rule-pairs th:first-child,.rules-page .rule-pairs td:first-child{width:27%}.rules-page .rule-values th:first-child,.rules-page .rule-values td:first-child{width:22%}
+.rules-page .rule-values input,.rules-page .rule-values select{width:100%;max-width:none;min-width:0;margin:0;min-height:42px;padding:8px}
+.rules-page .rule-values .checkbox-line{margin:0;min-height:42px;font-size:12px}.rules-page .rule-values input[type=checkbox]{width:auto;min-height:auto}
+.rules-page .rule-parameter-table th:first-child{width:70%}.rules-page .rule-parameter-table th:nth-child(2){width:30%}
+.rules-page .rule-parameter-table td{padding:0;vertical-align:middle}.rules-page .rule-parameter-table td+td{padding:9px 8px}
+.rules-page .rule-item{display:block;min-width:0;width:100%;text-align:left;min-height:54px;background:transparent;border:0;border-radius:0;padding:9px 10px;margin:0;font-size:13px}
+.rules-page .rule-item span,.rules-page .rule-item small{display:block}.rules-page .rule-item small{font-size:9px;line-height:1.5;color:var(--muted);margin-top:3px}
+.rules-page .rule-parameter-table tr[data-selected=true]{background:#edf2e8}.rules-page .rule-parameter-table tr[data-selected=true] .rule-item{box-shadow:inset 3px 0 #476b60;color:var(--ink);font-weight:600}
+.rules-page .rule-pagination{margin:12px 0 0;font-size:12px}.rules-page .rule-pagination button{min-height:44px}
+.rules-page #rule-detail{padding:20px;background:var(--paper);border:1px solid var(--line);border-radius:14px;scroll-margin-top:24px}
+.rules-page #rule-detail>h3{font-size:20px;line-height:1.5;margin:4px 0}.rules-page #rule-detail>.eyebrow{font-size:10px;margin:0 0 4px;overflow-wrap:anywhere}
+.rules-page .rule-type-label{margin:0 0 16px;font-size:12px}.rules-page .rule-trial{padding:0;border:0;border-radius:0;margin:16px 0 0}
+.rules-page .rule-trial h4{font-size:14px;margin:0 0 10px}.rule-trial-actions{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);grid-gap:8px;gap:8px;margin-top:14px}
+.rule-trial-actions button{min-width:0;padding:11px 8px;min-height:44px;font-size:13px}.rules-page .rule-trial .small-note{font-size:12px;margin:10px 0}
+.rules-page .rule-fold{margin:16px 0;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#f6f7f0;min-width:0}
+.rules-page .rule-fold>summary{cursor:pointer;font-size:13px;font-weight:600;min-height:24px;line-height:1.8;overflow-wrap:anywhere}
+.rules-page .rule-fold p{font-size:13px;line-height:1.8}.rules-page .rule-fold .rule-fold{background:transparent;padding:0;border:0}
+.rules-page .rule-doc-section{margin:24px 0}.rules-page .rule-doc-section>h3,#package-panel>h3{font-size:18px;margin:0 0 12px}
+.rules-page .score-ledger h5{font-size:13px;margin:16px 0 8px}.rules-page .score-ledger .rule-pairs td:first-child{width:37%}
+.rules-page .rule-contributions th:first-child{width:44%}.rules-page .rule-contributions th:last-child{width:22%}
+.rules-page #rule-trial-result{margin-top:18px}.rules-page #rule-trial-result:empty{display:none}.rules-page .trial-table{margin:12px 0;border-collapse:collapse}
+.rules-page .trial-table th:first-child{width:30%}.rules-page .trial-table th:last-child{width:15%}
+.rules-page .rules-tools{display:grid;grid-template-columns:1fr 1fr;grid-gap:16px;gap:16px;align-items:start;margin-top:20px}
+.rules-tools>section{padding:18px;background:var(--paper);border:1px solid var(--line);border-radius:12px;min-width:0}
+.rules-tools h4{font-size:15px;margin:0 0 12px}.rules-tools label{font-size:12px}.rules-tools input{min-width:0;width:100%;margin:8px 0 16px}.rules-tools .secondary-button,.rules-tools .primary-button{display:block;text-align:center;width:100%;min-height:44px;padding:12px 8px}
+@media(max-width:760px){
+ .rules-page .rule-browser{display:block}.rules-page #rule-detail{padding:18px 14px;margin-top:22px}
+ .rules-page .rule-table th,.rules-page .rule-table td{padding:9px 7px;font-size:12px}.rules-page .rule-parameter-table td{padding:0}.rules-page .rule-parameter-table td+td{padding:8px 6px}
+ .rules-page .rule-item{padding:9px 8px;font-size:12px}
+ .rules-page .rule-values th:first-child,.rules-page .rule-values td:first-child{width:22%}.rules-page .rule-values td{padding:8px 6px}
+ .rules-page .rule-values input,.rules-page .rule-values select{padding:8px 5px;font-size:13px}.rules-page .rule-values .checkbox-line{gap:4px}
+ .rules-page .rule-fold{padding:12px}.rules-page .rules-tools{grid-template-columns:minmax(0,1fr)}
+}

@@ -61,20 +61,5 @@
     const limits=node('details');limits.append(node('summary','出处与当前能力范围'),node('p','《卜筮正术补充卜宅》043、044；《太卜风水术》PDF 第130、149～150页。全部原理可在规则库查看、导出。','small-note'));t.limitations.forEach(s=>limits.append(node('p',s,'small-note')));panel.append(limits);
   }
 
-  const dialog=$('rules-page'),parameter=node('div'),principles=node('div');parameter.id='parameter-panel';principles.id='principle-panel';principles.hidden=true;
-  for(const child of [...dialog.children])if(child.matches('#rules-version,.rules-tools,#rules-message,.rules-primer,.rule-browser'))parameter.append(child);
-  const tabs=node('div','','principle-tabs'),parameterTab=node('button','评分参数'),principleTab=node('button','卜宅原理 · 10 条');
-  for(const b of [parameterTab,principleTab]){b.type='button';tabs.append(b);}parameterTab.setAttribute('aria-pressed','true');principleTab.setAttribute('aria-pressed','false');dialog.append(tabs,parameter,principles);
-  let guide=null;
-  function show(which){parameter.hidden=which!=='parameter';principles.hidden=which!=='principles';parameterTab.setAttribute('aria-pressed',String(which==='parameter'));principleTab.setAttribute('aria-pressed',String(which==='principles'));}
-  parameterTab.addEventListener('click',()=>show('parameter'));
-  principleTab.addEventListener('click',async()=>{show('principles');if(guide)return;principles.replaceChildren(node('p','正在读取原理…'));
-    try{const response=await fetch('/api/principles',{headers:{'X-App-Request':'1'}});if(!response.ok)throw new Error('原理未能读取，请重试。');guide=await response.json();principles.replaceChildren(node('p',guide.note,'topic-help'));
-      const link=node('a','导出原理及出处（JSON）','secondary-button');link.href='/api/principles/export';link.download='卜宅原理.json';principles.append(link);
-      const table=node('table','','principle-table');const head=node('tr');['命名候选','世爻六亲','还须核对旺相的六亲'].forEach(t=>head.append(node('th',t)));table.append(head);guide.five_lands.forEach(r=>{const tr=node('tr');[r.name,r.shi_relative,r.required_relative].forEach(t=>tr.append(node('td',t)));table.append(tr);});principles.append(table);
-      principles.append(node('p','下面各条可展开。这里没有需要修改的数值；实验加减分仍在“评分参数”中单独说明。','small-note'));
-      guide.rules.forEach(r=>{const d=node('details','','principle-entry');d.append(node('summary',r.title),node('p',r.statement),node('p','适用范围：'+r.scope,'small-note'));r.limitations.forEach(t=>d.append(node('p','边界：'+t,'small-note')));const source=guide.sources.find(s=>s.source_id===r.source_id);d.append(node('p','出处：《'+source.title+'》'+r.source_locator,'source-note'));principles.append(d);});
-    }catch(e){guide=null;principles.replaceChildren(node('p',e.message));}
-  });
   window.Buzhai={read,fill,canonical,render};
 })();

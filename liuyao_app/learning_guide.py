@@ -16,6 +16,7 @@ TOPICS = [
 
 
 def usage_guide():
+    from .rule_explanations import scoring_guide
     catalog = json.loads((Path(__file__).resolve().parents[1] / 'software_prep/rule_catalog.json').read_text())
     rules = {r['rule_id']:r for r in catalog['rules']}
     sources = {s['source_id']:s for s in catalog['sources']}
@@ -27,11 +28,12 @@ def usage_guide():
                         'source':sources[rule['source_id']]['title'], 'locator':rule['source_locator'],
                         'limitations':rule.get('limitations',[]), **review['rules'][key]})
     return {'title':'怎样问、怎样起、怎样用',
+            'scoring':scoring_guide(),
             'source_note':'已于 2026-09-20 核对《卜筮正术》001、003、010～012 与《卜筮正术补充卜宅》044 的相关正文。以下白话是整理说明；展开可区分原文短引、课次定位和软件采用方式。原理有出处，不等于实验分值已由原书规定或经案例验证。',
             'purpose':'先谋划现实中的做法，再就未拿准之处起卦；用于检查计划、权衡得失和改进做法，保留后续事实反馈。',
             'rules':entries,
             'workflow':[
                 {'title':'明确所问','text':'谋事写清具体计划、已知条件与疑点；诊断先写清待查范围和目的。保留本人真实关切，不让 AI 猜来意。'},
                 {'title':'记录实际起卦','text':'按器具说明操作，保存本次真实结果及当时的时间。软件只翻译和排盘，不代替实际摸取或摇卦。'},
-                {'title':'分层阅读结果','text':'先读直接答案，再看条件与专业依据。程序结构、实验评分、AI 判断和实际发生结果分别辨认。'},
-                {'title':'留存后续反馈','text':'记录实际进展。补充事实后可继续分析原卦；重新解卦调用 AI，不会自动再起一卦。新起一卦另建案例。'}]}
+                {'title':'分层阅读结果','text':'先读解卦结论，再看条件与专业依据。程序结构、实验评分、AI 判断和实际发生结果分别辨认。'},
+                {'title':'留存后续反馈','text':'记录实际进展。补充事实后可继续分析原卦；重新解卦调用 AI，不会自动再起一卦。相关问题用“再起一卦”接入本系列，无关问题新建系列。'}]}
