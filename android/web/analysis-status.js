@@ -27,7 +27,7 @@
   error.hidden = true;
   error.setAttribute("role", "status");
   const actions = el("div", "analysis-monitor-actions", "");
-  const replies = el("button", "analysis-view-replies", "查看 AI 回复与报错", "secondary-button"), refresh = el("button", "analysis-refresh", "刷新状态", "text-button");
+  const replies = el("button", "analysis-view-replies", "查看 Log", "secondary-button"), refresh = el("button", "analysis-refresh", "刷新状态", "text-button");
   const answer = el("button", "analysis-view-answer", "先看解卦结论", "secondary-button");
   answer.type = "button";
   answer.hidden = true;
@@ -39,7 +39,7 @@
   floating.type = "button";
   floating.hidden = true;
   document.body.append(floating);
-  const shortcut = el("button", "analysis-records-open", "AI 回复与报错", "text-button");
+  const shortcut = el("button", "analysis-records-open", "Log", "text-button");
   shortcut.type = "button";
   document.querySelector(".analysis-actions").append(shortcut);
   let job = null, receivedAt = 0, disconnected = "", callbacks = {};

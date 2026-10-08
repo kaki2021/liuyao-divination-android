@@ -153,8 +153,21 @@ body { background:#f5f6f3; }
 .trial-table { width:100%; margin:14px 0; font-size:12px; border-collapse:collapse; }
 .trial-table th,.trial-table td { text-align:left; padding:9px 5px; border-bottom:1px solid #e4e9df; }
 #model-info-content:empty:before { content:'本次暂无模型说明。'; display:block; color:#75816e; margin:16px 0; }
+.professional-checks{margin:18px 0 22px}
+.professional-checks>h3{font-size:16px;margin-bottom:6px}
+.professional-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.professional-check-card{border-left:3px solid #b8c9b2;padding-left:14px;min-width:0}
+.professional-check-card h4,.professional-list h4,.professional-missing h4{font-size:12px;margin:0 0 7px;color:var(--ink)}
+.professional-fields{display:grid;grid-template-columns:88px minmax(0,1fr);gap:7px 12px;margin:10px 0 0;font-size:12px;line-height:1.8}
+.professional-fields dt{color:var(--muted)}
+.professional-fields dd{margin:0;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere}
+.professional-list,.professional-missing{margin-top:14px;font-size:12px;line-height:1.9}
+.professional-list ul,.professional-missing ul{margin:0;padding-left:18px;overflow-wrap:anywhere;white-space:pre-wrap}
+.professional-missing{padding:13px 15px;border-radius:6px;background:#fbf6eb;color:#7b6848}
+.professional-card .conclusion-conditions,.professional-card .conclusion-limits{overflow-wrap:anywhere;white-space:pre-wrap}
+.log-card>h3{margin-bottom:6px}
 @media(max-width:720px) {
- .answer-grid,.rule-browser { grid-template-columns:1fr; }
+ .answer-grid,.rule-browser,.professional-check-grid { grid-template-columns:1fr; }
  .parameter-types { grid-template-columns:1fr 1fr; }
  #rules-dialog { padding:22px 16px; }
  .result-tabs { gap:2px; }.result-tabs button { font-size:12px; padding:12px 5px; }

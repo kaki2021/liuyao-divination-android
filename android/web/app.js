@@ -915,8 +915,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     if (typeof report === "string" && !duplicateFailureReport) {
       container.append(node("p", "report-summary", report));
       hasReport = true;
-    } else if (report && typeof report === "object" && !duplicateFailureReport) {
-      hasReport = window.ReportViews.render(report, container, { isDemo: Boolean(result.is_demo) });
+    }
+    if (report && typeof report === "object" && !duplicateFailureReport) {
+      hasReport = window.ReportViews.render(report, container, { isDemo: Boolean(result.is_demo), result });
+    } else {
+      hasReport = window.ReportViews.render({}, container, { isDemo: Boolean(result.is_demo), result }) || hasReport;
     }
     appendListBlock(container, result.clarifying_questions, "还想和你确认", "clarifying-block");
     if (!conclusion) appendListBlock(container, result.unresolved, "本次仍未确定的部分", "unresolved-block");

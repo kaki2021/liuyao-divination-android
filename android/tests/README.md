@@ -1,5 +1,7 @@
 # 手机界面回归检查
 
+使用 `node tests/report_views_browser.cjs` 独立验证专业页的原始意念、取象候选、结论条件、判断边界、缺失条件和 Log 入口。它使用实际页面、CSS 和编译后的 Android 脚本，不依赖私有规则包，不启动后台服务，不调用模型。覆盖早期缺口已解决、待澄清、历史报告、演示、切换分析及 320 到 1280 像素宽度。
+
 在 android 目录准备好 content.zip 后，安装 Playwright（`npm install --no-save --package-lock=false playwright`），运行 `npx playwright install chromium`，然后运行 `node tests/buttons_browser.cjs`。也可通过 CHROMIUM_PATH 指定现有 Chromium，通过 PYTHON 指定 Python 3 命令。
 
 检查运行 APK 中的实际资源包和安卓本地 HTTP 入口，使用隔离的临时数据库，不读取真实案例，不调用付费模型。输出位于 test-results，可通过 LIUYAO_TEST_OUTPUT 修改。

@@ -12,13 +12,13 @@
   const time=el('p','analysis-elapsed','','small-note'),connection=el('p','analysis-connection','','small-note');
   const hint=el('p','analysis-wait-hint','','small-note'),error=el('p','analysis-job-error','','error-text');error.hidden=true;error.setAttribute('role','status');
   const actions=el('div','analysis-monitor-actions','');
-  const replies=el('button','analysis-view-replies','查看 AI 回复与报错','secondary-button'),refresh=el('button','analysis-refresh','刷新状态','text-button');
+  const replies=el('button','analysis-view-replies','查看 Log','secondary-button'),refresh=el('button','analysis-refresh','刷新状态','text-button');
   const answer=el('button','analysis-view-answer','先看解卦结论','secondary-button');answer.type='button';answer.hidden=true;
   replies.type=refresh.type='button';actions.append(answer,replies,refresh);
   const note=el('p','analysis-lock-note','','small-note');
   box.append(title,meta,stepText,bar,list,time,connection,hint,error,actions,note);
   const floating=el('button','analysis-floating','正在解卦 · 查看进度');floating.type='button';floating.hidden=true;document.body.append(floating);
-  const shortcut=el('button','analysis-records-open','AI 回复与报错','text-button');shortcut.type='button';document.querySelector('.analysis-actions').append(shortcut);
+  const shortcut=el('button','analysis-records-open','Log','text-button');shortcut.type='button';document.querySelector('.analysis-actions').append(shortcut);
   let job=null,receivedAt=0,disconnected='',callbacks={};
   const running=()=>job&&['queued','running'].includes(job.status);
   const duration=s=>{s=Math.max(0,Math.floor(s||0));return s<60?`${s} 秒`:`${Math.floor(s/60)} 分 ${s%60} 秒`;};
