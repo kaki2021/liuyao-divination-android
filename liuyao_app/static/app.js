@@ -333,7 +333,6 @@
     $('time-details').open = Boolean(rawTime); $('revision-reason').value = ''; updateCastingMode();
   }
   function resetCase({ transferContext = false } = {}) {
-    window.ConditionRules?.setCase(null);
     if (state.busy) return false;
     if (!mayDiscard({ transferContext })) return false;
     window.AnalysisStatus.clear(); currentJob=null;
@@ -341,6 +340,7 @@
     state.seriesId = null; state.series = null; state.branchParent = null; state.pendingCreate = null; renderBranchDraft(); $('series-card').hidden = true;
     resetRawReplies();
     fillInput(null); $('results-section').hidden = true; $('form-title').textContent = '此刻，你想问什么？';
+    window.ConditionRules?.setCase(null); renderChart(null, null); window.ReportViews.reset();
     $('context-text').value = ''; $('feedback-text').value = '';
     if ($('feedback-occurred')) $('feedback-occurred').value = '';
     if ($('feedback-notes')) $('feedback-notes').value = '';
@@ -708,7 +708,7 @@
     if (historical) container.append(node('p', 'demo-banner', '历史分析：本报告对应当时保存的输入与背景，默认展示当时排盘。切换“当前已保存排盘”后，请按排盘标题区分；录入区始终显示当前输入。'));
     if (!result) { container.append(node('p', 'empty-state', status === 'running' ? `正在生成新的分析，完成后将自动显示结果。${state.runs.length ? '此前的分析保留在“回看分析”中。' : ''}` : '卦象已经排好。选择模型后，可以进一步梳理问题。')); return; }
     if (result.is_demo) container.append(node('p', 'demo-banner', '离线演示：以下用于体验流程，没有调用 AI，也不作占断结论。'));
-    const report = result.user_report || result.display_report || result.report;
+    const report = window.ReportViews.selectReport(result);
     if ($('feedback-run-label')) $('feedback-run-label').textContent = runId ? `反馈对应当前所选分析；规则版本：${result.rules_version || '旧版未记录'}` : '反馈保存在案例中；选择一次分析可关联当时的预测。';
     const errorMessage = readable(result.error);
     const duplicateFailureReport = Boolean(result.error && status === 'failed' && !report?.conclusion &&

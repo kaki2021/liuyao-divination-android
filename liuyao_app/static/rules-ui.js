@@ -30,15 +30,22 @@
   };
   window.RuleWorkbench={model};
   if(typeof document==='undefined')return;
-  let guidePromise=null;
+  let guidePromise=null,guideGeneration=0;
+  function invalidateUsage(){
+    ++guideGeneration;guidePromise=null;const host=$('usage-panel');delete host.dataset.loaded;
+    host.querySelectorAll('a[href^="blob:"]').forEach(a=>URL.revokeObjectURL(a.href));
+    window.ConditionRules?.invalidateLogic();host.replaceChildren(node('p','正在读取使用原理…'));
+    return host.hidden?Promise.resolve():loadUsage();
+  }
   async function read(path){const r=await fetch(path,{headers:{'X-App-Request':'1'}});if(!r.ok)throw Error('原理读取失败，请重试。');return r.json();}
   async function loadUsage(){
     const host=$('usage-panel');if(host.dataset.loaded==='true')return;
     if(guidePromise)return guidePromise;
-    host.replaceChildren(node('p','正在读取使用原理…'));
+    const generation=guideGeneration;host.replaceChildren(node('p','正在读取使用原理…'));
     guidePromise=(async()=>{
       try{
         const [g,b,l]=await Promise.all([read('/api/usage-guide'),read('/api/principles'),read('/api/calculation-logic')]);
+        if(generation!==guideGeneration)return;
         const logic=section('软件计算逻辑');window.ConditionRules.renderLogic(logic,l);
         const workflow=section('使用流程');workflow.append(node('p',g.purpose,'small-note'),table(['步骤','怎么做'],g.workflow.map((s,i)=>[(i+1)+'. '+s.title,s.text]),'rule-pairs'));
         const layers=fold('四类依据怎样分工');layers.append(table(['依据','作用'],[
@@ -59,8 +66,8 @@
         }),'rule-pairs'));
         const link=node('a','导出卜宅原理与出处','text-button');link.href='/api/principles/export';link.download='卜宅原理.json';residence.append(link);
         host.replaceChildren(logic,workflow,scoring,general,residence);host.dataset.loaded='true';
-      }catch(e){host.replaceChildren(node('p',e.message));const retry=node('button','重新读取','secondary-button');retry.type='button';retry.onclick=loadUsage;host.append(retry);}
-      finally{guidePromise=null;}
+      }catch(e){if(generation===guideGeneration){host.replaceChildren(node('p',e.message));const retry=node('button','重新读取','secondary-button');retry.type='button';retry.onclick=loadUsage;host.append(retry);}}
+      finally{if(generation===guideGeneration)guidePromise=null;}
     })();return guidePromise;
   }
   function show(which){
@@ -70,5 +77,5 @@
   }
   for(const key of ['parameter','usage','package'])$(key==='usage'?'usage-tab':key+'-tab').addEventListener('click',()=>show(key));
   function overview(guide){const kind=$('rule-kind'),previous=kind.value;kind.replaceChildren(node('option','全部类型'));kind.firstChild.value='';guide.kinds.forEach(t=>{const o=node('option',t.name);o.value=t.id;kind.append(o);});kind.value=previous||'';}
-  window.RuleWorkbench={node,table,fold,model,show,overview,loadUsage};
+  window.RuleWorkbench={node,table,fold,model,show,overview,loadUsage,invalidateUsage};
 })();

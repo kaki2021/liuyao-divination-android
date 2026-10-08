@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 for(const dir of ['../../liuyao_app/static','../web']){
  const file=path.join(__dirname,dir,'condition-rules.js');if(!fs.existsSync(file))continue;
- const context={window:{}};vm.runInNewContext(fs.readFileSync(file,'utf8'),context);const m=context.window.ConditionRules.model;
+ const context={window:{}};vm.runInNewContext(fs.readFileSync(path.join(__dirname,dir,'report-views.js'),'utf8'),context);vm.runInNewContext(fs.readFileSync(file,'utf8'),context);const m=context.window.ConditionRules.model,select=context.window.ReportViews.selectReport;
  assert.equal(m.label('unknown'),'未知');assert.equal(m.conjunction([{status:'satisfied'},{status:'unknown'}]),'unknown');
  assert.equal(m.conjunction([{status:'unsatisfied'},{status:'unknown'}]),'unsatisfied');
  const rules=[{id:'empty',name:'化空',scene:'空破',scope:'变支旬空',policy:'保留状态'},{id:'use',name:'取用',scene:'取用',scope:'对象用途',policy:'多现候选'}];
@@ -22,5 +22,12 @@ for(const dir of ['../../liuyao_app/static','../web']){
  assert.equal(rows[1].prediction,'未关联可读的分析');assert.equal(rows[1].runId,null);
  assert.equal(rows[1].rating,'尚待验证');assert.equal(JSON.stringify(record),unchanged);
  assert.equal(m.caseRows(null).length,0);
+ const legacy={user_report:{},display_report:{summary:'旧版可读预测'}};
+ assert.equal(select(legacy),legacy.display_report);
+ legacy.user_report={model_info:{rules_version:'old'}};assert.equal(select(legacy),legacy.display_report);
+ record.analysis_runs[0].outcome.result.report=legacy;assert.equal(m.caseRows(record)[0].prediction,'旧版可读预测');
+ record.analysis_runs[0].outcome.result.report='旧版文本预测';assert.equal(m.caseRows(record)[0].prediction,'旧版文本预测');
+ assert.equal(select({user_report:{summary:'正式报告'},display_report:{summary:'备用报告'}}).summary,'正式报告');
+ assert.equal(select(undefined),null);assert.equal(select({user_report:{},display_report:{}}).summary,undefined);
  console.log('PASS',dir,'condition states, scenarios, distinct empty labels and feedback bound to its saved analysis');
 }

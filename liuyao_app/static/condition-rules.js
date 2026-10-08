@@ -4,7 +4,7 @@
   const labels={satisfied:'满足',unsatisfied:'不满足',unknown:'未知'};
   const model={
     label(status){return labels[status]||'未知';},
-    caseRows(record){const names={matched:'符合',partly_matched:'部分符合',unmatched:'不符合',pending:'尚待验证'};return (record?.feedback||[]).map(f=>{const run=(record.analysis_runs||[]).find(r=>r.analysis_run_id===f.analysis_run_id),saved=run?.outcome?.result?.report,report=saved?.user_report||saved?.display_report||saved;return {prediction:report?.plain_language?.answer||report?.conclusion?.answer||report?.summary||'未关联可读的分析',actual:f.reported_outcome||f.text||'尚未说明',rating:names[f.match_degree]||'尚待验证',ruleVersion:f.rules_version||run?.rules_digest||'',runId:f.analysis_run_id||null};});},
+    caseRows(record){const names={matched:'符合',partly_matched:'部分符合',unmatched:'不符合',pending:'尚待验证'};return (record?.feedback||[]).map(f=>{const run=(record.analysis_runs||[]).find(r=>r.analysis_run_id===f.analysis_run_id),report=window.ReportViews.selectReport(run?.outcome?.result?.report);return {prediction:(typeof report==='string'?report:report?.plain_language?.answer||report?.conclusion?.answer||report?.summary)||'未关联可读的分析',actual:f.reported_outcome||f.text||'尚未说明',rating:names[f.match_degree]||'尚待验证',ruleVersion:f.rules_version||run?.rules_digest||'',runId:f.analysis_run_id||null};});},
     filter(rules,query,scene){const q=String(query||'').trim().toLowerCase();return rules.filter(r=>(!scene||r.scene===scene)&&(!q||[r.name,r.scope,r.policy,r.id].join(' ').toLowerCase().includes(q)));},
     conjunction(checks){return checks.some(c=>c.status==='unsatisfied')?'unsatisfied':checks.some(c=>c.status==='unknown')?'unknown':'satisfied';},
     compare(before,after){return after.checks.map(a=>{const b=before.checks.find(c=>c.rule_id===a.rule_id);return {id:a.rule_id,before:b?.status||'unknown',after:a.status,changed:!b||b.status!==a.status||JSON.stringify(b.conditions)!==JSON.stringify(a.conditions),conditions:a.conditions};});},
@@ -22,7 +22,7 @@
     if(!rows.length)$('condition-detail').replaceChildren(node('p','调整筛选条件可查看其他规则。','empty-state'));
   }
   function detail(){
-    ++request;const r=guide?.rules.find(r=>r.id===selected),box=$('condition-detail');if(!r)return;
+    ++request;const r=model.filter(guide?.rules||[],$('condition-search').value,$('condition-scene').value).find(r=>r.id===selected),box=$('condition-detail');if(!r){box.replaceChildren(node('p','调整筛选条件可查看其他规则。','empty-state'));return;}
     box.replaceChildren(node('h3',r.name),table(['项目','说明'],r.details||[['适用范围',r.scope],['判断原则',r.policy]],'rule-pairs'));
     const checked=current()?.checks.find(c=>c.rule_id===r.id);
     if(checked){box.append(node('p','当前显示卦盘：'+model.label(checked.status),'condition-status '+checked.status));box.append(table(['条件','状态'],checked.conditions.map(c=>{const cell=node('div');cell.append(node('span',model.label(c.status),'condition-status '+c.status));if(c.note)cell.append(node('p',c.note,'small-note'));return [c.label,cell];}),'rule-pairs'));}
@@ -74,6 +74,7 @@
     selector.onchange=()=>{content.querySelectorAll('a[href^="blob:"]').forEach(a=>URL.revokeObjectURL(a.href));display();};display();
   }
   window.ConditionRules={model,load,renderLogic(host,guide){installedLogic=guide;renderLogic(host,guide);},
+    invalidateLogic(){installedLogic=null;},
     setInput(value){input=value;++request;if(guide&&!$('rules-page').hidden)detail();},
     setChart(value){chart=value;++request;if(guide&&!$('rules-page').hidden)detail();},getChart(){return chart;},
     setCase(value){caseRecord=value||null;if(guide&&!$('rules-page').hidden)detail();},

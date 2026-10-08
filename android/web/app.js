@@ -437,7 +437,6 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
   function resetCase({ transferContext = false } = {}) {
     var _a2;
-    (_a2 = window.ConditionRules) == null ? void 0 : _a2.setCase(null);
     if (state.busy) return false;
     if (!mayDiscard({ transferContext })) return false;
     window.AnalysisStatus.clear();
@@ -460,6 +459,9 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     fillInput(null);
     $("results-section").hidden = true;
     $("form-title").textContent = "此刻，你想问什么？";
+    (_a2 = window.ConditionRules) == null ? void 0 : _a2.setCase(null);
+    renderChart(null, null);
+    window.ReportViews.reset();
     $("context-text").value = "";
     $("feedback-text").value = "";
     if ($("feedback-occurred")) $("feedback-occurred").value = "";
@@ -1011,7 +1013,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       return;
     }
     if (result.is_demo) container.append(node("p", "demo-banner", "离线演示：以下用于体验流程，没有调用 AI，也不作占断结论。"));
-    const report = result.user_report || result.display_report || result.report;
+    const report = window.ReportViews.selectReport(result);
     if ($("feedback-run-label")) $("feedback-run-label").textContent = runId ? "反馈对应当前所选分析；规则版本：".concat(result.rules_version || "旧版未记录") : "反馈保存在案例中；选择一次分析可关联当时的预测。";
     const errorMessage = readable(result.error);
     const duplicateFailureReport = Boolean(result.error && status === "failed" && !(report == null ? void 0 : report.conclusion) && (typeof report === "string" ? report === errorMessage : report && !((_i = report.sections) == null ? void 0 : _i.length)));

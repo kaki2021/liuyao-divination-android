@@ -22,10 +22,11 @@
   $('profile-form').addEventListener('submit',async e=>{e.preventDefault();$('profile-save').disabled=true;try{if($('profile-birth-clock').value&&!$('profile-birth_date').value)throw new Error('请先填写出生日期。');const profile={...Object.fromEntries(fields.map(k=>[k,$('profile-'+k).value])),...birthValues()};const body={profile,is_self:$('profile-is-self').checked};if($('profile-edit-select').value){body.person_id=$('profile-edit-select').value;body.expected_version=editingVersion;}const p=await api('/api/profiles',body);requestedProfile=p.person_id;await loadProfiles();editProfile(p.person_id);$('profile-select').dispatchEvent(new Event('change'));$('profile-message').textContent='档案与自动计算的八字已保存，并选用于当前录入。';}catch(e){$('profile-message').textContent=e.message;}finally{$('profile-save').disabled=false;}});
   function showRuleContent(value){document.querySelector('.rule-browser').hidden=!value;$('rules-empty').hidden=value;$('rules-export').hidden=!value;}
   async function loadRules(){
-    ++previewRequest;const status=await api('/api/rules');
-    if(!status.installed){guide=null;rulesVersion='';showRuleContent(false);$('rules-version').textContent='条件判断 1 · 计算逻辑可直接阅读 · 实验参数未安装';return false;}
+    ++previewRequest;const previousVersion=rulesVersion,status=await api('/api/rules');
+    if(!status.installed){guide=null;rulesVersion='';showRuleContent(false);$('rules-version').textContent='条件判断 1 · 计算逻辑可直接阅读 · 实验参数未安装';if(previousVersion!==rulesVersion)await window.RuleWorkbench.invalidateUsage();return false;}
     guide=await api('/api/rules/guide');const kinds=new Map(guide.kinds.map((k,i)=>[k.id,i]));guide.rules.sort((a,b)=>kinds.get(a.kind)-kinds.get(b.kind)||a.id.localeCompare(b.id));rulesVersion=guide.version;showRuleContent(true);window.RuleWorkbench.overview(guide);
     $('rules-version').textContent=`条件判断 1 · 实验参数 ${guide.version}`;
+    if(previousVersion!==rulesVersion)await window.RuleWorkbench.invalidateUsage();
     if(!guide.rules.some(r=>r.id===selectedRule))selectedRule='BASE_SCORE';refreshRules();return true;
   }
   function renderRules(){

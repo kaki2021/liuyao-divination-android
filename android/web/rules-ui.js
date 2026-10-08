@@ -66,7 +66,18 @@
   };
   window.RuleWorkbench = { model };
   if (typeof document === "undefined") return;
-  let guidePromise = null;
+  let guidePromise = null, guideGeneration = 0;
+  function invalidateUsage() {
+    var _a;
+    ++guideGeneration;
+    guidePromise = null;
+    const host = $("usage-panel");
+    delete host.dataset.loaded;
+    host.querySelectorAll('a[href^="blob:"]').forEach((a) => URL.revokeObjectURL(a.href));
+    (_a = window.ConditionRules) == null ? void 0 : _a.invalidateLogic();
+    host.replaceChildren(node("p", "正在读取使用原理…"));
+    return host.hidden ? Promise.resolve() : loadUsage();
+  }
   async function read(path) {
     const r = await fetch(path, { headers: { "X-App-Request": "1" } });
     if (!r.ok) throw Error("原理读取失败，请重试。");
@@ -76,10 +87,12 @@
     const host = $("usage-panel");
     if (host.dataset.loaded === "true") return;
     if (guidePromise) return guidePromise;
+    const generation = guideGeneration;
     host.replaceChildren(node("p", "正在读取使用原理…"));
     guidePromise = (async () => {
       try {
         const [g, b, l] = await Promise.all([read("/api/usage-guide"), read("/api/principles"), read("/api/calculation-logic")]);
+        if (generation !== guideGeneration) return;
         const logic = section("软件计算逻辑");
         window.ConditionRules.renderLogic(logic, l);
         const workflow = section("使用流程");
@@ -144,13 +157,15 @@
         host.replaceChildren(logic, workflow, scoring, general, residence);
         host.dataset.loaded = "true";
       } catch (e) {
-        host.replaceChildren(node("p", e.message));
-        const retry = node("button", "重新读取", "secondary-button");
-        retry.type = "button";
-        retry.onclick = loadUsage;
-        host.append(retry);
+        if (generation === guideGeneration) {
+          host.replaceChildren(node("p", e.message));
+          const retry = node("button", "重新读取", "secondary-button");
+          retry.type = "button";
+          retry.onclick = loadUsage;
+          host.append(retry);
+        }
       } finally {
-        guidePromise = null;
+        if (generation === guideGeneration) guidePromise = null;
       }
     })();
     return guidePromise;
@@ -176,5 +191,5 @@
     });
     kind.value = previous || "";
   }
-  window.RuleWorkbench = { node, table, fold, model, show, overview, loadUsage };
+  window.RuleWorkbench = { node, table, fold, model, show, overview, loadUsage, invalidateUsage };
 })();

@@ -165,12 +165,13 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
   async function loadRules() {
     ++previewRequest;
-    const status = await api("/api/rules");
+    const previousVersion = rulesVersion, status = await api("/api/rules");
     if (!status.installed) {
       guide = null;
       rulesVersion = "";
       showRuleContent(false);
       $("rules-version").textContent = "条件判断 1 · 计算逻辑可直接阅读 · 实验参数未安装";
+      if (previousVersion !== rulesVersion) await window.RuleWorkbench.invalidateUsage();
       return false;
     }
     guide = await api("/api/rules/guide");
@@ -180,6 +181,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     showRuleContent(true);
     window.RuleWorkbench.overview(guide);
     $("rules-version").textContent = "条件判断 1 · 实验参数 ".concat(guide.version);
+    if (previousVersion !== rulesVersion) await window.RuleWorkbench.invalidateUsage();
     if (!guide.rules.some((r) => r.id === selectedRule)) selectedRule = "BASE_SCORE";
     refreshRules();
     return true;

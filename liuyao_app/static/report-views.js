@@ -1,5 +1,12 @@
 (() => {
   'use strict';
+  function selectReport(result){
+    const reports=[result?.user_report,result?.display_report,result?.report,result];
+    const readable=value=>typeof value==='string'?Boolean(value.trim()):value&&typeof value==='object'&&
+      [value.summary,value.plain_language,value.conclusion,value.sections].some(part=>typeof part==='string'?Boolean(part.trim()):part&&typeof part==='object'&&Object.keys(part).length>0);
+    return reports.find(readable)||reports.find(value=>value&&typeof value==='object'&&Object.keys(value).length>0)||null;
+  }
+  window.ReportViews={selectReport};if(typeof document==='undefined')return;
   const $=id=>document.getElementById(id);
   const el=(tag,text='',cls='')=>{const n=document.createElement(tag);n.textContent=text;n.className=cls;return n;};
   const section=$('results-section'), analysis=$('analysis-card');
@@ -94,5 +101,5 @@
     }else professional.append(el('p','本次没有分段推演。','empty-state'));
     return shown;
   }
-  window.ReportViews={render,reset,show,openLog};reset();show('answer');
+  window.ReportViews={render,reset,show,openLog,selectReport};reset();show('answer');
 })();

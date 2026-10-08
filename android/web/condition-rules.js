@@ -9,8 +9,8 @@
       const names = { matched: "符合", partly_matched: "部分符合", unmatched: "不符合", pending: "尚待验证" };
       return ((record == null ? void 0 : record.feedback) || []).map((f) => {
         var _a, _b, _c, _d;
-        const run = (record.analysis_runs || []).find((r) => r.analysis_run_id === f.analysis_run_id), saved = (_b = (_a = run == null ? void 0 : run.outcome) == null ? void 0 : _a.result) == null ? void 0 : _b.report, report = (saved == null ? void 0 : saved.user_report) || (saved == null ? void 0 : saved.display_report) || saved;
-        return { prediction: ((_c = report == null ? void 0 : report.plain_language) == null ? void 0 : _c.answer) || ((_d = report == null ? void 0 : report.conclusion) == null ? void 0 : _d.answer) || (report == null ? void 0 : report.summary) || "未关联可读的分析", actual: f.reported_outcome || f.text || "尚未说明", rating: names[f.match_degree] || "尚待验证", ruleVersion: f.rules_version || (run == null ? void 0 : run.rules_digest) || "", runId: f.analysis_run_id || null };
+        const run = (record.analysis_runs || []).find((r) => r.analysis_run_id === f.analysis_run_id), report = window.ReportViews.selectReport((_b = (_a = run == null ? void 0 : run.outcome) == null ? void 0 : _a.result) == null ? void 0 : _b.report);
+        return { prediction: (typeof report === "string" ? report : ((_c = report == null ? void 0 : report.plain_language) == null ? void 0 : _c.answer) || ((_d = report == null ? void 0 : report.conclusion) == null ? void 0 : _d.answer) || (report == null ? void 0 : report.summary)) || "未关联可读的分析", actual: f.reported_outcome || f.text || "尚未说明", rating: names[f.match_degree] || "尚待验证", ruleVersion: f.rules_version || (run == null ? void 0 : run.rules_digest) || "", runId: f.analysis_run_id || null };
       });
     },
     filter(rules, query, scene) {
@@ -74,8 +74,11 @@
   function detail() {
     var _a;
     ++request;
-    const r = guide == null ? void 0 : guide.rules.find((r2) => r2.id === selected), box = $("condition-detail");
-    if (!r) return;
+    const r = model.filter((guide == null ? void 0 : guide.rules) || [], $("condition-search").value, $("condition-scene").value).find((r2) => r2.id === selected), box = $("condition-detail");
+    if (!r) {
+      box.replaceChildren(node("p", "调整筛选条件可查看其他规则。", "empty-state"));
+      return;
+    }
     box.replaceChildren(node("h3", r.name), table(["项目", "说明"], r.details || [["适用范围", r.scope], ["判断原则", r.policy]], "rule-pairs"));
     const checked = (_a = current()) == null ? void 0 : _a.checks.find((c) => c.rule_id === r.id);
     if (checked) {
@@ -249,6 +252,9 @@
     renderLogic(host, guide2) {
       installedLogic = guide2;
       renderLogic(host, guide2);
+    },
+    invalidateLogic() {
+      installedLogic = null;
     },
     setInput(value) {
       input = value;
