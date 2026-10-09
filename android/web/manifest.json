@@ -7,8 +7,8 @@
       "output": "f843fa1174a2370d31efa719ac38ffaa13524be1e636e02990ad7641b2b68e71"
     },
     "app.js": {
-      "source": "3bf458cfe1783f2489825451a84e7c0f3ebc0a43cb11cdbd4d1663b39d1b02f2",
-      "output": "7d6a0497e108c9d508dab68cb4bf56114fb11c431ba17b333755597c098fafba"
+      "source": "3018458ec4eb3206977b9a38ec823995776ff88fa41ab29bcdc58f758c85152d",
+      "output": "fc7e19d9fe029ad1861ee75411f2d26856789a95e188dbc99e0b29122b893bc4"
     },
     "buzhai.js": {
       "source": "4cfc99fa96a4ea23e377d7ea3c28fa3a0452eec3764028a015962f6124374bc0",
@@ -27,8 +27,8 @@
       "output": "95010c86be55f9c1e337d8a561c7f09d4e3daba102144badda904c75f5a0078a"
     },
     "guidance.js": {
-      "source": "5cc700e2d5d132d491fbb4e1ea39513772ba87b216e5293cf2ed2983651bb6a3",
-      "output": "de0cd54f7eafc947e8923e4661b53fdb818027953b2ffc58784ccab5659ad89a"
+      "source": "12aebdad6c9417c0392d18b6509335a78399c27d2e904275c6bc2b663e0d4e93",
+      "output": "cfd9808f47ca61df947a220d99d04eca487f979081c780ce49d6fda203692e7e"
     },
     "mobile.js": {
       "source": "0579825123d5ac419533fd49526d45cc119f93b1c60c4d7870653363d2bebcb3",
@@ -37,6 +37,10 @@
     "phone-chart.js": {
       "source": "8a81c78a10ead8bbfe77f50942e9d4231a6b39df9b43a614c3148bad9546fa83",
       "output": "8c65225629e66f14ea1f4376a50475f6f9082307e566568505e5cc62bc87df6d"
+    },
+    "random-coin.js": {
+      "source": "c6e5e767b052683d1e4caf41d10f707682a1e6489f04bba25aff200093ae41bc",
+      "output": "5774ef4cd67ce847638095057f601f79fe0124cf1e12d336e6d6fec3919ccff5"
     },
     "report-views.js": {
       "source": "6a6d5cb3a8be0b5b7689155f4e5162b6f01726521210dd9c06ad376678b9c11b",

@@ -92,7 +92,7 @@
     $('analyze-current-case').textContent = value && state.analyzing ? '分析进行中…' : '重新解卦';
     $('context-analyze').textContent = value && state.analyzing ? '正在回复…' : '发送追问';
     if (runSelect) runSelect.disabled = value;
-    if (!value) window.YarrowInput.refresh();
+    if (!value) { window.YarrowInput.refresh(); window.RandomCoinInput.refresh(); }
   }
   function showView(view, { scroll = false } = {}) {
     const requested = ['input', 'results', 'feedback'].includes(view) ? view : 'input';
@@ -157,6 +157,12 @@
       row.append(fieldset); $('taiji-inputs').append(row);
     });
     window.YarrowInput.init($('yarrow-inputs'), onInputChange);
+    window.RandomCoinInput.init($('random-coin-inputs'), ({ firstDraw }) => {
+      if (firstDraw && !$('cast-time').value) {
+        $('cast-time').value = localDateTime(new Date()); $('time-details').open = true;
+      }
+      onInputChange(); persistDraft();
+    });
     document.querySelectorAll('input[name="casting-method"]').forEach(radio => radio.addEventListener('change', updateCastingMode));
     updateCastingMode();
   }
@@ -170,12 +176,14 @@
   function castingMethod() { return document.querySelector('input[name="casting-method"]:checked')?.value || 'meibu'; }
   function selectedCastingResults(method = castingMethod()) {
     if (method === 'yarrow') return window.YarrowInput.read();
+    if (method === 'random_coin') return window.RandomCoinInput.read();
     const count = method === 'meibu' ? 3 : 6;
     return Array.from({ length: count }, (_, index) => document.querySelector(`input[name="${method}-${index + 1}"]:checked`)?.value || null);
   }
   function taijiCombination(value) { return typeof value === 'string' && /^[23]{3}$/.test(value) ? [...value].sort().join('') : null; }
   function linesFromCasting(method, results) {
     if (method === 'yarrow') return window.YarrowInput.derive(results);
+    if (method === 'random_coin') return window.RandomCoinInput.derive(results);
     if (method === 'taiji') return Array.from({ length: 6 }, (_, index) => TAIJI[taijiCombination(results[index])] || null);
     if (method !== 'meibu' || results.length !== 3 || results.some(value => !MEIBU.some(item => item.value === value))) return Array(6).fill(null);
     const bits = [...MEIBU.find(item => item.value === results[0]).bits, ...MEIBU.find(item => item.value === results[1]).bits];
@@ -193,11 +201,13 @@
     const method = castingMethod();
     $('meibu-inputs').hidden = method !== 'meibu'; $('taiji-inputs').hidden = method !== 'taiji'; $('line-inputs').hidden = method !== 'direct';
     $('yarrow-inputs').hidden = method !== 'yarrow'; window.YarrowInput.refresh();
+    $('random-coin-inputs').hidden = method !== 'random_coin'; window.RandomCoinInput.refresh();
     $('casting-instruction').textContent = method === 'meibu' ? '三次摸取：第一次定下卦，第二次定上卦，第三次定动爻。' : method === 'taiji' ? '每次选三颗丸显示的组合，共记录六次；223、233 不区分数字先后。' : method === 'yarrow' ? '用实物完成每一变，再记录左右余策。三变合一爻，六爻共十八变；操作前请先看“怎么记录？”。' : '硬币或已有卦象：从初爻到上爻依次选择。已有蓍草／筹策最终结果也可抄录；要保留十八变，请选独立入口。';
+    if (method === 'random_coin') $('casting-instruction').textContent = '用系统随机数模拟三枚公平硬币，从初爻到上爻共六次。结果会标记为“随机模拟”；概率原理见“怎么记录？”。';
     document.querySelector('.casting-layout').classList.toggle('meibu-layout', method === 'meibu');
     onInputChange();
   }
-  function hasEnteredData() { return Boolean($('question').value.trim() || $('cast-time').value || getPersonInfo(false) || window.Buzhai?.read(false) || document.querySelector('#case-form input[type="radio"]:checked:not([name="casting-method"])')); }
+  function hasEnteredData() { return Boolean($('question').value.trim() || $('cast-time').value || getPersonInfo(false) || window.Buzhai?.read(false) || window.RandomCoinInput.read().some(Boolean) || document.querySelector('#case-form input[type="radio"]:checked:not([name="casting-method"])')); }
   function updatePersonFields({ clearIrrelevant = false } = {}) {
     const isSelf = ($('person-subject').value || 'unspecified') === 'self';
     if (isSelf && clearIrrelevant) ['subject-age', 'person-relationship'].forEach(id => { $(id).value = ''; });
@@ -276,6 +286,12 @@
         throw new Error(`请记录${POSITIONS[Math.floor(missing / 3)]}第${missing % 3 + 1}变的两侧余策。`);
       }
       input.casting = { method, results };
+    } else if (method === 'random_coin') {
+      const results = window.RandomCoinInput.read(); const missing = results.findIndex(value => !value);
+      if (validate && missing >= 0) {
+        $('random-coin-draw').focus(); throw new Error(`请完成第${missing + 1}次随机模拟（${POSITIONS[missing]}），六次结果齐全后再保存。`);
+      }
+      input.casting = { method, results };
     } else {
       let results = selectedCastingResults(method); const missing = results.findIndex(item => !item);
       if (validate && missing !== -1) { document.querySelector(`input[name="${method}-${missing + 1}"]`).focus(); throw new Error(method === 'meibu' ? `请补选第${missing + 1}次摸取的结果。` : `请补选第${missing + 1}次摇卦的数字组合。`); }
@@ -323,8 +339,9 @@
     $('person-details').open = Boolean(person);
     updatePersonFields();
     state.originalCasting = input?.casting ? JSON.parse(JSON.stringify(input.casting)) : null;
-    const method = ['meibu', 'taiji', 'yarrow'].includes(input?.casting?.method) ? input.casting.method : input ? 'direct' : 'meibu';
+    const method = ['meibu', 'taiji', 'yarrow', 'random_coin'].includes(input?.casting?.method) ? input.casting.method : input ? 'direct' : 'meibu';
     window.YarrowInput.fill(method === 'yarrow' ? input.casting.results : null);
+    window.RandomCoinInput.fill(method === 'random_coin' ? input.casting.results : null);
     document.querySelector(`input[name="casting-method"][value="${method}"]`).checked = true;
     if (method !== 'direct') (input?.casting?.results || []).forEach((raw, index) => {
       const value = method === 'taiji' ? taijiCombination(raw) : raw;
@@ -479,6 +496,7 @@
     const casting = input?.casting; const record = $('casting-record'); record.hidden = !casting;
     if (casting?.method === 'meibu') record.textContent = `枚卜丸原始记录：${casting.results.map((value, index) => `${['下卦', '上卦', '动爻'][index]} ${MEIBU.find(item => item.value === value)?.label || value}`).join(' → ')}`;
     else if (casting?.method === 'taiji') record.textContent = `太极丸原始记录（初爻至上爻）：${casting.results.join(' / ')}`;
+    else if (casting?.method === 'random_coin') record.textContent = `随机模拟掷币原始记录（系统随机数；初爻至上爻；阴2、阳3）：${casting.results.join(' / ')}`;
     else if (casting?.method === 'yarrow') record.textContent = `蓍草／筹策十八变原始记录（每项为左、右余策）：${casting.results.map((pairs, index) => `${POSITIONS[index]} ${pairs.map(pair => `${pair[0]}与${pair[1]}`).join(' → ')}`).join('；')}`;
     else record.textContent = '';
     if (!chart?.main) { window.LiuyaoPhoneChart.render(null); $('chart-summary').append(node('p', 'empty-state', '这份记录没有可显示的排盘快照。')); document.querySelector('.chart-note').textContent = ''; return; }
@@ -1037,9 +1055,11 @@
     $('guide-dialog').showModal();
     await loadGuideContent('direct-record-guide', '#manual-lines-guide');
     await loadGuideContent('yarrow-record-guide', '#yarrow-guide');
+    await loadGuideContent('random-coin-guide', '#random-casting-explanation');
     if (!$('guide-dialog').open) return;
     if (castingMethod() === 'direct') $('direct-record-guide').scrollIntoView({block:'start'});
     else if (castingMethod() === 'yarrow') $('yarrow-record-guide').scrollIntoView({block:'start'});
+    else if (castingMethod() === 'random_coin') $('random-coin-guide').scrollIntoView({block:'start'});
     else $('guide-dialog').scrollTop = 0;
   });
   $('user-help-open').addEventListener('click', async () => {

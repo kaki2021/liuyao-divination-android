@@ -7,10 +7,11 @@
   "coverage": {
     "meibu_ordered_draw_combinations": 512,
     "taiji_permutation_position_combinations": 48,
-    "yarrow_triple_position_combinations": 1296
+    "yarrow_triple_position_combinations": 1296,
+    "random_coin_permutation_position_combinations": 48
   },
-  "tests_run": 15,
-  "passed": 15,
+  "tests_run": 17,
+  "passed": 17,
   "failed": 0,
   "tests": [
     {
@@ -75,30 +76,42 @@
     },
     {
       "test_id": "CAST-011",
+      "title": "模拟掷币八种组合各六爻位换算、严格校验与来源标签",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_random_coin_keeps_provenance_and_all_eight_coin_combinations"
+    },
+    {
+      "test_id": "CAST-012",
+      "title": "模拟六次原始结果与时间在保存修订后保留",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_random_coin_record_survives_save_and_revision"
+    },
+    {
+      "test_id": "CAST-013",
       "title": "新旧输入契约所需字段及封闭结构",
       "status": "passed",
       "evidence": "test_casting_input.py:test_schema_accepts_new_and_legacy_shapes"
     },
     {
-      "test_id": "CAST-012",
+      "test_id": "CAST-014",
       "title": "太极六次先后顺序对应初爻至上爻",
       "status": "passed",
       "evidence": "test_casting_input.py:test_taiji_six_throws_keep_bottom_to_top_order"
     },
     {
-      "test_id": "CAST-013",
+      "test_id": "CAST-015",
       "title": "筹策十八变左右余策及更正前后顺序完整留存",
       "status": "passed",
       "evidence": "test_casting_input.py:test_yarrow_raw_pairs_survive_revision_and_export"
     },
     {
-      "test_id": "CAST-014",
+      "test_id": "CAST-016",
       "title": "筹策须十八项合法余策且与附带六爻一致",
       "status": "passed",
       "evidence": "test_casting_input.py:test_yarrow_requires_all_18_valid_pairs_and_matching_lines"
     },
     {
-      "test_id": "CAST-015",
+      "test_id": "CAST-017",
       "title": "筹策原例与216种三变组合在六个爻位的1296次核对",
       "status": "passed",
       "evidence": "test_casting_input.py:test_yarrow_source_example_and_all_ordered_triples"

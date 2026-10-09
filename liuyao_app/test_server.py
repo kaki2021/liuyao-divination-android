@@ -203,6 +203,7 @@ class HTTPChecks(unittest.TestCase):
         self.assertEqual(status, 200)
         assets = re.findall(r'(?:src|href)="(/static/[^\"]+)"', page.decode())
         self.assertIn('/static/yarrow.js', assets)
+        self.assertIn('/static/random-coin.js', assets)
         for path in assets:
             with self.subTest(path=path):
                 status, headers, body = self.request('GET', path)

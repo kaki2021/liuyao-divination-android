@@ -59,15 +59,15 @@ def derive_casting_lines(casting):
     errors = [_error("$/casting/" + str(key), "UNEXPECTED_CASTING_FIELD", "起卦记录不接收此字段。")
               for key in casting if key not in {"method", "results"}]
     method = casting.get("method")
-    if not isinstance(method, str) or method not in {"meibu", "taiji", "yarrow"}:
-        errors.append(_error("$/casting/method", "INVALID_CASTING_METHOD", "起卦方式须为meibu、taiji或yarrow；逐爻录入时仅提供lines。"))
+    if not isinstance(method, str) or method not in {"meibu", "taiji", "yarrow", "random_coin"}:
+        errors.append(_error("$/casting/method", "INVALID_CASTING_METHOD", "起卦方式须为meibu、taiji、yarrow或random_coin；逐爻录入时仅提供lines。"))
     results = casting.get("results")
-    expected = 3 if method == "meibu" else 6 if method in ("taiji", "yarrow") else None
+    expected = 3 if method == "meibu" else 6 if method in ("taiji", "yarrow", "random_coin") else None
     if not isinstance(results, list):
         errors.append(_error("$/casting/results", "CASTING_RESULTS_REQUIRED", "须按实际先后次序提供起卦结果数组。"))
     elif expected is not None:
         if len(results) != expected:
-            errors.append(_error("$/casting/results", "CASTING_RESULT_COUNT", f"{dict(meibu='枚卜丸', taiji='太极丸', yarrow='蓍草／筹策')[method]}须提供{expected}项结果。"))
+            errors.append(_error("$/casting/results", "CASTING_RESULT_COUNT", f"{dict(meibu='枚卜丸', taiji='太极丸', yarrow='蓍草／筹策', random_coin='随机模拟掷币')[method]}须提供{expected}项结果。"))
         for index, token in enumerate(results):
             if method == "yarrow":
                 if not isinstance(token, list) or len(token) != 3:
@@ -80,13 +80,13 @@ def derive_casting_lines(casting):
             valid = (isinstance(token, str) and token in MEIBU_TRIGRAMS) if method == "meibu" else (
                 isinstance(token, str) and len(token) == 3 and all(symbol in "23" for symbol in token))
             if not valid:
-                message = "枚卜结果须为circle、square或字符串1至6。" if method == "meibu" else "每次太极结果须为三个2或3组成的字符串，例如222、223、233、333；排列次序不改变四象。"
+                message = "枚卜结果须为circle、square或字符串1至6。" if method == "meibu" else "每次三枚结果须为三个2或3组成的字符串，例如222、223、233、333；排列次序不改变四象。"
                 errors.append(_error("$/casting/results/" + str(index), "INVALID_CASTING_RESULT", message))
     if errors:
         raise CastingInputError(errors)
     if method == "yarrow":
         return [TAIJI_FOUR_STATES["".join(sorted(YARROW_SYMBOLS[pair] for pair in changes))] for changes in results]
-    if method == "taiji":
+    if method in ("taiji", "random_coin"):
         # Sorting recognizes the multiset of yin/yang symbols. The raw token is
         # retained unchanged in normalized input; no numeric addition is used.
         return [TAIJI_FOUR_STATES["".join(sorted(token))] for token in results]

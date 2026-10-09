@@ -80,6 +80,40 @@ class CastingInputTests(unittest.TestCase):
         self.assertEqual(derive_six_lines(normalized)["moving_line_numbers"], [1, 4])
         self.assertNotEqual(normalized["lines"], normalize_casting_input(self.payload("taiji", list(reversed(results))))["lines"])
 
+    def test_random_coin_keeps_provenance_and_all_eight_coin_combinations(self):
+        expected = {"222": "old_yin", "223": "young_yang", "232": "young_yang", "322": "young_yang",
+                    "233": "young_yin", "323": "young_yin", "332": "young_yin", "333": "old_yang"}
+        for token, state in expected.items():
+            for position in range(6):
+                results = ["223"] * 6
+                results[position] = token
+                normalized = normalize_casting_input(self.payload("random_coin", results))
+                lines = ["young_yang"] * 6
+                lines[position] = state
+                self.assertEqual(normalized["lines"], lines)
+                self.assertEqual(normalized["casting"], {"method": "random_coin", "results": results})
+        for bad in (["223"] * 5, ["223"] * 7, [223] * 6, ["7"] * 6, ["224"] * 6, [None] * 6):
+            with self.assertRaises(CastingInputError):
+                normalize_casting_input(self.payload("random_coin", bad, lines=["young_yang"] * 6))
+        bad = self.payload("random_coin", ["223"] * 6, lines=["old_yang"] * 6)
+        self.assertIn("CASTING_LINES_MISMATCH", [e["code"] for e in validate_input(bad)["errors"]])
+
+    def test_random_coin_record_survives_save_and_revision(self):
+        actor = Actor("random-coin-user", "test-session")
+        first = normalize_casting_input(self.payload("random_coin", ["222", "232", "332", "333", "322", "323"], actual_cast_time="2026-10-09T08:00:00Z"))
+        second = copy.deepcopy(first)
+        second["question"] = "补充所问的时间范围"
+        with tempfile.TemporaryDirectory() as directory:
+            store = CaseStore(Path(directory) / "cases.db")
+            try:
+                case_id = store.create_case(actor, first, idempotency_key="create")["case_id"]
+                store.revise_case(actor, case_id, second, reason="补充问题", expected_revision_seq=1, idempotency_key="revise")
+                exported = store.export_case(actor, case_id)
+                self.assertEqual(exported["original_input"], first)
+                self.assertEqual(exported["revisions"][-1]["input"], second)
+            finally:
+                store.close()
+
     def test_yarrow_source_example_and_all_ordered_triples(self):
         # The source's ordered symbols 232,332,233,323,232,222: 屯, 上爻动.
         raw = [["22", "13", "44"], ["31", "04", "22"], ["44", "40", "13"],
@@ -228,7 +262,7 @@ class CastingInputTests(unittest.TestCase):
         self.assertEqual(schema["required"], ["question"])
         self.assertEqual(schema["anyOf"], [{"required": ["lines"]}, {"required": ["casting"]}])
         variants = schema["properties"]["casting"]["oneOf"]
-        self.assertEqual([v["properties"]["method"]["const"] for v in variants], ["meibu", "taiji", "yarrow"])
+        self.assertEqual([v["properties"]["method"]["const"] for v in variants], ["meibu", "taiji", "yarrow", "random_coin"])
         self.assertTrue(all(v["additionalProperties"] is False for v in variants))
 
 
@@ -240,6 +274,8 @@ if __name__ == "__main__":
     for case, _ in result.failures + result.errors:
         failed.add(getattr(case, "test_case", case).id())
     titles = {
+        "test_random_coin_keeps_provenance_and_all_eight_coin_combinations": "模拟掷币八种组合各六爻位换算、严格校验与来源标签",
+        "test_random_coin_record_survives_save_and_revision": "模拟六次原始结果与时间在保存修订后保留",
         "test_yarrow_source_example_and_all_ordered_triples": "筹策原例与216种三变组合在六个爻位的1296次核对",
         "test_yarrow_requires_all_18_valid_pairs_and_matching_lines": "筹策须十八项合法余策且与附带六爻一致",
         "test_yarrow_raw_pairs_survive_revision_and_export": "筹策十八变左右余策及更正前后顺序完整留存",
@@ -263,7 +299,7 @@ if __name__ == "__main__":
              for index, case in enumerate(cases, start=1)]
     report = {"scope": "Casting conversion, strict input agreement and raw-data retention; no AI or prediction accuracy validation.",
               "rule_ids": ["casting.meibu_conversion", "casting.taiji_conversion"],
-              "coverage": {"meibu_ordered_draw_combinations": 512, "taiji_permutation_position_combinations": 48, "yarrow_triple_position_combinations": 1296},
+              "coverage": {"meibu_ordered_draw_combinations": 512, "taiji_permutation_position_combinations": 48, "yarrow_triple_position_combinations": 1296, "random_coin_permutation_position_combinations": 48},
               "tests_run": len(tests), "passed": len(tests) - len(failed), "failed": len(failed), "tests": tests}
     Path(__file__).with_name("casting_input_test_results.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     raise SystemExit(0 if result.wasSuccessful() else 1)

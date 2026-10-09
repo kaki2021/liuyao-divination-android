@@ -172,3 +172,5 @@ body[data-mobile-page=rules] .main-column{display:none}
 .guide-quote{margin:12px 0;padding:10px 14px;border-left:3px solid #819276;background:#edf2e8;line-height:1.85;font-size:14px;overflow-wrap:anywhere}
 
 @media(max-width:760px){.header-meta #user-help-open{margin-right:12px;font-size:12px}#user-help-dialog{padding:22px 16px}#user-help-dialog .user-help-content{font-size:15px}}
+
+@media(max-width:760px){.casting-methods .random-coin-method{grid-column:1/-1}.random-coin-inputs .section-heading{flex-wrap:wrap}.random-coin-faces{gap:14px}.casting-recommendation{font-size:12px}}

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:liuyao:client-input",
   "title": "六爻占断软件输入契约",
-  "description": "用户提供问题，以及自初至上六项四象或枚卜丸三次结果或太极丸六次结果或筹策六爻十八变余策；实际起卦时间和本次人物信息可选。服务器保留原始casting并生成lines，账户身份与记录时间由服务器添加。",
+  "description": "用户提供问题，以及自初至上六项四象或枚卜丸三次结果或太极丸六次结果或筹策六爻十八变余策或随机模拟掷币六次结果；实际起卦时间和本次人物信息可选。服务器保留原始casting并生成lines，账户身份与记录时间由服务器添加。",
   "type": "object",
   "properties": {
     "question": {
@@ -122,6 +122,31 @@
                 }
               },
               "description": "按初爻至上爻，每爻三变依次记录左右余策；13、31、04、40为阳象3，22、44为阴象2。每变放回挂一，每爻复原49根，保留全部18项及左右顺序。"
+            }
+          },
+          "required": [
+            "method",
+            "results"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "method": {
+              "const": "random_coin"
+            },
+            "results": {
+              "type": "array",
+              "minItems": 6,
+              "maxItems": 6,
+              "items": {
+                "type": "string",
+                "pattern": "^[23]{3}$",
+                "minLength": 3,
+                "maxLength": 3
+              },
+              "description": "软件随机模拟三枚公平硬币，共六次，按初爻至上爻保留每枚阴2阳3的原始有序结果；换算同三钱四象。方法标签保留模拟来源，不表示实物投掷。"
             }
           },
           "required": [
