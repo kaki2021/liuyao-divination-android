@@ -31,7 +31,7 @@ def logic_guide(parameter_version=None):
             'summary': '按真实输入排盘，按用途定位候选，分别核对爻状态和作用条件，再由 AI 解释目标成败与主体得失。实验评分仅供对照。',
             'steps': [
                 {'title': '输入与系列', 'formula': '起卦记录 → 初爻至上爻的六个四象',
-                 'detail': '枚卜丸、太极丸或直接六爻由 casting_input.normalize_casting_input 统一。系列共用有来源的背景；新卦保留独立原问、时间与盘面，父卦解释不变成事实。'},
+                 'detail': '枚卜丸、太极丸或逐爻录入由 casting_input.normalize_casting_input 统一。系列共用有来源的背景；新卦保留独立原问、时间与盘面，父卦解释不变成事实。'},
                 {'title': '历法', 'formula': CONVENTION_LABEL,
                  'detail': '只读取 actual_cast_time，转换到固定 UTC+08:00；缺失不取当前时间代替。六神用显示日柱天干。人物八字不参与六爻取用或强弱计算。'},
                 {'title': '本变卦与六亲', 'formula': '老阴变阳、老阳变阴；少阴少阳不变',

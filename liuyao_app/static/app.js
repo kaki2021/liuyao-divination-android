@@ -188,7 +188,7 @@
   function updateCastingMode() {
     const method = castingMethod();
     $('meibu-inputs').hidden = method !== 'meibu'; $('taiji-inputs').hidden = method !== 'taiji'; $('line-inputs').hidden = method !== 'direct';
-    $('casting-instruction').textContent = method === 'meibu' ? '三次摸取：第一次定下卦，第二次定上卦，第三次定动爻。' : method === 'taiji' ? '每次选三颗丸显示的组合，共记录六次；223、233 不区分数字先后。' : '已有六爻结果时，从初爻到上爻依次选择阴阳动静。';
+    $('casting-instruction').textContent = method === 'meibu' ? '三次摸取：第一次定下卦，第二次定上卦，第三次定动爻。' : method === 'taiji' ? '每次选三颗丸显示的组合，共记录六次；223、233 不区分数字先后。' : '硬币、蓍草／筹策或已有卦象：每得到一爻，就从初爻到上爻依次选择。操作方法见“怎么记录？”。';
     document.querySelector('.casting-layout').classList.toggle('meibu-layout', method === 'meibu');
     onInputChange();
   }
@@ -1004,19 +1004,31 @@
   $('feedback-return').addEventListener('click', () => showView('results', { scroll: true }));
   $('feedback-form').addEventListener('submit', event => { event.preventDefault(); appendCaseEvent('feedback'); });
   $('settings-open').addEventListener('click', () => $('settings-dialog').showModal());
-  $('guide-open').addEventListener('click', () => $('guide-dialog').showModal());
-  $('user-help-open').addEventListener('click', async () => {
-    $('user-help-dialog').showModal();
-    if ($('user-help-body').children.length) return;
-    $('user-help-body').textContent = '正在打开使用说明…';
+  async function loadGuideContent(targetId, selector) {
+    const target = $(targetId);
+    if (target.children.length) return;
+    target.textContent = '正在打开使用说明…';
     try {
       const response = await fetch('/api/help/export', {credentials:'same-origin'});
       if (!response.ok) throw new Error('说明暂时无法打开，请关闭后重试。');
       const page = new DOMParser().parseFromString(await response.text(), 'text/html');
-      const article = page.querySelector('.user-help-content');
+      const article = page.querySelector(selector);
       if (!article) throw new Error('说明内容不完整，请重新安装完整版本。');
-      $('user-help-body').replaceChildren(document.importNode(article, true));
-    } catch (error) { $('user-help-body').textContent = error.message; }
+      const content = document.importNode(article, true);
+      if (targetId === 'direct-record-guide') content.removeAttribute('id');
+      target.replaceChildren(content);
+    } catch (error) { target.textContent = error.message; }
+  }
+  $('guide-open').addEventListener('click', async () => {
+    $('guide-dialog').showModal();
+    await loadGuideContent('direct-record-guide', '#manual-lines-guide');
+    if (!$('guide-dialog').open) return;
+    if (castingMethod() === 'direct') $('direct-record-guide').scrollIntoView({block:'start'});
+    else $('guide-dialog').scrollTop = 0;
+  });
+  $('user-help-open').addEventListener('click', async () => {
+    $('user-help-dialog').showModal();
+    await loadGuideContent('user-help-body', '.user-help-content');
   });
   $('settings-done').addEventListener('click', () => { storePreference(); updateModelLabel(); $('settings-dialog').close(); });
   $('provider-select').addEventListener('change', () => updateModels());

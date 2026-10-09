@@ -109,7 +109,7 @@ def run_desktop(*, browser_open=webbrowser.open, stop_event=None, ready=None):
         record = {'url': url, 'instance_id': app.instance_id, 'build_id': build_id}
         write_runtime(state_path, record)
         print('六爻占问已启动：' + url, flush=True)
-        print('本页支持：枚卜丸、太极丸、直接六爻。', flush=True)
+        print('本页支持：枚卜丸、太极丸、逐爻录入。', flush=True)
         print(f'模型配置：{config_path}\n案例数据：{directory}', flush=True)
         print('请保留此窗口，退出时按 Ctrl+C。关闭浏览器不会停止程序。', flush=True)
         if not browser_open(url):
