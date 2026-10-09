@@ -535,7 +535,7 @@ class Handler(BaseHTTPRequestHandler):
         try:
             self.guard(mutation)
             path=urlsplit(self.path).path
-            if not mutation and path in ('/','/index.html','/app.js','/styles.css','/static/app.js','/static/styles.css','/chart-display.js','/static/chart-display.js','/v5-features.js','/static/v5-features.js','/static/report-views.js','/static/buzhai.js','/static/mobile.js','/static/mobile.css','/static/compat.js','/static/phone-chart.js','/static/analysis-status.js','/static/guidance.js','/static/rules-ui.js','/static/condition-rules.js','/static/rules.css','/static/series.js','/favicon.ico'):
+            if not mutation and path in ('/','/index.html','/app.js','/styles.css','/static/app.js','/static/styles.css','/chart-display.js','/static/chart-display.js','/v5-features.js','/static/v5-features.js','/static/report-views.js','/static/buzhai.js','/static/mobile.js','/static/mobile.css','/static/compat.js','/static/phone-chart.js','/static/analysis-status.js','/static/guidance.js','/static/rules-ui.js','/static/condition-rules.js','/static/rules.css','/static/series.js','/static/yarrow.js','/favicon.ico'):
                 if path=='/favicon.ico':
                     self._headers(204,'image/x-icon',0);return
                 name='index.html' if path in ('/','/index.html') else path.rsplit('/',1)[-1]

@@ -7,7 +7,7 @@ let server,browser;
   const url=await new Promise((resolve,reject)=>{server.stdout.once('data',b=>resolve(b.toString().trim()));server.once('error',reject);server.once('exit',c=>reject(Error('server '+c)));});
   browser=await chromium.launch({headless:true,args:['--no-sandbox']});
   const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
-  const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+  const errors=[];page.on('pageerror',e=>{errors.push(String(e));console.error('PAGE ERROR:',String(e));});
   await page.addInitScript(()=>{window.exports=[];window.LiuyaoAndroid={readPreference:()=>null,savePreference:()=>{},readDraft:()=>null,saveDraft:()=>{},configureModel:()=>{},exportFile:(url,name)=>window.exports.push({url,name}),analysisState:()=>{}};});
   await page.route(url+'/',r=>r.continue({headers:{...r.request().headers(),'X-Liuyao-Bootstrap':'button-test'}}));
   await page.goto(url);await page.waitForFunction(()=>Boolean(window.LiuyaoApp));
