@@ -6,10 +6,11 @@
   ],
   "coverage": {
     "meibu_ordered_draw_combinations": 512,
-    "taiji_permutation_position_combinations": 48
+    "taiji_permutation_position_combinations": 48,
+    "yarrow_triple_position_combinations": 1296
   },
-  "tests_run": 12,
-  "passed": 12,
+  "tests_run": 15,
+  "passed": 15,
   "failed": 0,
   "tests": [
     {
@@ -83,6 +84,24 @@
       "title": "太极六次先后顺序对应初爻至上爻",
       "status": "passed",
       "evidence": "test_casting_input.py:test_taiji_six_throws_keep_bottom_to_top_order"
+    },
+    {
+      "test_id": "CAST-013",
+      "title": "筹策十八变左右余策及更正前后顺序完整留存",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_yarrow_raw_pairs_survive_revision_and_export"
+    },
+    {
+      "test_id": "CAST-014",
+      "title": "筹策须十八项合法余策且与附带六爻一致",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_yarrow_requires_all_18_valid_pairs_and_matching_lines"
+    },
+    {
+      "test_id": "CAST-015",
+      "title": "筹策原例与216种三变组合在六个爻位的1296次核对",
+      "status": "passed",
+      "evidence": "test_casting_input.py:test_yarrow_source_example_and_all_ordered_triples"
     }
   ]
 }

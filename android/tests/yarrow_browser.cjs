@@ -1,0 +1,90 @@
+'use strict';
+const {chromium}=require('playwright'),{spawn}=require('node:child_process');
+const path=require('node:path'),fs=require('node:fs'),assert=require('node:assert/strict');
+let server,browser;
+(async()=>{
+  server=spawn(process.env.PYTHON||'python3',[path.join(__dirname,'buttons_server.py')],{stdio:['ignore','pipe','inherit']});
+  const url=await new Promise((resolve,reject)=>{server.stdout.once('data',b=>resolve(b.toString().trim()));server.once('error',reject);server.once('exit',c=>reject(Error('server '+c)));});
+  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+  const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  const errors=[];page.on('pageerror',e=>errors.push(String(e)));page.on('dialog',d=>d.accept());
+  await page.addInitScript(()=>{window.LiuyaoAndroid={readPreference:()=>null,savePreference:()=>{},readDraft:()=>localStorage.getItem('draft'),saveDraft:s=>localStorage.setItem('draft',s),configureModel:()=>{},exportFile:()=>{},analysisState:()=>{}};});
+  await page.route(url+'/',r=>r.continue({headers:{...r.request().headers(),'X-Liuyao-Bootstrap':'button-test'}}));
+  await page.goto(url);await page.waitForFunction(()=>Boolean(window.LiuyaoApp));
+  await page.locator('#question').fill('筹策原例：十八变、草稿与修订检查');
+  await page.locator('#mobile-next').click();
+  await page.locator('input[name="casting-method"][value="yarrow"]').check();
+  for(const width of [320,390,760]){
+    await page.setViewportSize({width,height:844});
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'page fits '+width);
+    await page.locator('#guide-open').click();
+    await page.locator('#yarrow-record-guide h3').waitFor();
+    const guide=await page.locator('#yarrow-record-guide').textContent();
+    assert.ok(guide.includes('45 或 41')&&guide.includes('十八变')&&guide.includes('挂起'));
+    assert.ok(await page.evaluate(()=>{const d=document.querySelector('#guide-dialog');return d.scrollWidth<=d.clientWidth+1;}),'guide fits '+width);
+    await page.locator('#guide-dialog .dialog-close').click();
+  }
+  await page.setViewportSize({width:390,height:844});
+  await page.locator('#save-case').click();
+  await page.waitForFunction(()=>document.querySelector('#global-message').textContent.includes('初爻第1变'));
+  assert.equal(await page.locator('body').getAttribute('data-view'),'input');
+  // 04 and 40 are distinct raw records, but equal in yin/yang and count.
+  await page.locator('input[name="yarrow-1-1"][value="04"]').check();
+  assert.match(await page.locator('#yarrow-result').textContent(),/阳象 3.*45 根/);
+  await page.locator('#yarrow-next').click();
+  assert.match(await page.locator('#yarrow-count').textContent(),/45 根/);
+  await page.locator('input[name="yarrow-1-2"][value="40"]').check();
+  await page.locator('#yarrow-next').click();
+  assert.match(await page.locator('#yarrow-count').textContent(),/41 根/);
+  await page.locator('input[name="yarrow-1-3"][value="44"]').check();
+  assert.match(await page.locator('#yarrow-result').textContent(),/33 根/);
+  assert.match(await page.locator('#yarrow-hint').textContent(),/少阴/);
+  await page.locator('#yarrow-next').click();
+  assert.match(await page.locator('#yarrow-count').textContent(),/49 根/);
+  await page.evaluate(()=>window.LiuyaoApp.persistDraft());
+  await page.reload();
+  await page.waitForFunction(()=>document.querySelector('input[name="yarrow-1-1"][value="04"]')?.checked);
+  await page.locator('#mobile-next').click();
+  assert.equal(await page.locator('input[name="casting-method"][value="yarrow"]').isChecked(),true);
+  assert.equal(await page.locator('#yarrow-step').inputValue(),'3');
+  assert.deepEqual(await page.evaluate(()=>window.YarrowInput.read()[0]),['04','40','44']);
+  // Source example: 232, 332, 233, 323, 232, 222 -> 屯, 上爻动.
+  const raw=[['22','13','44'],['31','04','22'],['44','40','13'],['04','22','31'],['22','40','44'],['44','22','44']];
+  const lines=['young_yang','young_yin','young_yin','young_yin','young_yang','old_yin'];
+  await page.locator('.yarrow-lines button').first().click();
+  for(let line=0;line<6;line++)for(let change=0;change<3;change++){
+    await page.locator(`input[name="yarrow-${line+1}-${change+1}"][value="${raw[line][change]}"]`).check();
+    if(line<5||change<2)await page.locator('#yarrow-next').click();
+  }
+  assert.deepEqual(await page.evaluate(()=>window.YarrowInput.derive(window.YarrowInput.read())),lines);
+  assert.match(await page.locator('#yarrow-progress').textContent(),/18 \/ 18/);
+  fs.mkdirSync('test-results',{recursive:true});
+  await page.locator('.yarrow-lines button').first().click();
+  await page.locator('.casting-methods').scrollIntoViewIfNeeded();
+  await page.screenshot({path:'test-results/yarrow-phone.png'});
+  await page.locator('#save-case').click();
+  await page.waitForFunction(()=>document.body.dataset.view==='results');
+  const exportUrl=url+await page.locator('#export-case').getAttribute('href');
+  const saved=await(await page.request.get(exportUrl)).json();
+  assert.deepEqual(saved.original_input.casting,{method:'yarrow',results:raw});
+  assert.deepEqual(saved.revisions.at(-1).input.lines,lines);
+  assert.match(await page.locator('#casting-record').textContent(),/十八变原始记录.*0与4.*4与0/);
+  await page.locator('#edit-case-input').click();
+  assert.deepEqual(await page.evaluate(()=>window.YarrowInput.read()),raw);
+  // Correct left/right only, leaving all derived lines identical.
+  await page.locator('.yarrow-lines button').nth(1).click();
+  await page.locator('.yarrow-changes button').nth(1).click();
+  await page.locator('input[name="yarrow-2-2"][value="40"]').check();
+  await page.locator('#revision-reason').fill('更正第二爻第二变的左右余策');
+  await page.locator('#save-case').click();
+  await page.waitForFunction(()=>document.body.dataset.view==='results');
+  const revised=await(await page.request.get(exportUrl)).json();
+  const modified=JSON.parse(JSON.stringify(raw));modified[1][1]='40';
+  assert.deepEqual(revised.original_input.casting.results,raw);
+  assert.deepEqual(revised.revisions.at(-1).input.casting.results,modified);
+  assert.deepEqual(revised.revisions.at(-1).input.lines,lines);
+  await page.locator('#new-case').click();
+  assert.deepEqual(await page.evaluate(()=>window.YarrowInput.read()),Array.from({length:6},()=>[null,null,null]));
+  assert.deepEqual(errors,[]);
+  console.log('PASS: yarrow phone layout, 18 raw changes, 04/40 counts, per-line reset, partial Android draft restore, source example, export and same-line raw revision.');
+})().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{if(browser)await browser.close();if(server)server.kill();});

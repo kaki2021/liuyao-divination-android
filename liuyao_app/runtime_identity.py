@@ -3,7 +3,7 @@ import hashlib
 from pathlib import Path
 
 APP_ID = 'liuyao-local-workbench'
-CASTING_METHODS = ['meibu', 'taiji', 'direct']
+CASTING_METHODS = ['meibu', 'taiji', 'yarrow', 'direct']
 
 def app_build_id():
     root = Path(__file__).resolve().parent

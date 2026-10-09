@@ -129,6 +129,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     $("analyze-current-case").textContent = value && state.analyzing ? "分析进行中…" : "重新解卦";
     $("context-analyze").textContent = value && state.analyzing ? "正在回复…" : "发送追问";
     if (runSelect) runSelect.disabled = value;
+    if (!value) window.YarrowInput.refresh();
   }
   function showView(view, { scroll = false } = {}) {
     var _a2;
@@ -203,6 +204,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       row.append(fieldset);
       $("taiji-inputs").append(row);
     });
+    window.YarrowInput.init($("yarrow-inputs"), onInputChange);
     document.querySelectorAll('input[name="casting-method"]').forEach((radio) => radio.addEventListener("change", updateCastingMode));
     updateCastingMode();
   }
@@ -224,6 +226,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     return ((_a2 = document.querySelector('input[name="casting-method"]:checked')) == null ? void 0 : _a2.value) || "meibu";
   }
   function selectedCastingResults(method = castingMethod()) {
+    if (method === "yarrow") return window.YarrowInput.read();
     const count = method === "meibu" ? 3 : 6;
     return Array.from({ length: count }, (_, index) => {
       var _a2;
@@ -234,6 +237,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     return typeof value === "string" && /^[23]{3}$/.test(value) ? [...value].sort().join("") : null;
   }
   function linesFromCasting(method, results) {
+    if (method === "yarrow") return window.YarrowInput.derive(results);
     if (method === "taiji") return Array.from({ length: 6 }, (_, index) => TAIJI[taijiCombination(results[index])] || null);
     if (method !== "meibu" || results.length !== 3 || results.some((value) => !MEIBU.some((item) => item.value === value))) return Array(6).fill(null);
     const bits = [...MEIBU.find((item) => item.value === results[0]).bits, ...MEIBU.find((item) => item.value === results[1]).bits];
@@ -255,7 +259,9 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     $("meibu-inputs").hidden = method !== "meibu";
     $("taiji-inputs").hidden = method !== "taiji";
     $("line-inputs").hidden = method !== "direct";
-    $("casting-instruction").textContent = method === "meibu" ? "三次摸取：第一次定下卦，第二次定上卦，第三次定动爻。" : method === "taiji" ? "每次选三颗丸显示的组合，共记录六次；223、233 不区分数字先后。" : "硬币、蓍草／筹策或已有卦象：每得到一爻，就从初爻到上爻依次选择。操作方法见“怎么记录？”。";
+    $("yarrow-inputs").hidden = method !== "yarrow";
+    window.YarrowInput.refresh();
+    $("casting-instruction").textContent = method === "meibu" ? "三次摸取：第一次定下卦，第二次定上卦，第三次定动爻。" : method === "taiji" ? "每次选三颗丸显示的组合，共记录六次；223、233 不区分数字先后。" : method === "yarrow" ? "用实物完成每一变，再记录左右余策。三变合一爻，六爻共十八变；操作前请先看“怎么记录？”。" : "硬币或已有卦象：从初爻到上爻依次选择。已有蓍草／筹策最终结果也可抄录；要保留十八变，请选独立入口。";
     document.querySelector(".casting-layout").classList.toggle("meibu-layout", method === "meibu");
     onInputChange();
   }
@@ -352,6 +358,13 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         throw new Error("请补选".concat(POSITIONS[missing], "，六爻都需要明确的阴阳动静。"));
       }
       input.lines = lines;
+    } else if (method === "yarrow") {
+      const results = window.YarrowInput.read();
+      if (validate && [].concat(...results).some((item) => !item)) {
+        const missing = window.YarrowInput.focusMissing();
+        throw new Error("请记录".concat(POSITIONS[Math.floor(missing / 3)], "第").concat(missing % 3 + 1, "变的两侧余策。"));
+      }
+      input.casting = { method, results };
     } else {
       let results = selectedCastingResults(method);
       const missing = results.findIndex((item) => !item);
@@ -410,8 +423,9 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     $("person-background").value = (person == null ? void 0 : person.background) || "";
     $("person-details").open = Boolean(person);
     updatePersonFields();
-    state.originalCasting = (input == null ? void 0 : input.casting) ? { method: input.casting.method, results: [...input.casting.results] } : null;
-    const method = ["meibu", "taiji"].includes((_c = input == null ? void 0 : input.casting) == null ? void 0 : _c.method) ? input.casting.method : input ? "direct" : "meibu";
+    state.originalCasting = (input == null ? void 0 : input.casting) ? JSON.parse(JSON.stringify(input.casting)) : null;
+    const method = ["meibu", "taiji", "yarrow"].includes((_c = input == null ? void 0 : input.casting) == null ? void 0 : _c.method) ? input.casting.method : input ? "direct" : "meibu";
+    window.YarrowInput.fill(method === "yarrow" ? input.casting.results : null);
     document.querySelector('input[name="casting-method"][value="'.concat(method, '"]')).checked = true;
     if (method !== "direct") (((_d = input == null ? void 0 : input.casting) == null ? void 0 : _d.results) || []).forEach((raw, index) => {
       const value = method === "taiji" ? taijiCombination(raw) : raw;
@@ -680,6 +694,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       return "".concat(["下卦", "上卦", "动爻"][index], " ").concat(((_a3 = MEIBU.find((item) => item.value === value)) == null ? void 0 : _a3.label) || value);
     }).join(" → "));
     else if ((casting == null ? void 0 : casting.method) === "taiji") record.textContent = "太极丸原始记录（初爻至上爻）：".concat(casting.results.join(" / "));
+    else if ((casting == null ? void 0 : casting.method) === "yarrow") record.textContent = "蓍草／筹策十八变原始记录（每项为左、右余策）：".concat(casting.results.map((pairs, index) => "".concat(POSITIONS[index], " ").concat(pairs.map((pair) => "".concat(pair[0], "与").concat(pair[1])).join(" → "))).join("；"));
     else record.textContent = "";
     if (!(chart == null ? void 0 : chart.main)) {
       window.LiuyaoPhoneChart.render(null);
@@ -1498,7 +1513,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       const article = page.querySelector(selector);
       if (!article) throw new Error("说明内容不完整，请重新安装完整版本。");
       const content = document.importNode(article, true);
-      if (targetId === "direct-record-guide") content.removeAttribute("id");
+      if (targetId !== "user-help-body") content.removeAttribute("id");
       target.replaceChildren(content);
     } catch (error) {
       target.textContent = error.message;
@@ -1507,8 +1522,10 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   $("guide-open").addEventListener("click", async () => {
     $("guide-dialog").showModal();
     await loadGuideContent("direct-record-guide", "#manual-lines-guide");
+    await loadGuideContent("yarrow-record-guide", "#yarrow-guide");
     if (!$("guide-dialog").open) return;
     if (castingMethod() === "direct") $("direct-record-guide").scrollIntoView({ block: "start" });
+    else if (castingMethod() === "yarrow") $("yarrow-record-guide").scrollIntoView({ block: "start" });
     else $("guide-dialog").scrollTop = 0;
   });
   $("user-help-open").addEventListener("click", async () => {

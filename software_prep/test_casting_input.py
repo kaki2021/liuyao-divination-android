@@ -80,6 +80,70 @@ class CastingInputTests(unittest.TestCase):
         self.assertEqual(derive_six_lines(normalized)["moving_line_numbers"], [1, 4])
         self.assertNotEqual(normalized["lines"], normalize_casting_input(self.payload("taiji", list(reversed(results))))["lines"])
 
+    def test_yarrow_source_example_and_all_ordered_triples(self):
+        # The source's ordered symbols 232,332,233,323,232,222: 屯, 上爻动.
+        raw = [["22", "13", "44"], ["31", "04", "22"], ["44", "40", "13"],
+               ["04", "22", "31"], ["22", "40", "44"], ["44", "22", "44"]]
+        original = copy.deepcopy(raw)
+        result = normalize_casting_input(self.payload("yarrow", raw))
+        expected = ["young_yang", "young_yin", "young_yin", "young_yin", "young_yang", "old_yin"]
+        self.assertEqual(result["lines"], expected)
+        self.assertEqual(result["casting"]["results"], original)
+        self.assertEqual(raw, original)
+        self.assertEqual(normalize_casting_input(result), result)
+        chart = calculate_base_chart(result["lines"])
+        self.assertEqual(chart["main"]["lower_trigram"], "震")
+        self.assertEqual(chart["main"]["upper_trigram"], "坎")
+        self.assertEqual(chart["moving_positions"], [6])
+        # Independently count unequal versus equal remainders, including 04/40.
+        states = ["old_yin", "young_yang", "young_yin", "old_yang"]
+        for triple in itertools.product(("13", "31", "22", "44", "04", "40"), repeat=3):
+            state = states[sum(pair[0] != pair[1] for pair in triple)]
+            for position in range(6):
+                data = copy.deepcopy(raw)
+                data[position] = list(triple)
+                lines = expected.copy()
+                lines[position] = state
+                normalized = normalize_casting_input(self.payload("yarrow", data))
+                self.assertEqual(normalized["lines"], lines)
+                self.assertEqual(normalized["casting"]["results"], data)
+
+    def test_yarrow_requires_all_18_valid_pairs_and_matching_lines(self):
+        good = [["13", "04", "44"] for _ in range(6)]
+        invalid = [good[:5], good + [good[0]], ["332"] * 6, [["13", "04"]] * 6,
+                   [["13", "04", "44", "22"]] * 6, [None] * 6]
+        for pair in (None, 13, "00", "14", "4", "4,0", "０４", "33", [], {}):
+            raw = copy.deepcopy(good)
+            raw[2][1] = pair
+            invalid.append(raw)
+        for raw in invalid:
+            with self.subTest(raw=raw):
+                with self.assertRaises(CastingInputError):
+                    normalize_casting_input(self.payload("yarrow", raw, lines=["young_yin"] * 6))
+        bad = self.payload("yarrow", good, lines=["old_yang"] * 6)
+        self.assertIn("CASTING_LINES_MISMATCH", [e["code"] for e in validate_input(bad)["errors"]])
+
+    def test_yarrow_raw_pairs_survive_revision_and_export(self):
+        actor = Actor("yarrow-user", "test-session")
+        raw = [["04", "13", "44"], ["40", "31", "22"], ["44", "22", "44"],
+               ["13", "31", "04"], ["22", "13", "44"], ["44", "40", "22"]]
+        first = normalize_casting_input(self.payload("yarrow", raw))
+        changed = copy.deepcopy(raw)
+        changed[0][0] = "40"  # Same yin/yang, but distinct raw record.
+        second = normalize_casting_input(self.payload("yarrow", changed))
+        self.assertEqual(first["lines"], second["lines"])
+        with tempfile.TemporaryDirectory() as directory:
+            store = CaseStore(Path(directory) / "cases.db")
+            try:
+                case_id = store.create_case(actor, first, idempotency_key="create")["case_id"]
+                store.revise_case(actor, case_id, second, reason="核对左右余策", expected_revision_seq=1, idempotency_key="revise")
+                exported = store.export_case(actor, case_id)
+                self.assertEqual(exported["original_input"], first)
+                self.assertEqual(exported["revisions"][0]["input"], first)
+                self.assertEqual(exported["revisions"][1]["input"], second)
+            finally:
+                store.close()
+
     def test_equivalent_meibu_taiji_and_direct_inputs(self):
         meibu = normalize_casting_input(self.payload("meibu", ["5", "2", "4"]))
         taiji = normalize_casting_input(self.payload("taiji", ["223", "233", "223", "333", "223", "233"]))
@@ -164,7 +228,7 @@ class CastingInputTests(unittest.TestCase):
         self.assertEqual(schema["required"], ["question"])
         self.assertEqual(schema["anyOf"], [{"required": ["lines"]}, {"required": ["casting"]}])
         variants = schema["properties"]["casting"]["oneOf"]
-        self.assertEqual([v["properties"]["method"]["const"] for v in variants], ["meibu", "taiji"])
+        self.assertEqual([v["properties"]["method"]["const"] for v in variants], ["meibu", "taiji", "yarrow"])
         self.assertTrue(all(v["additionalProperties"] is False for v in variants))
 
 
@@ -176,6 +240,9 @@ if __name__ == "__main__":
     for case, _ in result.failures + result.errors:
         failed.add(getattr(case, "test_case", case).id())
     titles = {
+        "test_yarrow_source_example_and_all_ordered_triples": "筹策原例与216种三变组合在六个爻位的1296次核对",
+        "test_yarrow_requires_all_18_valid_pairs_and_matching_lines": "筹策须十八项合法余策且与附带六爻一致",
+        "test_yarrow_raw_pairs_survive_revision_and_export": "筹策十八变左右余策及更正前后顺序完整留存",
         "test_all_512_meibu_draws": "枚卜全部512种有序组合的卦象与动变",
         "test_casting_original_and_derived_values_survive_store_revisions": "原始起卦和派生六爻跨原记录与修订保留",
         "test_circle_and_square_third_draws": "第三次圆全动、方全静",
@@ -196,7 +263,7 @@ if __name__ == "__main__":
              for index, case in enumerate(cases, start=1)]
     report = {"scope": "Casting conversion, strict input agreement and raw-data retention; no AI or prediction accuracy validation.",
               "rule_ids": ["casting.meibu_conversion", "casting.taiji_conversion"],
-              "coverage": {"meibu_ordered_draw_combinations": 512, "taiji_permutation_position_combinations": 48},
+              "coverage": {"meibu_ordered_draw_combinations": 512, "taiji_permutation_position_combinations": 48, "yarrow_triple_position_combinations": 1296},
               "tests_run": len(tests), "passed": len(tests) - len(failed), "failed": len(failed), "tests": tests}
     Path(__file__).with_name("casting_input_test_results.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     raise SystemExit(0 if result.wasSuccessful() else 1)

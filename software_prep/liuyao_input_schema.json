@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:liuyao:client-input",
   "title": "六爻占断软件输入契约",
-  "description": "用户提供问题，以及自初至上六项四象或枚卜丸三次结果或太极丸六次结果；实际起卦时间和本次人物信息可选。服务器保留原始casting并生成lines，账户身份与记录时间由服务器添加。",
+  "description": "用户提供问题，以及自初至上六项四象或枚卜丸三次结果或太极丸六次结果或筹策六爻十八变余策；实际起卦时间和本次人物信息可选。服务器保留原始casting并生成lines，账户身份与记录时间由服务器添加。",
   "type": "object",
   "properties": {
     "question": {
@@ -87,6 +87,41 @@
                 "maxLength": 3
               },
               "description": "第一次初爻、第六次上爻；单次222老阴、223及排列少阳、233及排列少阴、333老阳。保留原始字符串。"
+            }
+          },
+          "required": [
+            "method",
+            "results"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "method": {
+              "const": "yarrow"
+            },
+            "results": {
+              "type": "array",
+              "minItems": 6,
+              "maxItems": 6,
+              "items": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "13",
+                    "31",
+                    "22",
+                    "44",
+                    "04",
+                    "40"
+                  ]
+                }
+              },
+              "description": "按初爻至上爻，每爻三变依次记录左右余策；13、31、04、40为阳象3，22、44为阴象2。每变放回挂一，每爻复原49根，保留全部18项及左右顺序。"
             }
           },
           "required": [
