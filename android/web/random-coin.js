@@ -118,6 +118,8 @@
       const current = ++generation;
       notice.textContent = "掷币中，请稍候…";
       refresh();
+      const bounds = faces.getBoundingClientRect();
+      if (bounds.top < 90 || bounds.bottom > window.innerHeight - 90) faces.scrollIntoView({ block: "center", behavior: "auto" });
       frame = window.requestAnimationFrame(() => {
         timer = window.setTimeout(() => {
           frame = window.requestAnimationFrame(() => {

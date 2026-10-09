@@ -66,6 +66,8 @@ let server,browser;
   assert.deepEqual(await page.evaluate(()=>window.RandomCoinInput.read()),[null,null,null,null,null,null]);
   assert.equal(await page.locator('#cast-time').inputValue(),'');
   fs.mkdirSync('test-results',{recursive:true});
+  const coinBounds=await page.locator('.random-coin-faces').boundingBox();
+  assert.ok(coinBounds.y>=60&&coinBounds.y+coinBounds.height<=844-76,'coins remain visible after starting from a scrolled form');
   await page.screenshot({path:'test-results/coin-toss-phone.png'});
   await page.waitForFunction(()=>window.coinCalls===1);
   assert.ok(await page.evaluate(()=>performance.now())-started>=2000,'random values only after full animation');

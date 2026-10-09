@@ -80,6 +80,8 @@
       if (index < 0) return;
       tossing = true; const current = ++generation;
       notice.textContent = '掷币中，请稍候…'; refresh();
+      const bounds = faces.getBoundingClientRect();
+      if (bounds.top < 90 || bounds.bottom > window.innerHeight - 90) faces.scrollIntoView({ block: 'center', behavior: 'auto' });
       // Start counting after the animation has a frame. Even reduced-motion
       // mode waits two seconds. Never pre-draw or use elapsed time as entropy.
       frame = window.requestAnimationFrame(() => {
