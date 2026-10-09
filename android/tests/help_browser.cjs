@@ -39,7 +39,7 @@ let server,browser;
     await page.locator('#guide-open').click();
     await page.locator('#direct-record-guide h4').first().waitFor();
     const guide=await page.locator('#direct-record-guide').textContent();
-    assert.ok(guide.includes('一元')&&guide.includes('硬币')&&guide.includes('十八变'));
+    assert.ok(guide.includes('一元')&&guide.includes('硬币')&&guide.includes('独立入口'));
     assert.ok(await page.evaluate(()=>{const d=document.querySelector('#guide-dialog');return d.scrollWidth<=d.clientWidth+1;}));
     if(width===390)await page.screenshot({path:'test-results/casting-guide-phone.png'});
     await page.locator('#guide-dialog .dialog-close').click();
