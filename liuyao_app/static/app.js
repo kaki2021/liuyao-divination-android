@@ -104,7 +104,7 @@
       tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1;
       tab.disabled = name !== 'input' && !state.caseId;
     });
-    const headings = { input: ['从一个真实的问题开始。', '选择起卦方式，记录结果，理清此刻关心的事。'], results: ['看清卦象，回答所问。', '查看排盘、综合结论与判断依据，也可以补充情况继续解卦。'], feedback: ['记下后来发生的事。', '将实际进展与这次案例的分析保存在一起。'] };
+    const headings = { input: ['写下这次的所问', '一事一问，留存卦象与后续进展。'], results: ['看清卦象，回答所问。', '查看排盘、综合结论与判断依据，也可以补充情况继续解卦。'], feedback: ['记下后来发生的事。', '将实际进展与这次案例的分析保存在一起。'] };
     $('workspace-title').textContent = headings[state.view][0]; $('workspace-description').textContent = headings[state.view][1];
     $('feedback-question').textContent = state.input?.question || '';
     if (scroll) $(`${state.view}-section`).scrollIntoView({ behavior: 'smooth', block: 'start' });

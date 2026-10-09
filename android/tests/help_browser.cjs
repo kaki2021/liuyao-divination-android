@@ -73,6 +73,7 @@ let server,browser;
   assert.equal(await page.locator('#result-export-menu').getAttribute('open'),null);
   // Clearly labelled fixture for layout review; no paid model calls.
   await page.evaluate(()=>{
+    document.querySelector('#analysis-content').replaceChildren();
     window.ReportViews.render({plain_language:{source:'local',answer:'【界面示例】有推进的机会，先确认交付范围、资源与时间安排。',watch_for:['明确交付标准。','确认关键人员投入。','保留沟通记录。','重新评估时间安排。'],next_steps:['补充已知条件后再判断。']},sections:[]},document.querySelector('#analysis-content'));
     window.ReportViews.show('answer');
   });
@@ -81,7 +82,9 @@ let server,browser;
     await page.setViewportSize({width,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'results fits '+width);
     if(width===390){await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:'test-results/results-phone.png'});}
   }
-  await page.setViewportSize({width:390,height:844});await page.locator('#mobile-history').click();await page.screenshot({path:'test-results/history-phone.png'});
+  await page.setViewportSize({width:390,height:844});await page.locator('#mobile-history').click();
+  assert.ok(await page.evaluate(()=>document.querySelector('.history-item').getBoundingClientRect().width>=document.querySelector('#history-list').clientWidth*.95),'phone history uses the available width');
+  await page.screenshot({path:'test-results/history-phone.png'});
   await page.locator('.history-item').first().click();await page.waitForFunction(()=>document.body.dataset.mobilePage==='work');
   assert.deepEqual(errors,[]);
   console.log('PASS: renamed app, compact method selector, retained input, four help tabs and five illustrated methods at 320/390/760/1024px, keyboard navigation, offline guide, native exports, result menu, chart save and history.');

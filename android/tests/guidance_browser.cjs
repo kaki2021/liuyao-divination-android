@@ -31,7 +31,7 @@ const check=(name,condition)=>{assert.ok(condition,name);checks.push(name);conso
  await page.locator('#buzhai-choice-guide summary').click();check('四项不是四卦必做，治理保留三步顺序',(await page.locator('#buzhai-choice-guide').textContent()).includes('不要求每次走完四项')&&(await page.locator('#buzhai-choice-guide').textContent()).includes('依次核对范围'));
  await page.locator('#buzhai-beneficiary').fill('我');await page.locator('#buzhai-site').fill('A 房');await page.locator('#buzhai-proposal').fill('保留已填写的真实方案');
  await page.locator('#buzhai-stage').selectOption('diagnosis');check('切换阶段保留用户输入',await page.locator('#buzhai-proposal').inputValue()==='保留已填写的真实方案');
- await page.locator('#mobile-next').click();await page.locator('input[name="casting-method"][value="direct"]').check();
+ await page.locator('#mobile-next').click();await page.locator('#casting-method').selectOption('direct');
  for(let i=1;i<=6;i++)await page.locator(`input[name="line-${i}"][value="${i===5?'old_yin':i===2||i===3?'young_yin':'young_yang'}"]`).check();
  await page.locator('#time-details').evaluate(x=>x.open=true);await page.locator('#cast-time').fill('2026-09-18T12:00');await page.locator('#save-case').click();await page.waitForFunction(()=>document.body.dataset.view==='results');
  const detail=await(await page.request.get(url+'/api/cases')).json();const cid=detail.cases[0].case_id;
