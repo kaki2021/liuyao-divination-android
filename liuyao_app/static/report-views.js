@@ -85,7 +85,7 @@
     const c=report.conclusion||result?.stage_outputs?.interpretation?.conclusion,plain=!isDemo&&(report.plain_language|| (c?fallback(c):null));
     let shown=false;
     if(plain){const hero=el('div','','answer-hero');hero.append(el('p','本次结论','eyebrow'),el('h3',plain.answer,'direct-answer'));if(plain.reason)hero.append(el('p',plain.reason,'answer-reason'));container.append(hero);shown=true;
-      const grid=el('div','','answer-grid');for(const [key,label] of [['watch_for','需要留意'],['next_steps','接下来怎么做']]){if(!plain[key]?.length)continue;const card=el('section','','answer-note');card.append(el('h4',label));const list=el('ul');plain[key].slice(0,3).forEach(t=>list.append(el('li',t)));card.append(list);grid.append(card);}container.append(grid);
+      const grid=el('div','','answer-grid');for(const [key,label] of [['watch_for','需要留意'],['next_steps','接下来怎么做']]){if(!plain[key]?.length)continue;const card=el('section','','answer-note');card.append(el('h4',label));const list=el('ul');(plain.source==='local'?plain[key]:plain[key].slice(0,3)).forEach(t=>list.append(el('li',t)));card.append(list);grid.append(card);}container.append(grid);
       if(plain.timing)container.append(el('p','时间判断：'+plain.timing,'answer-timing'));
       if(plain.source==='compatibility')container.append(el('p','当前展示简要结论；完整原文和依据在“专业分析”。','small-note'));
     }else if(report.summary){container.append(el('p',report.summary,'report-summary'));shown=true;}

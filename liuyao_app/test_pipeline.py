@@ -148,7 +148,7 @@ class PipelineTests(unittest.TestCase):
 
     def run_model(self, mode="valid", **kwargs):
         provider = BoundProvider(mode)
-        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake-model", 1, provider_call=provider, **kwargs)
+        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake-model", 1, use_ai_report=True, provider_call=provider, **kwargs)
         return result, provider
 
     def latest(self):
@@ -172,7 +172,7 @@ class PipelineTests(unittest.TestCase):
     def test_local_demo_calls_no_model(self):
         def forbidden(*args, **kwargs):
             self.fail("demo must not call AI")
-        result = run_analysis(self.path, self.actor, self.case, "demo", "", 1, provider_call=forbidden)
+        result = run_analysis(self.path, self.actor, self.case, "demo", "", 1, use_ai_report=True, provider_call=forbidden)
         self.assertTrue(result["is_demo"])
         self.assertEqual(result["stage_outputs"], {})
         self.assertEqual(self.latest()["ai_events"], [])
@@ -231,7 +231,7 @@ class PipelineTests(unittest.TestCase):
         revised = {"question": self.input["question"], "lines": ["young_yang"] * 6}
         self.store.revise_case(self.actor, self.case, revised, reason="更正为实际静卦", expected_revision_seq=1, idempotency_key="chart-revision")
         second_provider = BoundProvider()
-        second = run_analysis(self.path, self.actor, self.case, "deepseek", "fake-model", 2, provider_call=second_provider)
+        second = run_analysis(self.path, self.actor, self.case, "deepseek", "fake-model", 2, use_ai_report=True, provider_call=second_provider)
         self.assertEqual(second["status"], "completed")
         self.assertEqual(second["chart"]["main"]["name"], "乾为天")
         self.assertIsNone(second["chart"]["changed_structure"])
@@ -272,7 +272,7 @@ class PipelineTests(unittest.TestCase):
                 out.update(unresolved=[issue], clarifying_questions=[question], selected_primary_id=None)
                 response["raw_text"] = json.dumps(out, ensure_ascii=False)
             return response
-        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, provider_call=with_notes)
+        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, use_ai_report=True, provider_call=with_notes)
         self.assertEqual(result["status"], "completed")
         self.assertEqual(len(provider.calls), 4)
         selection = result["stage_outputs"]["selection"]
@@ -307,7 +307,7 @@ class PipelineTests(unittest.TestCase):
                             if mode == "no_primary": out["selected_primary_id"] = None
                         response["raw_text"] = json.dumps(out, ensure_ascii=False)
                     return response
-                result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, provider_call=invalid_selection)
+                result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, use_ai_report=True, provider_call=invalid_selection)
                 self.assertEqual(result["status"], "failed")
                 self.assertEqual(result["error"]["stage"], "selection")
                 self.assertIn("$.candidates[0].purpose:" if mode == "supporting_id" else "$.selected_primary_id:", result["error"]["validation_detail"])
@@ -368,7 +368,7 @@ class PipelineTests(unittest.TestCase):
             else:
                 self.assertNotIn("repair_context", options)
             return valid(provider, model, prompt, inp, **options)
-        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, provider_call=repairable)
+        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, use_ai_report=True, provider_call=repairable)
         self.assertEqual(result["status"], "completed")
         self.assertEqual(len(calls), 5)
         self.assertEqual(result["display_report"]["conclusion"]["qualification"], "conditional")
@@ -400,7 +400,7 @@ class PipelineTests(unittest.TestCase):
             response["raw_text"] = "```json\n" + json.dumps(out, ensure_ascii=False) + "\n```"
             originals.append(response["raw_text"])
             return response
-        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, provider_call=compatible)
+        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, use_ai_report=True, provider_call=compatible)
         self.assertEqual(result["status"], "completed")
         self.assertEqual(len(valid.calls), 4)
         interpretation = result["stage_outputs"]["interpretation"]
@@ -422,7 +422,7 @@ class PipelineTests(unittest.TestCase):
             if valid.calls[-1]["stage"] == "report":
                 response["raw_text"] = "not JSON"
             return response
-        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, provider_call=broken_report)
+        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, use_ai_report=True, provider_call=broken_report)
         self.assertEqual(result["status"], "completed")
         self.assertTrue(any(w["stage"]=="report" for w in result["audit_report"]["warnings"]))
         self.assertEqual(len(valid.calls), 5)
@@ -442,7 +442,7 @@ class PipelineTests(unittest.TestCase):
             code = "NOT_CONFIGURED"
         def missing(*args, **kwargs):
             raise SyntheticProviderError("未配置API密钥。")
-        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, provider_call=missing)
+        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, use_ai_report=True, provider_call=missing)
         self.assertEqual(result["status"], "failed")
         self.assertEqual(result["error"]["code"], "NOT_CONFIGURED")
         self.assertEqual(len(self.latest()["ai_events"]), 1)
@@ -460,7 +460,7 @@ class PipelineTests(unittest.TestCase):
             if len(calls) == 1:
                 raise InvalidJson("模型输出JSON格式错误。")
             return valid(*args, **kwargs)
-        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, provider_call=repairable)
+        result = run_analysis(self.path, self.actor, self.case, "deepseek", "fake", 1, use_ai_report=True, provider_call=repairable)
         self.assertEqual(result["status"], "completed")
         self.assertIsNone(calls[0]["timeout"])
         event = self.latest()["ai_events"][0]["attempt"]

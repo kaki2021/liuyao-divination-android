@@ -555,6 +555,10 @@ class Handler(BaseHTTPRequestHandler):
             app=self.server.app
             parts=path.strip('/').split('/')
             if not mutation:
+                if path=='/api/help/export':
+                    raw=(Path(__file__).parent/'static/user-guide.html').read_bytes()
+                    self._headers(200,'text/html; charset=utf-8',len(raw),{'Content-Disposition':'attachment; filename="guanxiang-guide.html"'})
+                    self.wfile.write(raw);return
                 if path=='/api/config':self.send_json(app.config());return
                 if path=='/api/cases':self.send_json({'cases':app.list_cases(actor)});return
                 if path=='/api/series':

@@ -23,7 +23,7 @@ from liuyao_app.response_compat import normalize_stage_output, parse_model_json
 from liuyao_app.selection_context import build_information_scope, review_selection_notes, current_selection_notes
 from liuyao_app.validation_feedback import collect_output_errors, collect_application_errors
 from liuyao_app.interpretation_checks import interpretation_errors
-from liuyao_app.report_generator import build_user_report, normalize_report, fallback_report
+from liuyao_app.report_generator import build_user_report, normalize_report, fallback_report, local_report
 from liuyao_app.rulebook import load_rules
 from liuyao_app.comprehensive_analysis import calculate_comprehensive, select_use_lines, analysis_facts
 from liuyao_app.report_template import SECTIONS
@@ -594,11 +594,13 @@ def result_from_outcome(run):
 
 
 def run_analysis(db_path, actor: Actor, case_id, provider, model, expected_revision_seq,
-                 progress: Callable | None = None, *, provider_call=None):
+                 progress: Callable | None = None, *, provider_call=None, use_ai_report=False):
     """Retain one analysis on a frozen revision; always finish a started run.
 
     Actor is trusted service identity. Providers and secrets are never obtained
-    from case content. A separate local demo path performs no model calls.
+    from case content. A separate local demo path performs no model calls. Reports are assembled
+    locally by default. use_ai_report retains the legacy formatter for explicit
+    maintenance/compatibility runs; the application UI never enables it.
     """
     if not isinstance(actor, Actor):
         raise TypeError("Actor must come from the service session")
@@ -738,7 +740,21 @@ def run_analysis(db_path, actor: Actor, case_id, provider, model, expected_revis
         result['user_report']=fallback_report(interpretation,result['chart'])
         result['display_report'] = _display(result)
         emit({'analysis_run_id': result['analysis_run_id'], 'checkpoint': deepcopy(result),
-              'report_timeout_seconds': REPORT_TIMEOUT_SECONDS})
+              'report_timeout_seconds': REPORT_TIMEOUT_SECONDS if use_ai_report else 0})
+        if not use_ai_report:
+            emit({'stage': 'report', 'phase': 'validating', 'analysis_run_id': result['analysis_run_id']})
+            result['report'] = local_report(interpretation, result['chart'])
+            result['stage_outputs']['report'] = deepcopy(result['report'])
+            result['user_report'] = deepcopy(result['report'])
+            result['report_status'] = {'mode': 'local', 'message': '报告已整理完成。'}
+            result['audit_report']['local_stages'] = ['report']
+            result['user_report']['model_info'] = {
+                'rules_version': rulebook.version, 'model_version': '条件判断 1',
+                'timing': '精确应期未实现', 'strength': '实验评分仅供对照，不自动取用',
+                'calendar': result['chart']['calendar']['status'],
+                'logic_version': result['logic_snapshot']['logic_version']}
+            emit({'stage': 'report', 'phase': 'stage_done', 'completed_stage': 'report'})
+            return finish('completed')
         try:
             result["report"] = call("report", question=question, accepted_interpretation=interpretation, unresolved_gaps=gaps,analysis_chart={k:v for k,v in result['chart'].items() if k!='comprehensive_analysis'})
             result['user_report']=build_user_report(result['report'])

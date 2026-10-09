@@ -294,7 +294,7 @@
         const card = el("section", "", "answer-note");
         card.append(el("h4", label));
         const list = el("ul");
-        plain[key].slice(0, 3).forEach((t) => list.append(el("li", t)));
+        (plain.source === "local" ? plain[key] : plain[key].slice(0, 3)).forEach((t) => list.append(el("li", t)));
         card.append(list);
         grid.append(card);
       }

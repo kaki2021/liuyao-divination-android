@@ -1005,6 +1005,19 @@
   $('feedback-form').addEventListener('submit', event => { event.preventDefault(); appendCaseEvent('feedback'); });
   $('settings-open').addEventListener('click', () => $('settings-dialog').showModal());
   $('guide-open').addEventListener('click', () => $('guide-dialog').showModal());
+  $('user-help-open').addEventListener('click', async () => {
+    $('user-help-dialog').showModal();
+    if ($('user-help-body').children.length) return;
+    $('user-help-body').textContent = '正在打开使用说明…';
+    try {
+      const response = await fetch('/api/help/export', {credentials:'same-origin'});
+      if (!response.ok) throw new Error('说明暂时无法打开，请关闭后重试。');
+      const page = new DOMParser().parseFromString(await response.text(), 'text/html');
+      const article = page.querySelector('.user-help-content');
+      if (!article) throw new Error('说明内容不完整，请重新安装完整版本。');
+      $('user-help-body').replaceChildren(document.importNode(article, true));
+    } catch (error) { $('user-help-body').textContent = error.message; }
+  });
   $('settings-done').addEventListener('click', () => { storePreference(); updateModelLabel(); $('settings-dialog').close(); });
   $('provider-select').addEventListener('change', () => updateModels());
   $('model-select').addEventListener('change', updateModelLabel);

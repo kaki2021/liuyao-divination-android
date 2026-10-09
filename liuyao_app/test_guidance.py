@@ -116,7 +116,7 @@ class GuidanceTests(unittest.TestCase):
                         self.assertTrue(any('checkpoint' in e for e in events));timeouts.append(kwargs['timeout'])
                         raise ProviderError('timeout','合成超时')
                     return fixture(*args,**kwargs)
-                result=run_analysis(path,actor,case,'deepseek','deepseek-flash',1,progress=events.append,provider_call=call)
+                result=run_analysis(path,actor,case,'deepseek','deepseek-flash',1,progress=events.append,use_ai_report=True, provider_call=call)
                 self.assertTrue(89<timeouts[0]<=90)
                 self.assertEqual(result['status'],'completed');self.assertEqual(result['report_status']['code'],'timeout')
                 self.assertEqual(result['user_report']['conclusion'],result['stage_outputs']['interpretation']['conclusion'])
@@ -132,7 +132,7 @@ class GuidanceTests(unittest.TestCase):
                 if isinstance(event,dict) and event.get('checkpoint'):
                     captured.append(event['checkpoint'])
                     raise PowerLoss()
-            return run_analysis(*args,progress=record,provider_call=fixture,**kwargs)
+            return run_analysis(*args,progress=record,use_ai_report=True, provider_call=fixture,**kwargs)
         with tempfile.TemporaryDirectory() as directory:
             app=Application(directory,pipeline=interrupted_pipeline);actor=Actor('local-user','s')
             store=app.store()

@@ -170,3 +170,5 @@ body[data-mobile-page=rules] .main-column{display:none}
 .score-learning-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}.score-learning-tabs button{font-size:13px;white-space:normal;padding:12px 8px;border:1px solid #d7e1d3;background:#f4f7ef;border-radius:10px}.score-learning-tabs button[aria-pressed=true]{background:#284a3e;color:#fff}
 
 .guide-quote{margin:12px 0;padding:10px 14px;border-left:3px solid #819276;background:#edf2e8;line-height:1.85;font-size:14px;overflow-wrap:anywhere}
+
+@media(max-width:760px){.header-meta #user-help-open{margin-right:12px;font-size:12px}#user-help-dialog{padding:22px 16px}#user-help-dialog .user-help-content{font-size:15px}}

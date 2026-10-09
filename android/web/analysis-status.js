@@ -80,7 +80,7 @@
       item.setAttribute("aria-label", item.textContent + "：" + (done.includes(key) ? "已完成" : key === stage ? failed ? "未完成" : "当前步骤" : "尚未开始"));
     }
     hint.textContent = active ? job.phase === "validating" ? "本阶段已收到回复，正在校验。" : job.phase === "repairing" || job.attempt === 2 ? "上一份回复格式未通过校验，正在自动修复；可展开查看草稿和原因。" : job.phase === "stage_done" ? "本阶段已保存，正在进入下一步。" : "尚未收到本阶段的完整回复。max 模式可能等待较久；每一步返回后即可查看正文。" : "已返回的回复和报错保存在本次分析记录中。";
-    if (preview) hint.textContent = "解卦结论已生成，可先看答案。报告整理最多等待 ".concat(job.report_timeout_seconds || 90, " 秒（含格式修复），超时会保留现有结论。");
+    if (preview) hint.textContent = job.report_timeout_seconds === 0 ? "解卦结论已生成，正在本机整理报告。" : "解卦结论已生成，可先看答案。报告整理最多等待 ".concat(job.report_timeout_seconds || 90, " 秒（含格式修复），超时会保留现有结论。");
     if (fallback) {
       title.textContent = "解卦已完成 · 已保留结论";
       hint.textContent = job.result.report_status.message;

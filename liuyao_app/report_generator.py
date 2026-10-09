@@ -80,6 +80,48 @@ def fallback_report(interpretation,chart):
     return result
 
 
+def local_report(interpretation, chart):
+    """Format accepted analysis without another model call or new predictions.
+
+    Copy the full answer, qualifications and source statements verbatim. Do not
+    truncate a conditional answer to its first clause as the legacy preview did.
+    """
+    result = fallback_report(interpretation, chart)
+    conclusion = deepcopy(interpretation['conclusion'])
+    claims = interpretation.get('claims', [])
+    referenced = set(conclusion.get('claim_refs', []))
+    reasons = [c['statement'] for c in claims if c.get('claim_id') in referenced]
+    def unique(values):
+        return list(dict.fromkeys(v for v in values if isinstance(v, str) and v.strip()))
+    # The professional report retains each cited statement's own conditions.
+    for section in result['sections']:
+        dimension = {'support': 'support', 'obstacle': 'obstacle',
+                     'advice': 'adjustment', 'shi_ying': 'subject_effect'}.get(section['key'])
+        selected = [c for c in claims if c.get('dimension') == dimension] if dimension else []
+        details = []
+        for claim in selected:
+            details.append(claim['statement'])
+            details.extend('成立前提：' + x for x in claim.get('assumptions', []))
+            details.extend('判断边界：' + x for x in claim.get('limitations', []))
+        if details:
+            base = [section['content']] if section['key'] == 'shi_ying' else []
+            if section['key'] == 'advice':
+                details.extend(a['text'] for a in interpretation.get('advice', []))
+            section['content'] = '\n'.join(unique([*base, *details]))
+    result['binding'] = deepcopy(interpretation.get('binding', {}))
+    result['uncertainties'] = deepcopy(interpretation.get('uncertainties', []))
+    result['accepted_claims'] = deepcopy(claims)
+    result['plain_language'] = {
+        'direction': conclusion['direction'], 'answer': conclusion['answer'],
+        'reason': '\n'.join(unique(reasons)),
+        'watch_for': unique([*conclusion.get('key_conditions', []), *conclusion.get('limits', []),
+                            *(u['impact'] for u in interpretation.get('uncertainties', []))]),
+        'next_steps': unique(a['text'] for a in interpretation.get('advice', [])),
+        'timing': '', 'source': 'local',
+    }
+    return result
+
+
 # Compatibility display for saved reports; original conclusions remain intact.
 import re
 TECHNICAL_WORDS = re.compile(r'用神|官鬼|妻财|父母爻|兄弟爻|子孙|世爻|应爻|应克世|持世|动爻|变爻|旬空|月令|日辰|生扶|回头生|回头克|实验|综合分|结构性|第[一二三四五六123456]爻|GAP_|claim_refs')

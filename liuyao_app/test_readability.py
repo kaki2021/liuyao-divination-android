@@ -78,7 +78,7 @@ class PlainReportTests(unittest.TestCase):
                     if modifier and p.calls[-1]['stage']=='report':
                         v=json.loads(r['raw_text']);modifier(v);r['raw_text']=json.dumps(v,ensure_ascii=False)
                     return r
-                return run_analysis(path,a,cid,'deepseek','synthetic',1,provider_call=provider)
+                return run_analysis(path,a,cid,'deepseek','synthetic',1,use_ai_report=True, provider_call=provider)
             finally:db.close()
     def test_new_report_contains_plain_answer_and_full_professional_parts(self):
         r=self.run_report();self.assertEqual(r['status'],'completed')
