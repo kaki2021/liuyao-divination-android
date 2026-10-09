@@ -50,6 +50,41 @@ let server,browser;
   await page.setViewportSize({width:390,height:844});
   await page.locator('#question').fill('考虑接受新项目，未来三个月能否按计划完成？');
   await page.locator('#mobile-next').click();
+  const names=['枚卜丸','太极丸','蓍草/筹策','逐爻录入','随机模拟掷币'];
+  assert.deepEqual(await page.locator('#casting-method option').allTextContents(),names);
+  // Reproduce opening from a scrolled form, small screens, landscape, and
+  // enlarged guide text. Exercise native touch scrolling, not just widths.
+  const touch=await page.context().newCDPSession(page);
+  async function swipe(up){
+    const box=await page.locator('#user-help-body').boundingBox();
+    const x=box.x+box.width*.7,from=box.y+box.height*(up?.82:.28),to=box.y+box.height*(up?.28:.82);
+    await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y:from}]});
+    for(let i=1;i<=8;i++){await touch.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y:from+(to-from)*i/8}]});await page.waitForTimeout(25);}
+    await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForTimeout(350);
+  }
+  for(const viewport of [{width:320,height:480},{width:390,height:520},{width:844,height:390}]){
+    await page.setViewportSize(viewport);await page.locator('#casting-method').selectOption('direct');
+    await page.locator('#guide-open').click();await page.locator('[data-help-method="direct"]:visible').waitFor();
+    assert.deepEqual(await page.locator('#help-method option').allTextContents(),names);
+    await page.locator('#user-help-body .help-document').evaluate(el=>{el.style.fontSize='21px';});
+    await page.locator('[data-help-method="direct"] details').evaluateAll(nodes=>nodes.forEach(el=>{el.open=true;}));
+    const bounds=await page.locator('#user-help-dialog').boundingBox();
+    assert.ok(bounds.y>=0&&bounds.y+bounds.height<=viewport.height+1,'entire dialog fits visible height');
+    await page.locator('#user-help-body').evaluate(el=>{el.scrollTop=0;});await swipe(true);
+    assert.ok(await page.locator('#user-help-body').evaluate(el=>el.scrollTop)>30,'touch scroll advances guide');
+    await page.locator('#user-help-body').evaluate(el=>{el.scrollTop=el.scrollHeight;});
+    assert.ok(await page.evaluate(()=>{
+      const body=document.querySelector('#user-help-body'),last=document.querySelector('[data-help-method="direct"] details:last-child');
+      return last.getBoundingClientRect().bottom<=body.getBoundingClientRect().bottom&&body.scrollHeight-body.clientHeight-body.scrollTop<=2;
+    }),'final manual-entry explanation is reachable');
+    if(viewport.width===390)await page.screenshot({path:'test-results/help-scroll-phone.png'});
+    const before=await page.locator('#user-help-body').evaluate(el=>el.scrollTop);await swipe(false);
+    assert.ok(await page.locator('#user-help-body').evaluate(el=>el.scrollTop)<before,'can scroll back up');
+    await page.locator('#user-help-dialog .dialog-close').click();
+    assert.equal(await page.evaluate(()=>document.documentElement.classList.contains('help-is-open')),false);
+  }
+  await touch.detach();await page.setViewportSize({width:390,height:844});
+  await page.locator('#user-help-body .help-document').evaluate(el=>{el.style.fontSize='';});
   for(const method of ['meibu','taiji','yarrow','direct','random_coin']){
     await page.locator('#casting-method').selectOption(method);await page.locator('#guide-open').click();
     await page.locator('[data-help-method="'+method+'"]:visible').waitFor();

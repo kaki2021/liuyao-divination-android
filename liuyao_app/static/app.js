@@ -95,6 +95,7 @@
     if (!value) { window.YarrowInput.refresh(); window.RandomCoinInput.refresh(); }
   }
   function showView(view, { scroll = false } = {}) {
+    window.RandomCoinInput.cancel();
     const requested = ['input', 'results', 'feedback'].includes(view) ? view : 'input';
     state.view = state.caseId ? requested : 'input';
     document.body.dataset.view = state.view;
@@ -199,6 +200,7 @@
   }
   function updateCastingMode() {
     const method = castingMethod();
+    if (method !== 'random_coin') window.RandomCoinInput.cancel();
     $('meibu-inputs').hidden = method !== 'meibu'; $('taiji-inputs').hidden = method !== 'taiji'; $('line-inputs').hidden = method !== 'direct';
     $('yarrow-inputs').hidden = method !== 'yarrow'; window.YarrowInput.refresh();
     $('random-coin-inputs').hidden = method !== 'random_coin'; window.RandomCoinInput.refresh();
@@ -1035,11 +1037,26 @@
   $('open-feedback').addEventListener('click', () => showView('feedback', { scroll: true }));
   $('feedback-return').addEventListener('click', () => showView('results', { scroll: true }));
   $('feedback-form').addEventListener('submit', event => { event.preventDefault(); appendCaseEvent('feedback'); });
-  $('settings-open').addEventListener('click', () => $('settings-dialog').showModal());
+  $('settings-open').addEventListener('click', () => { window.RandomCoinInput.cancel(); $('settings-dialog').showModal(); });
   let guideLoading;
+  function sizeUserHelp() {
+    const dialog = $('user-help-dialog');
+    if (!dialog.open) return;
+    const viewport = window.visualViewport;
+    const available = viewport ? viewport.height : window.innerHeight;
+    const height = Math.min(860, Math.max(0, available - 16));
+    dialog.style.height = `${height}px`;
+    dialog.style.top = `${(viewport ? viewport.offsetTop : 0) + (available - height) / 2}px`;
+  }
+  window.addEventListener('resize', sizeUserHelp);
+  window.visualViewport?.addEventListener('resize', sizeUserHelp);
+  window.visualViewport?.addEventListener('scroll', sizeUserHelp);
+  $('user-help-dialog').addEventListener('close', () => document.documentElement.classList.remove('help-is-open'));
   async function openUserHelp(section = 'start') {
+    window.RandomCoinInput.cancel();
     const dialog = $('user-help-dialog'), target = $('user-help-body');
     if (!dialog.open) dialog.showModal();
+    document.documentElement.classList.add('help-is-open'); sizeUserHelp();
     if (!target.querySelector('.help-document')) {
       if (!guideLoading) {
         target.textContent = '正在打开使用说明…';

@@ -37,6 +37,7 @@
   casting.prepend(back);
   form.append(steps, question, casting);
   function step(n, scroll = true) {
+    if (n !== 2) window.RandomCoinInput.cancel();
     if (n === 2 && !$("question").value.trim()) {
       $("question").focus();
       $("question").reportValidity();
@@ -115,6 +116,7 @@
   document.querySelector(".workspace").append(rulesPage);
   let rulesReturn = "work";
   function page(key, scroll = true) {
+    if (key !== "work") window.RandomCoinInput.cancel();
     document.body.dataset.mobilePage = key;
     rulesPage.hidden = key !== "rules";
     nav.querySelectorAll("button").forEach((b) => {

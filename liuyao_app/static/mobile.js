@@ -9,7 +9,7 @@
  for(const [n,label] of [[1,'写下所问'],[2,'记录卦象']]){const b=make('button');b.type='button';b.dataset.step=n;b.append(make('span','',String(n)),document.createTextNode(label));b.addEventListener('click',()=>step(n));steps.append(b);}
  const next=make('button','primary-button mobile-only mobile-next','下一步 · 记录卦象 →');next.type='button';next.id='mobile-next';next.onclick=()=>step(2);
  const back=make('button','text-button mobile-only mobile-step-back','← 返回修改所问');back.type='button';back.onclick=()=>step(1);question.append(next);casting.prepend(back);form.append(steps,question,casting);
- function step(n,scroll=true){if(n===2&&!$('question').value.trim()){ $('question').focus();$('question').reportValidity();return;}form.dataset.mobileStep=String(n);steps.querySelectorAll('button').forEach(b=>{if(Number(b.dataset.step)===n)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});if(phone.matches&&scroll)form.scrollIntoView({block:'start',behavior:'smooth'});}
+ function step(n,scroll=true){if(n!==2)window.RandomCoinInput.cancel();if(n===2&&!$('question').value.trim()){ $('question').focus();$('question').reportValidity();return;}form.dataset.mobileStep=String(n);steps.querySelectorAll('button').forEach(b=>{if(Number(b.dataset.step)===n)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});if(phone.matches&&scroll)form.scrollIntoView({block:'start',behavior:'smooth'});}
  step(1,false);
  // Keep each of the three draws legible instead of stacking 24 choices.
  const draws=[...$('meibu-inputs').querySelectorAll('.meibu-group')], drawNav=make('nav','mobile-only mobile-draw-nav');drawNav.setAttribute('aria-label','枚卜丸摸取进度');
@@ -25,7 +25,7 @@
  const nav=make('nav','mobile-nav');nav.setAttribute('aria-label','主导航');
  for(const [key,label] of [['work','问卦'],['history','档案'],['rules','规则']]){const b=make('button');b.type='button';b.dataset.page=key;b.id='mobile-'+key;b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+icons[key]+'</svg>';b.append(make('span','',label));b.onclick=()=>{if(key==='rules')$('rules-open').click();else page(key);};nav.append(b);}document.body.append(nav);
  const rulesPage=$('rules-page');document.querySelector('.workspace').append(rulesPage);let rulesReturn='work';
- function page(key,scroll=true){document.body.dataset.mobilePage=key;rulesPage.hidden=key!=='rules';nav.querySelectorAll('button').forEach(b=>{if(b.dataset.page===key)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});if(scroll)window.scrollTo({top:0,behavior:'smooth'});}
+ function page(key,scroll=true){if(key!=='work')window.RandomCoinInput.cancel();document.body.dataset.mobilePage=key;rulesPage.hidden=key!=='rules';nav.querySelectorAll('button').forEach(b=>{if(b.dataset.page===key)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});if(scroll)window.scrollTo({top:0,behavior:'smooth'});}
  page('work',false);
  new MutationObserver(()=>{if(document.body.dataset.mobilePage!=='rules')page('work',false);if(document.body.dataset.view==='input'&&$('case-state').textContent==='新案例')step(1,false);}).observe(document.body,{attributes:true,attributeFilter:['data-view']});
  document.addEventListener('liuyao:new-casting',()=>{step(1,false);showDraw(0);drawButtons.forEach((b,i)=>b.textContent=['下卦','上卦','动爻'][i]);page('work');});
