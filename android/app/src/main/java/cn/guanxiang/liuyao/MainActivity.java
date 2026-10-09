@@ -35,7 +35,7 @@ public final class MainActivity extends Activity {
             else v.setPadding(insets.getSystemWindowInsetLeft(),insets.getSystemWindowInsetTop(),insets.getSystemWindowInsetRight(),insets.getSystemWindowInsetBottom());
             return insets;
         });
-        setContentView(root);loading("观象", "正在准备你的六爻工作台…");
+        setContentView(root);loading("六爻占问", "正在准备你的六爻工作台…");
         AppRuntime.WORK.execute(()->{try {String url=AppRuntime.start(this);runOnUiThread(()->open(url));} catch(Exception e){runOnUiThread(()->failure());}});
     }
     private int dp(int value){return Math.round(value*getResources().getDisplayMetrics().density);}
@@ -59,7 +59,7 @@ public final class MainActivity extends Activity {
             @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request){
                 Uri uri=request.getUrl();
                 if(local(uri.toString())){
-                    if(uri.getPath().startsWith("/api/")){export(uri.toString(),uri.getPath().contains("help")?"观象_新人使用说明.html":uri.getPath().contains("rules")?"六爻规则库.xlsx":"六爻案例.json");return true;}
+                    if(uri.getPath().startsWith("/api/")){export(uri.toString(),uri.getPath().contains("help")?"六爻占问_使用说明.html":uri.getPath().contains("rules")?"六爻规则库.xlsx":"六爻案例.json");return true;}
                     return false;
                 }
                 if(request.hasGesture()&&"https".equals(uri.getScheme()))try{startActivity(new Intent(Intent.ACTION_VIEW,uri));}catch(ActivityNotFoundException ignored){}

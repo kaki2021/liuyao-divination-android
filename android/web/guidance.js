@@ -35,9 +35,6 @@
     $("rules-open").click();
     window.RuleWorkbench.show("usage");
   };
-  const how = details("起卦与“重新解卦”有什么区别？");
-  how.append(el("p", "实物起卦是摸取、摇卦或揲筮后记录结果；“随机模拟掷币”则在点击时用随机数生成爻象。“保存并排盘”把结果翻译为卦盘；“保存并分析”和“重新解卦”调用 AI 解读已记录的卦，不会自动产生新卦。相关的细问可用“再起一卦”接入本系列，无关问题新建系列。"));
-  $("casting-instruction").after(how);
   function ledger(host, traces, title) {
     host.replaceChildren(el("h4", title));
     const label = el("label", "选择一个爻，看分数怎么得来"), select = el("select");

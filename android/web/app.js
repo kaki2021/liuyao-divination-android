@@ -216,7 +216,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       onInputChange();
       persistDraft();
     });
-    document.querySelectorAll('input[name="casting-method"]').forEach((radio) => radio.addEventListener("change", updateCastingMode));
+    $("casting-method").addEventListener("change", updateCastingMode);
     updateCastingMode();
   }
   function makeCastingOption(name, value, label, detail, accessibleLabel, extraClass) {
@@ -233,8 +233,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     return option;
   }
   function castingMethod() {
-    var _a2;
-    return ((_a2 = document.querySelector('input[name="casting-method"]:checked')) == null ? void 0 : _a2.value) || "meibu";
+    return $("casting-method").value || "meibu";
   }
   function selectedCastingResults(method = castingMethod()) {
     if (method === "yarrow") return window.YarrowInput.read();
@@ -276,8 +275,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     window.YarrowInput.refresh();
     $("random-coin-inputs").hidden = method !== "random_coin";
     window.RandomCoinInput.refresh();
-    $("casting-instruction").textContent = method === "meibu" ? "三次摸取：第一次定下卦，第二次定上卦，第三次定动爻。" : method === "taiji" ? "每次选三颗丸显示的组合，共记录六次；223、233 不区分数字先后。" : method === "yarrow" ? "用实物完成每一变，再记录左右余策。三变合一爻，六爻共十八变；操作前请先看“怎么记录？”。" : "硬币或已有卦象：从初爻到上爻依次选择。已有蓍草／筹策最终结果也可抄录；要保留十八变，请选独立入口。";
-    if (method === "random_coin") $("casting-instruction").textContent = "用系统随机数模拟三枚公平硬币，从初爻到上爻共六次。结果会标记为“随机模拟”；概率原理见“怎么记录？”。";
+    $("casting-instruction").textContent = method === "meibu" ? "三次摸取：第一次定下卦，第二次定上卦，第三次定动爻。" : method === "taiji" ? "每次选三颗丸显示的组合，共记录六次；223、233 不区分数字先后。" : method === "yarrow" ? "每变记录左右余策，三变成一爻，共六爻。初次使用请打开“操作图解”。" : "从初爻到上爻，依次录入阴阳动静。硬币或蓍草／筹策的最终结果也可在此填写。";
+    if (method === "random_coin") $("casting-instruction").textContent = "每次模拟三枚硬币，依次生成初爻至上爻。六次结果都会保存。";
     document.querySelector(".casting-layout").classList.toggle("meibu-layout", method === "meibu");
     onInputChange();
   }
@@ -451,7 +450,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     const method = ["meibu", "taiji", "yarrow", "random_coin"].includes((_c = input == null ? void 0 : input.casting) == null ? void 0 : _c.method) ? input.casting.method : input ? "direct" : "meibu";
     window.YarrowInput.fill(method === "yarrow" ? input.casting.results : null);
     window.RandomCoinInput.fill(method === "random_coin" ? input.casting.results : null);
-    document.querySelector('input[name="casting-method"][value="'.concat(method, '"]')).checked = true;
+    $("casting-method").value = method;
     if (method !== "direct") (((_d = input == null ? void 0 : input.casting) == null ? void 0 : _d.results) || []).forEach((raw, index) => {
       const value = method === "taiji" ? taijiCombination(raw) : raw;
       if (method === "meibu" && MEIBU.some((item) => item.value === value) || method === "taiji" && TAIJI[value]) {
@@ -563,12 +562,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     if (state.branchParent) $("form-title").textContent = "这次想细问什么？";
   }
   function startRelatedCase() {
-    var _a2;
     if (state.busy || !state.caseId) return;
     const draft = window.LiuyaoSeries.relatedDraft(
       state,
       $("context-text").value,
-      (_a2 = document.querySelector('input[name="casting-method"]:checked')) == null ? void 0 : _a2.value
+      $("casting-method").value
     );
     const series = state.series;
     if (!resetCase({ transferContext: true })) return;
@@ -576,7 +574,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     state.series = series;
     state.seriesId = (series == null ? void 0 : series.series_id) || draft.parent.caseId;
     fillInput(draft.input);
-    document.querySelector('input[name="casting-method"][value="'.concat(draft.method, '"]')).checked = true;
+    $("casting-method").value = draft.method;
     updateCastingMode();
     onInputChange();
     renderBranchDraft();
@@ -1528,37 +1526,42 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     appendCaseEvent("feedback");
   });
   $("settings-open").addEventListener("click", () => $("settings-dialog").showModal());
-  async function loadGuideContent(targetId, selector) {
-    const target = $(targetId);
-    if (target.children.length) return;
-    target.textContent = "正在打开使用说明…";
-    try {
-      const response = await fetch("/api/help/export", { credentials: "same-origin" });
-      if (!response.ok) throw new Error("说明暂时无法打开，请关闭后重试。");
-      const page = new DOMParser().parseFromString(await response.text(), "text/html");
-      const article = page.querySelector(selector);
-      if (!article) throw new Error("说明内容不完整，请重新安装完整版本。");
-      const content = document.importNode(article, true);
-      if (targetId !== "user-help-body") content.removeAttribute("id");
-      target.replaceChildren(content);
-    } catch (error) {
-      target.textContent = error.message;
+  let guideLoading;
+  async function openUserHelp(section = "start") {
+    const dialog = $("user-help-dialog"), target = $("user-help-body");
+    if (!dialog.open) dialog.showModal();
+    if (!target.querySelector(".help-document")) {
+      if (!guideLoading) {
+        target.textContent = "正在打开使用说明…";
+        guideLoading = (async () => {
+          const response = await fetch("/api/help/export", { credentials: "same-origin" });
+          if (!response.ok) throw new Error("说明暂时无法打开，请关闭后重试。");
+          const page = new DOMParser().parseFromString(await response.text(), "text/html");
+          const article = page.querySelector(".help-document");
+          if (!article) throw new Error("说明内容不完整，请重新安装完整版本。");
+          target.replaceChildren(document.importNode(article, true));
+        })();
+      }
+      try {
+        await guideLoading;
+      } catch (error) {
+        target.textContent = error.message;
+        guideLoading = null;
+        return;
+      }
     }
+    if (!dialog.open) return;
+    window.LiuyaoHelp.mount(target.querySelector(".help-document"), { section, method: castingMethod() });
+    target.scrollTop = 0;
   }
-  $("guide-open").addEventListener("click", async () => {
-    $("guide-dialog").showModal();
-    await loadGuideContent("direct-record-guide", "#manual-lines-guide");
-    await loadGuideContent("yarrow-record-guide", "#yarrow-guide");
-    await loadGuideContent("random-coin-guide", "#random-casting-explanation");
-    if (!$("guide-dialog").open) return;
-    if (castingMethod() === "direct") $("direct-record-guide").scrollIntoView({ block: "start" });
-    else if (castingMethod() === "yarrow") $("yarrow-record-guide").scrollIntoView({ block: "start" });
-    else if (castingMethod() === "random_coin") $("random-coin-guide").scrollIntoView({ block: "start" });
-    else $("guide-dialog").scrollTop = 0;
+  $("guide-open").addEventListener("click", () => openUserHelp("casting"));
+  $("user-help-open").addEventListener("click", () => openUserHelp("start"));
+  document.addEventListener("click", (event) => {
+    const menu = $("result-export-menu");
+    if (menu.open && (!menu.contains(event.target) || event.target.closest("a"))) menu.open = false;
   });
-  $("user-help-open").addEventListener("click", async () => {
-    $("user-help-dialog").showModal();
-    await loadGuideContent("user-help-body", ".user-help-content");
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") $("result-export-menu").open = false;
   });
   $("settings-done").addEventListener("click", () => {
     storePreference();
@@ -1636,6 +1639,13 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           if ("checked" in f) el.checked = f.checked;
         }
       });
+      if (!fields["casting-method"]) {
+        const oldMethod = ["meibu", "taiji", "yarrow", "direct", "random_coin"].find((method) => {
+          var _a2;
+          return (_a2 = fields["casting-method::" + method]) == null ? void 0 : _a2.checked;
+        });
+        if (oldMethod) $("casting-method").value = oldMethod;
+      }
       updateCastingMode();
       updatePersonFields();
       $("buzhai-enabled").dispatchEvent(new Event("change", { bubbles: true }));

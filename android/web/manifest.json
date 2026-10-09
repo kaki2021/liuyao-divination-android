@@ -3,12 +3,12 @@
   "tool": "esbuild 0.25.10",
   "files": {
     "analysis-status.js": {
-      "source": "d866e5e4288ab8b6240747f2aedf2e812b5754b7382350f2ba1a1802c2ebc0b3",
-      "output": "f843fa1174a2370d31efa719ac38ffaa13524be1e636e02990ad7641b2b68e71"
+      "source": "537c7feec5aa1e6dc591cfa3cc9a5ef3135a84129329ae5730dcaf4177105e28",
+      "output": "f6477c9635cdeee863030b44d061b5fd78bd27e8c07573cf38416509620d5dcf"
     },
     "app.js": {
-      "source": "3018458ec4eb3206977b9a38ec823995776ff88fa41ab29bcdc58f758c85152d",
-      "output": "fc7e19d9fe029ad1861ee75411f2d26856789a95e188dbc99e0b29122b893bc4"
+      "source": "2f9e26a82ab6d01dd612ed3dc15a56abe6294914503b2a60085aee5dc856b739",
+      "output": "1b1b87df5685fdeeb8f5f0616afc35797146ec94f75c6d75c188b5b09ebfb02d"
     },
     "buzhai.js": {
       "source": "4cfc99fa96a4ea23e377d7ea3c28fa3a0452eec3764028a015962f6124374bc0",
@@ -27,12 +27,16 @@
       "output": "95010c86be55f9c1e337d8a561c7f09d4e3daba102144badda904c75f5a0078a"
     },
     "guidance.js": {
-      "source": "12aebdad6c9417c0392d18b6509335a78399c27d2e904275c6bc2b663e0d4e93",
-      "output": "cfd9808f47ca61df947a220d99d04eca487f979081c780ce49d6fda203692e7e"
+      "source": "0e72b2b6b6117a977c5a8803bd14bec9cd2f07749353b6fbd780eb01b05217c9",
+      "output": "b570a43ff722624175ec4e541cb57e98271c9d1fad3d7974237b7167f7886795"
+    },
+    "help-ui.js": {
+      "source": "e22ee2c79e88d7e7fbdff9580afc2e2e9e8287439be731287b916fecbb3ae09f",
+      "output": "ea99dae2b76603583f6d07ae930fe62c80a704bcbf7b5fa909b7c1997d50b01a"
     },
     "mobile.js": {
-      "source": "0579825123d5ac419533fd49526d45cc119f93b1c60c4d7870653363d2bebcb3",
-      "output": "48a2c257a58d150627bc43b7415bbed6e22ac662d4292ebec436ff319d92760c"
+      "source": "b233b0d2cd98cbe4ba0e18f6e090cd4fdaf3fcdb89d96a50da34e1da38ae04c5",
+      "output": "d93efec9bb2db42ccb439e79714cca41164621bf6b967583514537a8257d4289"
     },
     "phone-chart.js": {
       "source": "8a81c78a10ead8bbfe77f50942e9d4231a6b39df9b43a614c3148bad9546fa83",
@@ -43,8 +47,8 @@
       "output": "5774ef4cd67ce847638095057f601f79fe0124cf1e12d336e6d6fec3919ccff5"
     },
     "report-views.js": {
-      "source": "6a6d5cb3a8be0b5b7689155f4e5162b6f01726521210dd9c06ad376678b9c11b",
-      "output": "81ed0985192b876d7ba88a38eb8657420336c83c2957089b0e84c8b85608fafa"
+      "source": "f81ab5f2c69b5c663416073845ecf026a74a34010adb32affd149013fcfa26ac",
+      "output": "ef7ca5d331da7e383957d74d14bae848903b5a3c5413f6bd0e79d16a7eda5e0c"
     },
     "rules-ui.js": {
       "source": "7c48379ee70c8f8fdcf14f521ead7d6ce2782045e29b486a1487ce4301f07908",

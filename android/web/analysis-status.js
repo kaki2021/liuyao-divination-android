@@ -39,7 +39,7 @@
   floating.type = "button";
   floating.hidden = true;
   document.body.append(floating);
-  const shortcut = el("button", "analysis-records-open", "Log", "text-button");
+  const shortcut = el("button", "analysis-records-open", "运行记录", "text-button");
   shortcut.type = "button";
   shortcut.setAttribute("aria-haspopup", "dialog");
   shortcut.setAttribute("aria-controls", "analysis-log-dialog");

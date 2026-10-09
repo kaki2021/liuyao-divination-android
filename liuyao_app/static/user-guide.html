@@ -1,32 +1,64 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>观象 · 新人使用说明</title>
-<style>body{margin:0;background:#f5f4ef;color:#243e35;font:16px/1.8 system-ui,"Microsoft YaHei",sans-serif}article{max-width:780px;margin:auto;padding:32px 24px 64px}h1{font-size:30px;line-height:1.4}h2{margin-top:32px;font-size:21px;border-top:1px solid #dce2d8;padding-top:20px}h3{font-size:17px}p,li{overflow-wrap:anywhere}li{margin:8px 0}ol,ul{padding-left:25px}.guide-lead{font-size:18px}.guide-note{padding:14px 18px;background:#e8eee2;border-radius:12px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px;border-bottom:1px solid #dce2d8;vertical-align:top}a{color:#305e48}nav{display:flex;gap:12px;flex-wrap:wrap}@media print{body{background:white}article{padding:0}h2{break-after:avoid}table{break-inside:avoid}}</style></head>
-<body><article class="user-help-content">
-<p>观象 · 六爻研习</p><h1>新人使用说明</h1>
-<p class="guide-lead">写清问题 → 记录起卦结果 → 保存并分析 → 查看结论和条件 → 记录实际进展。</p>
-<p class="guide-note">内置规则版安装后即可排盘、保存案例。AI 解卦需要联网，并在“模型设置”中填写自己账户的 API 密钥。</p>
-<h2>1. 第一次打开：先设置模型</h2>
-<ol><li>打开右上角“模型设置”，选择 AI 厂商和模型。</li><li>Android 版点击“配置 API 密钥”，填入对应厂商提供的密钥并保存，再点击“使用此设置”。密钥由应用加密保存在本机。</li><li>DeepSeek 可选模型以界面实际列表为准；豆包需填写自己已开通的模型或接入点。API 调用费用由所选厂商按账户规则计收。</li></ol>
-<p>只想记录和查看卦盘，可以先不配置 AI，使用“保存并排盘”。“离线演示”只展示流程和计算，不会给出 AI 解卦结论。</p>
-<h2>2. 写下一个清楚的问题</h2>
-<p>写明在问谁、什么事、想判断什么，以及相关时间范围；有必要的背景再补充。一次围绕一个主问题展开。</p>
-<p>例如：“我正在考虑接受 A 公司的录用，想问未来三个月这份工作是否适合我。已知薪资和工作地点，团队情况还不清楚。”</p>
-<ul><li>区分“事情能否办成”和“办成后对我有没有好处”，可以写清主要关注点。</li><li>起卦时间填写实际起卦时刻；补录旧卦时不要误填成现在。不知道的时间保持未知。</li><li>人物档案可选填，便于后续重复使用。出生资料目前用于记录与八字辅助展示。</li><li>涉及住处时，可选择卜宅专题并按页面提示说明是择地、选房还是核对现有住处。</li></ul>
-<h2>3. 按你使用的方式记录卦象</h2>
-<p class="guide-note"><strong>推荐使用实物起卦：太极丸、枚卜丸、蓍草与筹策。</strong>软件也提供“随机模拟掷币”作为便捷选项；记录中会注明模拟来源。</p>
-<p>点击“下一步 · 记录卦象”，选择与你实际操作一致的录入方式。旁边的“怎么记录？”可随时打开对照表。</p>
-<h3>枚卜丸：记录三次结果</h3>
-<p>第一次定下卦，第二次定上卦，第三次定动爻。前两次的对应关系如下：</p>
-<table><thead><tr><th>结果</th><th>八卦</th><th>结果</th><th>八卦</th></tr></thead><tbody>
-<tr><td>圆</td><td>乾 · 天</td><td>方</td><td>坤 · 地</td></tr><tr><td>1</td><td>震 · 雷</td><td>2</td><td>兑 · 泽</td></tr><tr><td>3</td><td>坎 · 水</td><td>4</td><td>艮 · 山</td></tr><tr><td>5</td><td>离 · 火</td><td>6</td><td>巽 · 风</td></tr></tbody></table>
-<p>第三次：圆表示六爻全动，方表示六爻全静，数字 1—6 分别表示初爻至上爻发动。</p>
-<h3>太极丸：记录六次组合</h3>
-<p>每次记录三颗丸显示的数字组合，第一次是初爻，第六次是上爻。同一组数字的排列次序不影响选择。</p>
-<table><thead><tr><th>组合</th><th>阴阳与动静</th></tr></thead><tbody><tr><td>222</td><td>老阴，动，变阳</td></tr><tr><td>223（任意次序）</td><td>少阳，静</td></tr><tr><td>233（任意次序）</td><td>少阴，静</td></tr><tr><td>333</td><td>老阳，动，变阴</td></tr></tbody></table>
-<section id="yarrow-guide">
-<h3>蓍草／筹策：独立记录十八变</h3>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>六爻占问 · 使用说明</title>
+<style id="guide-styles">/* Scoped guide styles are shared by the app and its offline HTML export. */
+.help-document{--help-ink:#233f37;--help-text:#43544c;--help-muted:#718078;--help-line:#dfe6de;--help-soft:#f2f5ee;box-sizing:border-box;color:var(--help-text);font:15px/1.8 system-ui,-apple-system,"Microsoft YaHei",sans-serif;max-width:860px;margin:0 auto;padding:28px 28px 48px}
+.help-document *{box-sizing:border-box}.help-document [hidden]{display:none!important}
+.help-document h1,.help-document h2,.help-document h3,.help-document h4{color:var(--help-ink);font-family:inherit;font-weight:650;letter-spacing:0;line-height:1.45}
+.help-document h1{font-size:28px;margin:4px 0 10px}.help-document h2{font-size:22px;margin:0 0 10px;border:0;padding:0}.help-document h3{font-size:18px;margin:24px 0 10px}.help-document h4{font-size:15px;margin:18px 0 8px}
+.help-document p{margin:10px 0;overflow-wrap:anywhere}.help-document a{color:#315f4d;text-decoration:underline;text-underline-offset:3px}
+.help-kicker{color:var(--help-muted);font-size:12px;letter-spacing:2px}.help-document .help-subtitle{color:var(--help-muted);margin:0 0 20px;font-size:14px}
+.help-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:5px;margin:0 0 24px;background:#edf1e9;border:1px solid var(--help-line);border-radius:12px;position:sticky;top:0;z-index:3}
+.help-tabs button{border:0;border-radius:8px;background:transparent;color:#64756b;font:inherit;font-size:13px;line-height:1.4;min-height:42px;padding:8px 3px;cursor:pointer}
+.help-tabs button[aria-selected=true]{color:#234d3d;background:#fff;font-weight:650;box-shadow:0 1px 4px #24433412}
+.help-document button:focus-visible,.help-document select:focus-visible,.help-document summary:focus-visible{outline:2px solid #51735b;outline-offset:3px}
+.help-document section{min-width:0}.help-document .help-caption{font-size:12px;color:var(--help-muted)}
+.help-document .help-note{margin:16px 0;padding:13px 15px;background:var(--help-soft);border-left:3px solid #90a585;border-radius:0 8px 8px 0;font-size:13px;line-height:1.8}
+.help-document .help-note strong{color:var(--help-ink)}.help-method-select{margin:18px 0 20px}.help-method-select label{display:block;color:var(--help-muted);font-size:12px;margin-bottom:5px}
+.help-document select{width:100%;font:inherit;font-size:15px;line-height:1.5;min-height:48px;padding:11px 34px 11px 12px;border:1px solid #c9d5c7;border-radius:10px;background:#fff;color:var(--help-ink)}
+.help-document ol,.help-document ul{padding-left:23px;margin:12px 0}.help-document li{margin:8px 0;overflow-wrap:anywhere}
+.help-document table{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;margin:16px 0;font-size:13px;line-height:1.7;border:1px solid var(--help-line);border-radius:10px;overflow:hidden}
+.help-document th,.help-document td{text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere;padding:11px 12px;border:0;border-bottom:1px solid var(--help-line)}
+.help-document th{background:#f0f4eb;color:var(--help-ink);font-weight:600}.help-document tr:last-child td{border-bottom:0}.help-document tbody tr:nth-child(even){background:#fafbf8}
+.help-document .help-pairs th:first-child,.help-document .help-pairs td:first-child{width:32%}
+.help-document details{border:1px solid var(--help-line);border-radius:10px;margin:14px 0;padding:0 15px;background:#fff}
+.help-document summary{cursor:pointer;color:var(--help-ink);padding:14px 0;font-size:14px;line-height:1.6;min-height:48px}
+.help-document details[open]{padding-bottom:12px}.help-document details p{font-size:14px}
+.help-steps{list-style:none!important;padding:0!important;counter-reset:help-step}.help-steps>li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;border-bottom:1px solid var(--help-line);padding:12px 0;margin:0!important}.help-steps>li:last-child{border:0}
+.help-steps>li:before{counter-increment:help-step;content:counter(help-step);width:26px;height:26px;border-radius:50%;background:#e8eee1;color:#456348;font-size:12px;display:grid;place-items:center;margin-top:2px}
+.help-steps strong{display:block;color:var(--help-ink);font-size:15px}.help-steps p{margin:3px 0!important;font-size:14px}
+.help-example{margin:18px 0;padding:16px;background:#faf7ef;border:1px solid #e8dfcb;border-radius:12px}.help-example>p:first-child{margin-top:0;font-size:11px;color:#8a7655;letter-spacing:1px}.help-example p:last-child{margin-bottom:0}
+.help-figure{margin:20px 0;border:1px solid var(--help-line);border-radius:12px;overflow:hidden;background:#f7f9f3}.help-figure svg{display:block;width:100%;height:auto;max-width:600px;margin:0 auto;color:var(--help-ink)}
+.help-figure svg text{font-family:system-ui,"Microsoft YaHei",sans-serif;fill:currentColor}.help-figure figcaption{margin:0;padding:10px 14px;border-top:1px solid var(--help-line);font-size:12px;color:var(--help-muted);line-height:1.6}
+.help-document .help-next{border:1px solid #d2ddcb;background:#edf2e7;color:#315541;border-radius:9px;min-height:44px;padding:10px 16px;font:inherit;font-size:14px;cursor:pointer;margin-top:12px;width:100%}
+.help-document .help-meta{font-size:12px;color:var(--help-muted);margin-top:24px}.help-document code{font-size:12px;word-break:break-all}
+@media(max-width:600px){.help-document{padding:18px 16px 36px;font-size:14px}.help-document h1{font-size:24px}.help-document h2{font-size:20px}.help-tabs{margin-bottom:20px}.help-tabs button{font-size:12px}.help-document th,.help-document td{padding:10px 8px;font-size:12px}.help-document h3{font-size:17px}}
+@media print{.help-tabs,.help-method-select,.help-next{display:none!important}.help-document [hidden]{display:block!important}.help-document{max-width:none;padding:0;font-size:11pt}.help-document [data-help-panel]{break-before:page}.help-document [data-help-panel=start]{break-before:auto}.help-document details>*{display:block}.help-document table,.help-figure{break-inside:avoid}.help-document h2,.help-document h3{break-after:avoid}.help-document details{border:0;padding:0}.help-document summary{font-weight:600}}
+
+.help-figure svg .figure-inverse{fill:#fff}
+</style>
+<style>body{margin:0;background:#fffefb} @media print{body{background:white}}</style></head>
+<body><article class="help-document user-help-content">
+<header class="help-cover"><p class="help-kicker">六爻占问</p><h1>新人使用说明</h1><p class="help-subtitle">从第一卦开始，按需要查阅。</p></header>
+<nav class="help-tabs" role="tablist" aria-label="使用说明栏目"><button type="button" id="help-tab-start" role="tab" aria-controls="help-panel-start" aria-selected="true" data-help-tab="start">开始使用</button><button type="button" id="help-tab-casting" role="tab" aria-controls="help-panel-casting" aria-selected="false" data-help-tab="casting">起卦图解</button><button type="button" id="help-tab-results" role="tab" aria-controls="help-panel-results" aria-selected="false" data-help-tab="results">查看结果</button><button type="button" id="help-tab-faq" role="tab" aria-controls="help-panel-faq" aria-selected="false" data-help-tab="faq">常见问题</button></nav>
+<section id="help-panel-start" role="tabpanel" aria-labelledby="help-tab-start" data-help-panel="start">
+<h2>第一卦，从这里开始</h2><p class="help-subtitle">只想排盘可以直接开始；AI 解卦需要先配置密钥。</p><figure class="help-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 194" role="img" aria-label="六爻占问操作流程示意，写所问、记卦象、看结果"><g fill="#fffefb" stroke="#ccd8c6"><rect x="20" y="22" width="108" height="150" rx="12"/><rect x="146" y="22" width="108" height="150" rx="12"/><rect x="272" y="22" width="108" height="150" rx="12"/></g><g text-anchor="middle" font-size="14" font-weight="600"><text x="74" y="51">写所问</text><text x="200" y="51">记卦象</text><text x="326" y="51">看结果</text></g><g fill="#eaf0e2"><rect x="33" y="67" width="82" height="57" rx="5"/><rect x="159" y="67" width="82" height="24" rx="5"/><rect x="285" y="67" width="82" height="20" rx="5"/></g><g stroke="#93a486" stroke-width="3" stroke-linecap="round"><path d="M43 80h60m-60 12h60m-60 12h36M171 79h47M167 106h26m10 0h28m-64 12h64m-64 12h26m10 0h28M286 100h79m-79 12h79m-79 12h52"/></g><g fill="#496c52"><rect x="33" y="140" width="82" height="19" rx="5"/><rect x="159" y="140" width="82" height="19" rx="5"/></g><g font-size="10" text-anchor="middle"><text x="74" y="154" class="figure-inverse">下一步</text><text x="200" y="154" class="figure-inverse">保存并分析</text><text x="326" y="153">结论与条件一起看</text></g></svg><figcaption>操作位置示意。填写真实问题，选择方式记录，再保存并排盘或分析。</figcaption></figure>
+<ol class="help-steps"><li><div><strong>写下一个明确的问题</strong><p>说明对象、打算和犹疑之处，必要时补充时间范围与背景。</p></div></li><li><div><strong>选择方式，记录卦象</strong><p>进入“记录卦象”，在下拉框选择实际使用的器具。初次使用可点“操作图解”。</p></div></li><li><div><strong>保存，然后看结论与条件</strong><p>“保存并排盘”用于留存和计算；“保存并分析”会调用 AI。事情有进展后，补上实际反馈。</p></div></li></ol>
+<details><summary>首次使用：怎样配置 AI 模型？</summary><ol><li>打开右上角“模型设置”，选择厂商和模型。</li><li>Android 版点击“配置 API 密钥”，填写对应厂商提供的密钥，保存后点“使用此设置”。密钥加密保存在本机。</li><li>可选模型以页面实际列表为准；豆包需填写已开通的模型或接入点。API 费用按所选厂商账户规则计收。</li></ol><p>“离线演示”只展示流程和计算，不会给出 AI 解卦结论。</p></details>
+<details><summary>问题怎么写？哪些资料需要填？</summary><table class="help-pairs"><thead><tr><th>内容</th><th>填写要点</th></tr></thead><tbody><tr><td>这次的所问</td><td>问谁、什么事、拿不准什么；需要时说明时间范围。</td></tr><tr><td>背景与人物</td><td>只补充与本问有关的已知事实。人物档案选填，出生资料用于记录与八字辅助展示。</td></tr><tr><td>实际起卦时间</td><td>填写真正起卦的时刻；补录旧卦时不要误填现在。未知则留空。</td></tr><tr><td>卜宅专题</td><td>按提示选择择地、选房或核对现有住处，并说明范围。</td></tr></tbody></table><div class="help-example"><p>提问示例</p><p>我正在考虑接受 A 公司的录用，想问未来三个月这份工作是否适合我。已知薪资和工作地点，团队情况还不清楚。</p></div><p>先认真考虑现实条件，再问尚未拿准之处。“能否办成”和“办成后是否有利”可以区分；排查问题时，先明确待查对象、范围与目的。</p></details>
+<button type="button" class="help-next" data-help-jump="casting">下一页 · 选择起卦方式 →</button></section>
+<section id="help-panel-casting" role="tabpanel" aria-labelledby="help-tab-casting" data-help-panel="casting">
+<p class="help-note"><strong>推荐实物起卦：太极丸、枚卜丸、蓍草与筹策。</strong><br>选择一种方式，查看对应步骤与图解。</p>
+<div class="help-method-select"><label for="help-method">查看哪种方式？</label><select id="help-method"><optgroup label="实物起卦 · 推荐"><option value="meibu">枚卜丸 · 三次摸取</option><option value="taiji">太极丸 · 六次摇卦</option><option value="yarrow">蓍草／筹策 · 十八变</option></optgroup><optgroup label="其他方式"><option value="direct">逐爻录入 · 硬币／已有结果</option><option value="random_coin">随机模拟掷币</option></optgroup></select></div>
+<section id="meibu-guide" data-help-method="meibu"><h2>枚卜丸</h2><p class="help-subtitle">摸取三次：下卦、上卦、动爻。</p><figure class="help-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" role="img" aria-label="枚卜丸三次结果：一为下卦震，五为上卦离，三表示三爻动"><text x="20" y="29" font-size="12" fill="#718078">示例 · 按实际摸取结果选择</text>
+<g fill="#fffefb" stroke="#ccd8c6"><rect x="20" y="48" width="108" height="116" rx="12"/><rect x="146" y="48" width="108" height="116" rx="12"/><rect x="272" y="48" width="108" height="116" rx="12"/></g>
+<g text-anchor="middle"><g font-size="12"><text x="74" y="74">第一次 · 下卦</text><text x="200" y="74">第二次 · 上卦</text><text x="326" y="74">第三次 · 动爻</text></g><g font-size="30" font-weight="600"><text x="74" y="118">1</text><text x="200" y="118">5</text><text x="326" y="118">3</text></g><g font-size="13"><text x="74" y="147">震 · 雷</text><text x="200" y="147">离 · 火</text><text x="326" y="147">三爻发动</text></g></g><text x="200" y="198" text-anchor="middle" font-size="14">本卦：火雷噬嗑　｜　三爻动</text></svg><figcaption>第三次的数字表示动爻位置，与前两次的八卦对应表不同。</figcaption></figure><ol class="help-steps"><li><div><strong>第一次：记录下卦</strong><p>选择实物显示的圆、方或数字 1—6。</p></div></li><li><div><strong>第二次：记录上卦</strong><p>手机上点“第二次”，继续选择摸取结果。</p></div></li><li><div><strong>第三次：记录动爻</strong><p>数字 1—6 对应初爻至上爻；圆为六爻全动，方为六爻全静。</p></div></li></ol><details><summary>前两次的八卦对应表</summary><table><thead><tr><th>结果</th><th>八卦</th><th>结果</th><th>八卦</th></tr></thead><tbody><tr><td>圆</td><td>乾 · 天</td><td>方</td><td>坤 · 地</td></tr><tr><td>1</td><td>震 · 雷</td><td>2</td><td>兑 · 泽</td></tr><tr><td>3</td><td>坎 · 水</td><td>4</td><td>艮 · 山</td></tr><tr><td>5</td><td>离 · 火</td><td>6</td><td>巽 · 风</td></tr></tbody></table></details><p class="help-note">需要更正时，点“下卦／上卦／动爻”返回对应一次；请按实际结果记录。</p></section>
+<section id="taiji-guide" data-help-method="taiji"><h2>太极丸</h2><p class="help-subtitle">每次记录三颗丸的数字，共六次。</p><figure class="help-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" role="img" aria-label="两阴一阳，二加二加三等于七，初爻记录少阳"><text x="20" y="29" font-size="12">示例 · 第一次得到两阴一阳</text><g fill="#fffdf6" stroke="#cab995" stroke-width="2"><circle cx="85" cy="91" r="33"/><circle cx="200" cy="91" r="33"/><circle cx="315" cy="91" r="33"/></g><g text-anchor="middle" font-size="22"><text x="85" y="99">阴 2</text><text x="200" y="99">阴 2</text><text x="315" y="99">阳 3</text></g><text x="200" y="154" text-anchor="middle" font-size="18">2 ＋ 2 ＋ 3 ＝ 7</text><rect x="36" y="174" width="328" height="32" rx="8" fill="#e6eddd"/><text x="200" y="196" text-anchor="middle" font-size="14">初爻选择「少阳」 · 阳爻，不发动</text></svg><figcaption>阴面记 2，阳面记 3。太极丸按显示数字记录；钱币先按说明辨明阴阳面。</figcaption></figure><p>每摇一次，就在对应行选数字组合；第一次是初爻，第六次是上爻。同组数字的排列次序不影响选择，232 与 322 均选 223。</p><table><thead><tr><th>三颗数字</th><th>爻象</th><th>动静</th></tr></thead><tbody><tr><td>222</td><td>老阴 ×</td><td>动，变阳</td></tr><tr><td>223</td><td>少阳</td><td>静，阳爻</td></tr><tr><td>233</td><td>少阴</td><td>静，阴爻</td></tr><tr><td>333</td><td>老阳 ○</td><td>动，变阴</td></tr></tbody></table><p class="help-note">六行都填写后保存。若只记住最终的阴阳动静，可选择“逐爻录入”。</p></section>
+<section id="yarrow-guide" data-help-method="yarrow">
+<h2>蓍草／筹策</h2><p class="help-subtitle">六爻十八变，逐变保留左右余策。</p>
 <p>这里按本软件采用的筹策流程说明。筹策可以使用蓍草，也可用竹签或木筹。选择独立的“蓍草／筹策”入口；每变完成后，按实际左右次序选余策组合。软件自动判阴阳，三变合成一爻，保留六爻十八变的原始记录。</p>
-<ol>
+<figure class="help-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 237" role="img" aria-label="筹策一爻的三变示例：十三、零四、四四，合成少阴"><text x="20" y="28" font-size="12">一爻示例 · 每爻开始都恢复 49 根</text>
+<g fill="#fffefb" stroke="#ccd8c6"><rect x="20" y="46" width="108" height="136" rx="12"/><rect x="146" y="46" width="108" height="136" rx="12"/><rect x="272" y="46" width="108" height="136" rx="12"/></g>
+<g text-anchor="middle"><g font-size="12"><text x="74" y="71">第一变 · 49 根</text><text x="200" y="71">第二变 · 45 根</text><text x="326" y="71">第三变 · 41 根</text></g><g font-size="24" font-weight="600"><text x="74" y="107">1 ｜ 3</text><text x="200" y="107">0 ｜ 4</text><text x="326" y="107">4 ｜ 4</text></g><g font-size="13"><text x="74" y="135">阳象 3</text><text x="200" y="135">阳象 3</text><text x="326" y="135">阴象 2</text></g><g font-size="11"><text x="74" y="164">余策 4 · 剩 45</text><text x="200" y="164">余策 4 · 剩 41</text><text x="326" y="164">余策 8 · 剩 33</text></g><text x="200" y="213" font-size="15">3、3、2 → 少阴 · 静爻</text></g></svg><figcaption>每一变的余策留在旁边，挂起的阴阳签放回继续操作；下一爻再收回全部余策。</figcaption></figure><details><summary>实物操作：准备、分二、挂一、揲四</summary><ol>
 <li><strong>准备：</strong>共备 60 根，先留出 5 根，再从取出的 55 根中留出 6 根，以余下 49 根操作。把其中一根标记为阴阳签。</li>
 <li><strong>分二、挂一：</strong>将 49 根放入筒内摇匀，取出铺开，以阴阳签的位置分成左右两部分；取出阴阳签，作为本变“挂一”的一根。</li>
 <li><strong>揲四：</strong>两侧分别按四根一组分出。每个非空部分最后保留 1—4 根作为余策，正好四根时保留四根；空的一侧记 0。将两侧余策分开放置，保留这一变的组合。</li>
@@ -34,58 +66,104 @@
 <li><strong>继续下一变：</strong>将两侧余策留在旁边，把挂起的阴阳签放回刚才分出的其余筹策中，再重复分二、挂一、揲四。第一变后应剩 45 或 41 根，第二变后应剩 41、37 或 33 根。</li>
 <li><strong>三变合爻：</strong>三次全阴是老阴，两阴一阳是少阳，一阴两阳是少阴，三次全阳是老阳。三变先后次序会留存，最终爻象由阴阳数量确定。</li>
 <li><strong>复原再起下一爻：</strong>核对页面自动生成的爻象，收回这一爻的全部余策，恢复 49 根，点击“下一爻”继续。依次完成六爻，共十八变。</li>
-</ol>
-<p class="guide-note">本流程依据每一变的“两侧余策组合”判阴阳，挂起的一根会放回下一变使用。请完整沿用这一流程；不能把别的筮法中“挂一另置”或“最后剩余根数除以四”的步骤混入。</p>
-<p>例如三变依次得到“1 与 3”“0 与 4”“4 与 4”，就是阳、阳、阴，记作 332，软件自动合成“少阴”。</p>
-<p>页面逐变显示应取的根数和记录后的剩余根数，供你核对实物；这些数由录入结果推算，不能代替实物计数。点上方爻位和“第几变”可返回更正，后续根数提示会重新计算。</p>
+</ol></details>
+<table><thead><tr><th>左右余策</th><th>本变记数</th></tr></thead><tbody><tr><td>1｜3、3｜1、0｜4、4｜0</td><td>阳象 3</td></tr><tr><td>2｜2、4｜4</td><td>阴象 2</td></tr></tbody></table><p class="help-note">本流程依据每一变的“两侧余策组合”判阴阳，挂起的一根会放回下一变使用。请完整沿用这一流程；不能把别的筮法中“挂一另置”或“最后剩余根数除以四”的步骤混入。</p>
+<p>图中三变依次得到“1 与 3”“0 与 4”“4 与 4”，记作 332，自动合成少阴。</p>
+<h3>在软件里怎么记</h3><p>页面逐变显示应取的根数和记录后的剩余根数，供你核对实物；这些数由录入结果推算，不能代替实物计数。点上方爻位和“第几变”可返回更正，后续根数提示会重新计算。</p>
 <p>未记录满十八变不能保存成完整卦例。Android 版会保留尚未保存的输入；返回后先核对记录，再接着操作。保存后，在卦盘页、重新编辑和导出案例中都能查到十八变原始余策。若只保留了最终六爻，请使用“逐爻录入”。</p>
 </section>
-<section id="manual-lines-guide">
-<h3>逐爻录入：硬币、已有六爻结果</h3>
+<section id="manual-lines-guide" data-help-method="direct">
+<h2>逐爻录入</h2><p class="help-subtitle">适合硬币起卦，也适合抄录已有的六爻结果。</p><figure class="help-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 224" role="img" aria-label="录入从初爻到上爻，卦盘从上爻到初爻显示"><text x="22" y="30" font-size="13" font-weight="600">录入顺序</text><text x="205" y="30" font-size="13" font-weight="600">卦盘位置</text><path d="M166 190V63m-5 8 5-8 5 8" fill="none" stroke="#90a783" stroke-width="2"/><text x="22" y="67" font-size="13">第 1 次 → 初爻</text><text x="22" y="93" font-size="13">第 2 次 → 二爻</text><text x="22" y="119" font-size="13">第 3 次 → 三爻</text><text x="22" y="145" font-size="13">第 4 次 → 四爻</text><text x="22" y="171" font-size="13">第 5 次 → 五爻</text><text x="22" y="197" font-size="13">第 6 次 → 上爻</text><text x="205" y="67" font-size="13">上爻</text><path d="M259 62h37m20 0h38" stroke="#35583e" stroke-width="7"/><text x="205" y="93" font-size="13">五爻</text><path d="M259 88h95" stroke="#35583e" stroke-width="7"/><text x="205" y="119" font-size="13">四爻</text><path d="M259 114h37m20 0h38" stroke="#35583e" stroke-width="7"/><text x="205" y="145" font-size="13">三爻</text><path d="M259 140h37m20 0h38" stroke="#35583e" stroke-width="7"/><text x="205" y="171" font-size="13">二爻</text><path d="M259 166h95" stroke="#35583e" stroke-width="7"/><text x="205" y="197" font-size="13">初爻</text><path d="M259 192h95" stroke="#35583e" stroke-width="7"/></svg><figcaption>左侧按生成次序录入；右侧卦盘把初爻放在最下面。此图只示意位置。</figcaption></figure>
 <p>用硬币起卦，或已有六个爻的完整结果时，选择“逐爻录入”。蓍草／筹策要逐变记录时，使用独立入口；只抄录最终六爻也可在这里完成。每得到一爻，就在对应位置选择老阴、少阳、少阴或老阳，共录入六爻。</p>
 <p>第一次得到的是初爻，第六次得到的是上爻。按页面的初爻、二爻至上爻依次填入；卦盘展示时，上爻在上、初爻在下。老阴、老阳是动爻，少阴、少阳是静爻。</p>
-<h4>硬币／铜钱：三枚一起投掷，共六次</h4>
+<h3>用三枚硬币起卦</h3>
 <p>准备三枚同规格钱币。本软件采用的阴阳面认定是：承载面值、年号等主要识别信息的一面为阴，另一面为阳。例如清代铜钱的汉字面为阴、满文面为阳；一元硬币的“一元”面为阴，另一面为阳。先辨明两面，再按同一规则记录六次。</p>
-<p>每次三枚一起投掷，只看朝上的一面。阴面记 2，阳面记 3；对照下表，直接选择这一爻：</p>
+<figure class="help-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" role="img" aria-label="两阴一阳，二加二加三等于七，初爻记录少阳"><text x="20" y="29" font-size="12">示例 · 第一次得到两阴一阳</text><g fill="#fffdf6" stroke="#cab995" stroke-width="2"><circle cx="85" cy="91" r="33"/><circle cx="200" cy="91" r="33"/><circle cx="315" cy="91" r="33"/></g><g text-anchor="middle" font-size="22"><text x="85" y="99">阴 2</text><text x="200" y="99">阴 2</text><text x="315" y="99">阳 3</text></g><text x="200" y="154" text-anchor="middle" font-size="18">2 ＋ 2 ＋ 3 ＝ 7</text><rect x="36" y="174" width="328" height="32" rx="8" fill="#e6eddd"/><text x="200" y="196" text-anchor="middle" font-size="14">初爻选择「少阳」 · 阳爻，不发动</text></svg><figcaption>阴面记 2，阳面记 3。太极丸按显示数字记录；钱币先按说明辨明阴阳面。</figcaption></figure><p>每次三枚一起投掷，只看朝上的一面。阴面记 2，阳面记 3；对照下表，直接选择这一爻：</p>
 <table><thead><tr><th>朝上的三面</th><th>记数</th><th>选择</th></tr></thead><tbody><tr><td>三阴</td><td>222＝6</td><td>老阴，动，变阳</td></tr><tr><td>两阴一阳</td><td>223＝7</td><td>少阳，静</td></tr><tr><td>一阴两阳</td><td>233＝8</td><td>少阴，静</td></tr><tr><td>三阳</td><td>333＝9</td><td>老阳，动，变阴</td></tr></tbody></table>
 <p>三枚的排列顺序不影响这一爻。例如第一次得到“两阴一阳”，就在初爻选择“少阳”，然后再投掷并填写二爻。</p>
-<h4>已有卦象：逐爻抄录阴阳动静</h4>
-<p>按原始记录填写六个爻象；只有本卦名称或阴阳线条时，还需要确认哪些爻发动。静爻填少阴或少阳，动爻填老阴或老阳。只有本卦名时，不应擅自把六爻都设成静爻。</p>
-</section>
-<section id="random-casting-explanation">
-<h3>随机模拟掷币：每次三枚，共六次</h3>
+<details><summary>只有已有卦象，怎么抄录？</summary>
+<p>按原始记录填写六个爻象；只有本卦名称或阴阳线条时，还需要确认哪些爻发动。静爻填少阴或少阳，动爻填老阴或老阳。只有本卦名时，不应擅自把六爻都设成静爻。</p></details></section>
+<section id="random-casting-explanation" data-help-method="random_coin">
+<h2>随机模拟掷币</h2><p class="help-subtitle">每次三枚，共六次，从初爻到上爻。</p><figure class="help-figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" role="img" aria-label="两阴一阳，二加二加三等于七，初爻记录少阳"><text x="20" y="29" font-size="12">示例 · 第一次得到两阴一阳</text><g fill="#fffdf6" stroke="#cab995" stroke-width="2"><circle cx="85" cy="91" r="33"/><circle cx="200" cy="91" r="33"/><circle cx="315" cy="91" r="33"/></g><g text-anchor="middle" font-size="22"><text x="85" y="99">阴 2</text><text x="200" y="99">阴 2</text><text x="315" y="99">阳 3</text></g><text x="200" y="154" text-anchor="middle" font-size="18">2 ＋ 2 ＋ 3 ＝ 7</text><rect x="36" y="174" width="328" height="32" rx="8" fill="#e6eddd"/><text x="200" y="196" text-anchor="middle" font-size="14">初爻选择「少阳」 · 阳爻，不发动</text></svg><figcaption>阴面记 2，阳面记 3。太极丸按显示数字记录；钱币先按说明辨明阴阳面。</figcaption></figure>
 <ol><li>先写清问题，进入“记录卦象”，选择“随机模拟掷币”。</li><li>点击“模拟第 1 次 · 初爻”，页面显示三枚币各自的阴2或阳3及本爻阴阳动静。</li><li>继续点击，共六次，从初爻到上爻依次成卦。每次结果立即留在列表中，齐六爻后可保存并排盘或分析。</li><li>首次模拟时，起卦时间未填则记录当前时刻；已填写的时间保留你的设置。补录实物旧卦时，请使用相应录入入口。</li></ol>
 <p>切换起卦方式再切回来、中途恢复草稿、保存或重新解卦，都不会重新抽取已有结果。软件保留“随机模拟”标记和全部六次三枚币原始结果。要另起一卦，请使用“新建系列”或原系列的“再起一卦”。</p>
-<h4>随机原理与概率</h4>
+<details><summary>随机原理、概率与验证说明</summary>
 <p>本入口用系统随机数模拟三枚公平、独立的硬币。采用浏览器的 <code>crypto.getRandomValues</code> 提供强随机值，通常由系统熵源驱动的伪随机发生器产生；它不是实际投掷硬币，也不意味着具有预测能力。</p>
 <p>数学模型：每枚阴面记 2、阳面记 3，设 X₁、X₂、X₃ 各以 1/2 概率取 0 或 1，且相互独立，则总数 S＝6＋X₁＋X₂＋X₃。故 P(S＝6＋k)＝C(3,k)／8（k＝0、1、2、3）。</p>
 <table><thead><tr><th>结果</th><th>对应爻象</th><th>理想概率</th></tr></thead><tbody><tr><td>6</td><td>老阴</td><td>1/8＝12.5%</td></tr><tr><td>7</td><td>少阳</td><td>3/8＝37.5%</td></tr><tr><td>8</td><td>少阴</td><td>3/8＝37.5%</td></tr><tr><td>9</td><td>老阳</td><td>1/8＝12.5%</td></tr></tbody></table>
 <p>不能把四种爻象各按 25% 随机选取后称为“三枚硬币模拟”；实物硬币也可能存在偏差。上表仅描述公平硬币模型，不代表本软件筹策法的概率。</p>
 <p>概率分布可用数学和抽样检验核对，预测现实事件是否准确则要另做预先规定判断标准、对照基准并可重复的验证。已有易经相关实验，但所查资料不足以证明软件随机起卦能可靠预测现实事件；一项 200 人研究中仅第二卦命中率高于机会水平，且差异并不显著，也不能据此宣称实际预测准确率。</p>
-<p class="guide-note">推荐使用太极丸、枚卜丸、蓍草与筹策进行实物起卦。随机模拟作为便捷选项，不能据此宣称预测准确率；录入、换算与排盘测试通过，表示程序步骤符合相应规则。</p>
+<p class="help-note">推荐使用太极丸、枚卜丸、蓍草与筹策进行实物起卦。随机模拟作为便捷选项，不能据此宣称预测准确率；录入、换算与排盘测试通过，表示程序步骤符合相应规则。</p>
 <p>原理参考：<a href="https://www.w3.org/TR/2017/REC-WebCryptoAPI-20170126/#Crypto-method-getRandomValues">W3C 随机值接口</a>；<a href="https://www.parapsychologypress.org/jparticle/jp-70-1-121-141">Storm（2006）易经实验</a>。</p>
+</details></section>
 </section>
-<h2>4. 保存、分析与等待</h2>
-<ul><li><strong>保存并排盘：</strong>保存问题和卦象，查看本卦、变卦及程序计算。</li><li><strong>保存并分析：</strong>保存后调用所选模型，依次理解问题、确定取用、综合解卦，最后由本机整理报告。</li><li><strong>需要补充：</strong>按模型提出的问题补充真实背景，再继续分析。保留不确定事项，不必为了凑齐信息而猜测。</li></ul>
-<p>分析时可查看当前阶段、已用时间和 Log。高强度推理可能需要较长时间，尽量保持网络稳定；手机若严格限制后台运行，可把应用留在前台。点击“刷新状态”只查询当前任务。</p>
-<p>“重新解卦”会新建一次分析，并重新调用模型，可能产生新的 API 费用。只有补充了信息、希望重新判断或前面步骤确实失败时再使用。</p>
-<h2>5. 三个结果页面怎么看</h2>
-<table><thead><tr><th>页面</th><th>主要看什么</th></tr></thead><tbody><tr><td>解卦结论</td><td>本次回答、成立条件、需要留意的事项及后续建议。</td></tr><tr><td>专业分析</td><td>问题理解、取象选择、爻的状态、判断依据和不确定之处。</td></tr><tr><td>卦盘与计算</td><td>本卦、变卦、动爻、干支、六亲、世应及程序计算结果。</td></tr></tbody></table>
-<p>结论应连同条件和边界一起看。软件中的“未知”“待核实”表示资料不足或条件尚未确定；“有条件成立”需要同时满足列出的条件。</p>
-<h2>6. 追问、再起一卦和档案</h2>
-<ul><li><strong>沿用当前卦：</strong>打开已有卦例，补充背景或发送追问，围绕该卦继续分析。</li><li><strong>再起一卦：</strong>需要新卦时，从所选卦下发起，重新记录起卦结果。新卦会保留在同一系列中。</li><li><strong>新建系列：</strong>用于独立的新问题。</li><li><strong>档案：</strong>查找以前的系列，展开后打开其中的任意一卦。系列可以共享有来源的背景，各卦保留各自的问题、卦象、时间和分析。</li></ul>
-<p>事情有进展后，点击“记录后续反馈”，写下实际发生的结果与时间，便于之后复盘。</p>
-<h2>7. 导出与备份</h2>
-<p>在结果页使用“导出案例”，或在系列中导出整个系列。发送问题给维护者时，可附“导出诊断”，并说明使用的厂商、模型、卡住的阶段和出现时间。</p>
-<p>案例和配置主要保存在当前手机中。卸载、清除应用数据或换手机前先导出；目前导出用于留存和复盘，尚无一键恢复整个旧档案的入口。若安装的是独立新版，应保留旧应用以便查阅已有案例。</p>
-<p>在软件的“使用说明”窗口点击“导出说明”，可保存成 HTML 文件，发给新人后用浏览器打开即可。</p>
-<h2>8. 遇到问题时</h2>
-<table><thead><tr><th>提示或现象</th><th>处理方式</th></tr></thead><tbody>
-<tr><td>旧报告提示“报告整理超时”</td><td>先查看已保留的结论与“专业分析”，不必仅为这条提示重新解卦。新版在综合解卦完成后由本机整理报告。</td></tr>
-<tr><td>前面的 AI 阶段超时</td><td>检查网络、厂商服务和账户额度，查看 Log；确认任务已结束后再重新解卦。</td></tr>
-<tr><td>密钥或权限错误</td><td>检查密钥对应的厂商、账户可用额度，以及是否开通了所选模型。</td></tr>
-<tr><td>回复格式未通过校验</td><td>应用会尝试修复并保留原回复；仍失败时导出诊断，便于定位具体字段。</td></tr>
-<tr><td>尚未安装规则包</td><td>确认安装的是“内置规则版”。公开源码构建的版本需要在“规则 → 规则包”中另行导入。</td></tr>
-</tbody></table>
-<p class="guide-note">先记录真实问题和实际卦象，再结合条件阅读结果；后续发生的事实也保存下来，才能形成有用的案例。</p>
-</article></body></html>
+<section id="help-panel-results" role="tabpanel" aria-labelledby="help-tab-results" data-help-panel="results"><h2>先看回答，再核对条件</h2><p class="help-subtitle">结果按用途分成三个页面。</p>
+<table class="help-pairs"><thead><tr><th>页面</th><th>主要看什么</th></tr></thead><tbody><tr><td>解卦结论</td><td>本次回答、成立条件、需要留意的事项与后续建议。</td></tr><tr><td>专业分析</td><td>问题理解、取象选择、爻的状态、判断依据和不确定之处。</td></tr><tr><td>卦盘与计算</td><td>本卦、变卦、动爻、干支、六亲、世应及程序计算。</td></tr></tbody></table>
+<p class="help-note">“未知”“待核实”表示资料不足或条件未确定；“有条件成立”要连同列出的条件一起看。</p>
+<h3>下一步，应该点哪个？</h3><table class="help-pairs"><thead><tr><th>你的需要</th><th>对应操作</th></tr></thead><tbody><tr><td>继续问这一卦</td><td>在“进一步交流”写补充或追问，点“发送追问”。</td></tr><tr><td>围绕此事起新卦</td><td>点“再起一卦”，重新记录结果，保留在当前系列中。</td></tr><tr><td>问独立的新问题</td><td>在“档案”点“新建系列”。</td></tr><tr><td>记下实际进展</td><td>点“记录反馈”，写下结果与发生时间，便于复盘。</td></tr><tr><td>改正录入错误</td><td>点“修改输入”，填更正原因；原记录与分析会保留。</td></tr></tbody></table>
+<details><summary>分析中：等待、补充与重新解卦</summary><p>分析依次经过理解问题、确定取用、综合解卦，最后由本机整理报告。可查看阶段、已用时间和运行记录；手机可先把应用留在前台，保持网络稳定。</p><p>遇到“需要补充”，按提示提供真实背景，不确定的信息保持未知。“刷新状态”只查询任务。</p><p>“重新解卦”新建一次分析，重新调用模型，可能产生费用；沿用已记录的卦，不会自动产生新卦。实物起卦需重新操作；随机模拟也需要另起一卦后点击生成。</p></details>
+<details><summary>档案、导出与备份</summary><p>“档案”按系列保存相关卦例。展开系列可打开各卦；背景保留来源，各卦分别保留问题、卦象、时间与分析。</p><p>结果页的“导出”菜单可导出本卦案例或诊断信息；系列卡片中可导出整个系列。“使用说明”顶部也可导出本说明，发给新人用浏览器打开。</p><p>案例和配置保存在当前手机。卸载、清除数据或换手机前先导出；目前导出用于留存和复盘，尚无一键恢复整个旧档案的入口。安装独立新版时，应保留旧应用查阅已有案例。</p></details></section>
+<section id="help-panel-faq" role="tabpanel" aria-labelledby="help-tab-faq" data-help-panel="faq"><h2>遇到问题，按现象查找</h2><p class="help-subtitle">先看卡在哪一步，再决定是否重试。</p>
+<details><summary>报告整理超时</summary><p>旧报告可先查看已保留的结论与“专业分析”，不必仅为这条提示重新解卦。新版在综合解卦完成后由本机整理报告。</p></details>
+<details><summary>AI 很久没有完成，或前面阶段超时</summary><p>检查网络、厂商服务与账户额度，查看当前阶段和运行记录。高强度推理可能需要较长时间，可先保持应用在前台。</p><p>“刷新状态”不会重复分析。确认原任务结束后，再决定是否重新解卦；不要反复发起相同请求。</p></details>
+<details><summary>密钥、权限或模型错误</summary><table class="help-pairs"><thead><tr><th>检查项</th><th>要确认什么</th></tr></thead><tbody><tr><td>厂商</td><td>密钥与所选厂商一致，没有多余空格。</td></tr><tr><td>账户</td><td>可用额度充足，已开通所选模型。</td></tr><tr><td>模型或接入点</td><td>与厂商控制台配置一致，再保存模型设置。</td></tr></tbody></table></details>
+<details><summary>回复格式未通过校验</summary><p>应用会尝试修复并保留原回复；仍失败时，从结果页“导出”菜单保存诊断信息，并说明厂商、模型、卡住的阶段与时间。</p></details>
+<details><summary>尚未安装规则包</summary><p>确认安装的是内置规则版。公开源码构建的版本需要在“规则 → 规则包”中另行导入规则包。</p></details>
+<details><summary>随机模拟点击失败，或者没有重新生成</summary><p>如果提示系统随机接口不可用，请重新打开应用后重试。没有生成的那次不会加入记录。</p><p>六次完成后按钮锁定，切页、重开、保存和重新解卦都会沿用原结果。另起一卦请用“新建系列”或“再起一卦”。</p></details>
+<p class="help-note">反馈问题时，描述操作步骤与出错阶段，附截图或诊断文件；分享前请检查其中的个人信息。</p></section>
+<p class="help-meta">六爻占问 · 使用说明　｜　图中数据均为教学示例。</p>
+</article><script id="guide-script">(() => {
+  "use strict";
+  function mount(root, options = {}) {
+    if (!root) return;
+    const tabs = [...root.querySelectorAll("[data-help-tab]")];
+    const panels = [...root.querySelectorAll("[data-help-panel]")];
+    const selector = root.querySelector("#help-method");
+    function section(name, focus = false) {
+      if (!tabs.some((tab) => tab.dataset.helpTab === name)) name = "start";
+      tabs.forEach((tab) => {
+        const active = tab.dataset.helpTab === name;
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+        if (active && focus) tab.focus();
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.helpPanel !== name;
+      });
+      root.dataset.section = name;
+      const scroller = root.closest("#user-help-body");
+      if (scroller) scroller.scrollTop = 0;
+      else if (focus) root.querySelector(".help-tabs").scrollIntoView({ block: "start" });
+    }
+    function method(value) {
+      if (![...selector.options].some((option) => option.value === value)) value = "meibu";
+      selector.value = value;
+      root.querySelectorAll("[data-help-method]").forEach((panel) => {
+        panel.hidden = panel.dataset.helpMethod !== value;
+      });
+    }
+    if (!root.dataset.enhanced) {
+      root.dataset.enhanced = "true";
+      root.addEventListener("click", (event) => {
+        const tab = event.target.closest("[data-help-tab]");
+        if (tab) section(tab.dataset.helpTab, true);
+        const jump = event.target.closest("[data-help-jump]");
+        if (jump) section(jump.dataset.helpJump, true);
+      });
+      root.querySelector(".help-tabs").addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        const index = tabs.indexOf(document.activeElement);
+        if (index < 0) return;
+        event.preventDefault();
+        const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+        section(tabs[next].dataset.helpTab, true);
+      });
+      selector.addEventListener("change", () => method(selector.value));
+    }
+    section(options.section || "start");
+    method(options.method || selector.value);
+  }
+  window.LiuyaoHelp = { mount };
+  mount(document.querySelector("body > .help-document"));
+})();
+</script></body></html>

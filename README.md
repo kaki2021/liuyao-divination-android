@@ -1,4 +1,4 @@
-# 观象 · 六爻占问 Android
+# 六爻占问 · Android
 
 一款面向传统六爻学习与案例复盘的 Android 应用。程序在手机本地完成起卦记录、排盘、规则计算、人物档案与案例管理，并可选连接用户自己的模型服务，分阶段生成辅助解读。
 
@@ -236,7 +236,7 @@ cd android
 ./gradlew -PseparateInstall=true assembleRelease
 ```
 
-`separateInstall=true` 使用应用 ID `cn.guanxiang.liuyao.study` 和名称“观象研习”；不传时使用 `cn.guanxiang.liuyao`。升级已有安装必须保持相同应用 ID、签名证书，并递增 `versionCode`。
+`separateInstall=true` 使用应用 ID `cn.guanxiang.liuyao.study` ，显示名称统一为“六爻占问”；不传时使用 `cn.guanxiang.liuyao`。升级已有安装必须保持相同应用 ID、签名证书，并递增 `versionCode`。
 
 ## AI 配置与隐私
 
@@ -287,3 +287,9 @@ python android/prepare.py
 ## 第三方代码与使用授权
 
 `liuyao_app/_vendor/lunar_python/` 保留其原始许可证和 NOTICE。仓库当前未附项目级开源许可证；公开可见不等于自动授予复制、修改或商业使用权限。
+
+### 界面与图解说明
+
+应用名称统一为“六爻占问”。起卦方式使用下拉选择，保持当前方式的原始记录；手机结果页把导出收进菜单。使用说明分为开始使用、起卦图解、查看结果、常见问题，按器具切换图解和对照表。HTML 导出包含全部图解、样式和导航，可离线打开。
+
+修改说明样式或导航后，请在 `android/` 运行 `npm run build:web`，同步 `help.css`、`help-ui.js` 与独立说明中的内嵌资源。

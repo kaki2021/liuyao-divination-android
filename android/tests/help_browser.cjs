@@ -11,47 +11,78 @@ let server,browser;
   await page.addInitScript(()=>{window.exports=[];window.LiuyaoAndroid={readPreference:()=>null,savePreference:()=>{},readDraft:()=>null,saveDraft:()=>{},configureModel:()=>{},exportFile:(url,name)=>window.exports.push({url,name}),analysisState:()=>{}};});
   await page.route(url+'/',r=>r.continue({headers:{...r.request().headers(),'X-Liuyao-Bootstrap':'button-test'}}));
   await page.goto(url);await page.waitForFunction(()=>Boolean(window.LiuyaoApp));
-  for(const width of [320,390,760]){
-    await page.setViewportSize({width,height:844});
-    await page.locator('#user-help-open').click();
-    await page.locator('#user-help-dialog .user-help-content').waitFor();
-    assert.ok((await page.locator('#user-help-body').textContent()).includes('新人使用说明'));
-    const fits=await page.evaluate(()=>{const d=document.querySelector('#user-help-dialog');return d.scrollWidth<=d.clientWidth+1;});
-    assert.ok(fits,'help fits '+width+'px');
+  fs.mkdirSync('test-results',{recursive:true});
+  assert.equal(await page.title(),'六爻占问');
+  assert.equal(await page.locator('.brand').getAttribute('aria-label'),'六爻占问首页');
+  await page.screenshot({path:'test-results/question-phone.png'});
+  for(const width of [320,390,760,1024]){
+    await page.setViewportSize({width,height:844});await page.locator('#user-help-open').click();
+    await page.locator('#help-panel-start').waitFor();
+    for(const section of ['start','casting','results','faq']){
+      await page.locator('[data-help-tab="'+section+'"]').click();
+      assert.equal(await page.locator('[data-help-panel]:visible').count(),1);
+      if(section==='casting')for(const method of ['meibu','taiji','yarrow','direct','random_coin']){
+        await page.locator('#help-method').selectOption(method);
+        assert.equal(await page.locator('[data-help-method]:visible').count(),1);
+        assert.ok(await page.locator('[data-help-method]:visible svg[role=img]').count()>=1);
+        assert.ok(await page.evaluate(()=>{const d=document.querySelector('#user-help-body');return d.scrollWidth<=d.clientWidth+1;}),'guide '+method+' fits '+width);
+      }
+      assert.ok(await page.evaluate(()=>{const d=document.querySelector('#user-help-body');return d.scrollWidth<=d.clientWidth+1;}),'help '+section+' fits '+width);
+    }
+    await page.locator('#help-tab-start').focus();await page.keyboard.press('ArrowRight');
+    assert.equal(await page.locator('#help-tab-casting').getAttribute('aria-selected'),'true');
+    assert.equal(await page.locator('.help-tabs [tabindex="0"]').count(),1);
     await page.locator('#user-help-dialog a[download]').click();
-    assert.ok((await page.evaluate(()=>window.exports.at(-1))).name.endsWith('.html'));
-    if(width===390){fs.mkdirSync('test-results',{recursive:true});await page.screenshot({path:'test-results/help-phone.png'});}
+    assert.equal((await page.evaluate(()=>window.exports.at(-1))).name,'六爻占问_使用说明.html');
+    await page.locator('#help-tab-start').click();
+    if(width===390)await page.screenshot({path:'test-results/help-phone.png'});
     await page.locator('#user-help-dialog .dialog-close').click();
     assert.equal(await page.locator('#user-help-dialog').isVisible(),false);
   }
-  await page.evaluate(()=>{
-    document.querySelector('#analysis-content').replaceChildren();
-    window.ReportViews.render({plain_language:{source:'local',answer:'有机会；须先确认条件。',watch_for:['一','二','三','四'],next_steps:[]},sections:[]},document.querySelector('#analysis-content'));
-  });
-  assert.equal(await page.locator('#analysis-content .answer-note li').count(),4);
+  const standalone=await browser.newPage({viewport:{width:390,height:844}});
+  standalone.on('pageerror',e=>errors.push(String(e)));
+  const offlineRequests=[];standalone.on('request',r=>{if(/^https?:/.test(r.url()))offlineRequests.push(r.url());});
+  await standalone.goto('file://'+path.resolve(__dirname,'../../liuyao_app/static/user-guide.html'));
+  await standalone.locator('#help-tab-casting').click();await standalone.locator('#help-method').selectOption('yarrow');
+  assert.equal(await standalone.locator('[data-help-method]:visible').getAttribute('id'),'yarrow-guide');
+  assert.equal(await standalone.locator('[data-help-panel]:visible').count(),1);
+  assert.deepEqual(offlineRequests,[]);await standalone.close();
   await page.setViewportSize({width:390,height:844});
-  await page.locator('#question').fill('筹策逐爻录入与保存检查');
+  await page.locator('#question').fill('考虑接受新项目，未来三个月能否按计划完成？');
   await page.locator('#mobile-next').click();
-  await page.locator('input[name="casting-method"][value="direct"]').check();
-  assert.ok((await page.locator('#casting-instruction').textContent()).includes('蓍草'));
-  for(const width of [320,390]){
-    await page.setViewportSize({width,height:844});
-    await page.locator('#guide-open').click();
-    await page.locator('#direct-record-guide h4').first().waitFor();
-    const guide=await page.locator('#direct-record-guide').textContent();
-    assert.ok(guide.includes('一元')&&guide.includes('硬币')&&guide.includes('独立入口'));
-    assert.ok(await page.evaluate(()=>{const d=document.querySelector('#guide-dialog');return d.scrollWidth<=d.clientWidth+1;}));
-    if(width===390)await page.screenshot({path:'test-results/casting-guide-phone.png'});
-    await page.locator('#guide-dialog .dialog-close').click();
+  for(const method of ['meibu','taiji','yarrow','direct','random_coin']){
+    await page.locator('#casting-method').selectOption(method);await page.locator('#guide-open').click();
+    await page.locator('[data-help-method="'+method+'"]:visible').waitFor();
+    assert.equal(await page.locator('#help-method').inputValue(),method);
+    if(method==='meibu')await page.screenshot({path:'test-results/casting-guide-phone.png'});
+    await page.keyboard.press('Escape');assert.equal(await page.locator('#user-help-dialog').isVisible(),false);
   }
-  // The source's six-line example remains a normal manual entry and round-trips.
+  await page.locator('#casting-method').selectOption('meibu');await page.locator('input[name="meibu-1"][value="1"]').check();
+  await page.locator('.casting-selector').scrollIntoViewIfNeeded();await page.screenshot({path:'test-results/meibu-phone.png'});
+  await page.locator('#casting-method').selectOption('taiji');await page.locator('#casting-method').selectOption('meibu');
+  assert.equal(await page.locator('input[name="meibu-1"][value="1"]').isChecked(),true);
+  await page.locator('#casting-method').selectOption('direct');
+  assert.ok((await page.locator('#casting-instruction').textContent()).includes('蓍草'));
   const lines=['young_yang','young_yin','young_yin','young_yin','young_yang','old_yin'];
   for(let i=0;i<lines.length;i++)await page.locator(`input[name="line-${i+1}"][value="${lines[i]}"]`).check();
-  await page.screenshot({path:'test-results/casting-entry-phone.png'});
-  await page.locator('#save-case').click();
-  await page.waitForFunction(()=>document.body.dataset.view==='results');
-  const saved=await (await page.request.get(url+await page.locator('#export-case').getAttribute('href'))).json();
-  assert.deepEqual(saved.revisions.at(-1).input.lines,lines);
+  await page.locator('.casting-selector').scrollIntoViewIfNeeded();await page.screenshot({path:'test-results/casting-entry-phone.png'});
+  await page.locator('#save-case').click();await page.waitForFunction(()=>document.body.dataset.view==='results');
+  const saved=await(await page.request.get(url+await page.locator('#export-case').getAttribute('href'))).json();assert.deepEqual(saved.revisions.at(-1).input.lines,lines);
+  await page.locator('#result-export-menu summary').click();assert.equal(await page.locator('#export-case').isVisible(),true);
+  await page.locator('#export-case').click();assert.equal((await page.evaluate(()=>window.exports.at(-1))).name,'六爻案例.json');
+  assert.equal(await page.locator('#result-export-menu').getAttribute('open'),null);
+  // Clearly labelled fixture for layout review; no paid model calls.
+  await page.evaluate(()=>{
+    window.ReportViews.render({plain_language:{source:'local',answer:'【界面示例】有推进的机会，先确认交付范围、资源与时间安排。',watch_for:['明确交付标准。','确认关键人员投入。','保留沟通记录。','重新评估时间安排。'],next_steps:['补充已知条件后再判断。']},sections:[]},document.querySelector('#analysis-content'));
+    window.ReportViews.show('answer');
+  });
+  assert.ok((await page.locator('#analysis-content').textContent()).includes('重新评估时间安排。'));
+  for(const width of [320,390,760,1024]){
+    await page.setViewportSize({width,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'results fits '+width);
+    if(width===390){await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:'test-results/results-phone.png'});}
+  }
+  await page.setViewportSize({width:390,height:844});await page.locator('#mobile-history').click();await page.screenshot({path:'test-results/history-phone.png'});
+  await page.locator('.history-item').first().click();await page.waitForFunction(()=>document.body.dataset.mobilePage==='work');
   assert.deepEqual(errors,[]);
-  console.log('PASS: help opens and exports, local report retains conditions, manual coin/yarrow guidance fits phones, and six lines save unchanged.');
+  console.log('PASS: renamed app, compact method selector, retained input, four help tabs and five illustrated methods at 320/390/760/1024px, keyboard navigation, offline guide, native exports, result menu, chart save and history.');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{if(browser)await browser.close();if(server)server.kill();});

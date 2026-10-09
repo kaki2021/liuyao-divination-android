@@ -24,8 +24,8 @@
   panels.answer.append(analysis);
   const professional=el('section','','paper-card professional-card');professional.id='professional-content';panels.professional.append(professional);
   const log=el('dialog','','analysis-log-dialog');log.id='analysis-log-dialog';log.setAttribute('aria-labelledby','analysis-log-title');
-  const logHeading=el('div','','log-heading'),logTitle=el('h2','分析 Log');logTitle.id='analysis-log-title';
-  const closeLog=el('button','×','icon-button');closeLog.id='analysis-log-close';closeLog.type='button';closeLog.title='关闭 Log';closeLog.setAttribute('aria-label','关闭 Log');closeLog.onclick=()=>log.close();
+  const logHeading=el('div','','log-heading'),logTitle=el('h2','分析运行记录');logTitle.id='analysis-log-title';
+  const closeLog=el('button','×','icon-button');closeLog.id='analysis-log-close';closeLog.type='button';closeLog.title='关闭运行记录';closeLog.setAttribute('aria-label','关闭运行记录');closeLog.onclick=()=>log.close();
   logHeading.append(logTitle,closeLog);const model=el('div');model.id='model-info-content';log.append(logHeading,model,analysis.querySelector('#audit-report'),analysis.querySelector('#ai-raw-replies'));document.body.append(log);
   log.addEventListener('click',event=>{if(event.target===log){const rect=log.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)log.close();}});
   const followup=$('context-card');panels.answer.append(followup);

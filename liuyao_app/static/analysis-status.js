@@ -18,7 +18,7 @@
   const note=el('p','analysis-lock-note','','small-note');
   box.append(title,meta,stepText,bar,list,time,connection,hint,error,actions,note);
   const floating=el('button','analysis-floating','正在解卦 · 查看进度');floating.type='button';floating.hidden=true;document.body.append(floating);
-  const shortcut=el('button','analysis-records-open','Log','text-button');shortcut.type='button';shortcut.setAttribute('aria-haspopup','dialog');shortcut.setAttribute('aria-controls','analysis-log-dialog');document.querySelector('.analysis-actions').append(shortcut);
+  const shortcut=el('button','analysis-records-open','运行记录','text-button');shortcut.type='button';shortcut.setAttribute('aria-haspopup','dialog');shortcut.setAttribute('aria-controls','analysis-log-dialog');document.querySelector('.analysis-actions').append(shortcut);
   let job=null,receivedAt=0,disconnected='',callbacks={};
   const running=()=>job&&['queued','running'].includes(job.status);
   const duration=s=>{s=Math.max(0,Math.floor(s||0));return s<60?`${s} 秒`:`${Math.floor(s/60)} 分 ${s%60} 秒`;};

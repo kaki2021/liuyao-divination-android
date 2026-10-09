@@ -1,0 +1,35 @@
+/* Scoped guide styles are shared by the app and its offline HTML export. */
+.help-document{--help-ink:#233f37;--help-text:#43544c;--help-muted:#718078;--help-line:#dfe6de;--help-soft:#f2f5ee;box-sizing:border-box;color:var(--help-text);font:15px/1.8 system-ui,-apple-system,"Microsoft YaHei",sans-serif;max-width:860px;margin:0 auto;padding:28px 28px 48px}
+.help-document *{box-sizing:border-box}.help-document [hidden]{display:none!important}
+.help-document h1,.help-document h2,.help-document h3,.help-document h4{color:var(--help-ink);font-family:inherit;font-weight:650;letter-spacing:0;line-height:1.45}
+.help-document h1{font-size:28px;margin:4px 0 10px}.help-document h2{font-size:22px;margin:0 0 10px;border:0;padding:0}.help-document h3{font-size:18px;margin:24px 0 10px}.help-document h4{font-size:15px;margin:18px 0 8px}
+.help-document p{margin:10px 0;overflow-wrap:anywhere}.help-document a{color:#315f4d;text-decoration:underline;text-underline-offset:3px}
+.help-kicker{color:var(--help-muted);font-size:12px;letter-spacing:2px}.help-document .help-subtitle{color:var(--help-muted);margin:0 0 20px;font-size:14px}
+.help-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:5px;margin:0 0 24px;background:#edf1e9;border:1px solid var(--help-line);border-radius:12px;position:sticky;top:0;z-index:3}
+.help-tabs button{border:0;border-radius:8px;background:transparent;color:#64756b;font:inherit;font-size:13px;line-height:1.4;min-height:42px;padding:8px 3px;cursor:pointer}
+.help-tabs button[aria-selected=true]{color:#234d3d;background:#fff;font-weight:650;box-shadow:0 1px 4px #24433412}
+.help-document button:focus-visible,.help-document select:focus-visible,.help-document summary:focus-visible{outline:2px solid #51735b;outline-offset:3px}
+.help-document section{min-width:0}.help-document .help-caption{font-size:12px;color:var(--help-muted)}
+.help-document .help-note{margin:16px 0;padding:13px 15px;background:var(--help-soft);border-left:3px solid #90a585;border-radius:0 8px 8px 0;font-size:13px;line-height:1.8}
+.help-document .help-note strong{color:var(--help-ink)}.help-method-select{margin:18px 0 20px}.help-method-select label{display:block;color:var(--help-muted);font-size:12px;margin-bottom:5px}
+.help-document select{width:100%;font:inherit;font-size:15px;line-height:1.5;min-height:48px;padding:11px 34px 11px 12px;border:1px solid #c9d5c7;border-radius:10px;background:#fff;color:var(--help-ink)}
+.help-document ol,.help-document ul{padding-left:23px;margin:12px 0}.help-document li{margin:8px 0;overflow-wrap:anywhere}
+.help-document table{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;margin:16px 0;font-size:13px;line-height:1.7;border:1px solid var(--help-line);border-radius:10px;overflow:hidden}
+.help-document th,.help-document td{text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere;padding:11px 12px;border:0;border-bottom:1px solid var(--help-line)}
+.help-document th{background:#f0f4eb;color:var(--help-ink);font-weight:600}.help-document tr:last-child td{border-bottom:0}.help-document tbody tr:nth-child(even){background:#fafbf8}
+.help-document .help-pairs th:first-child,.help-document .help-pairs td:first-child{width:32%}
+.help-document details{border:1px solid var(--help-line);border-radius:10px;margin:14px 0;padding:0 15px;background:#fff}
+.help-document summary{cursor:pointer;color:var(--help-ink);padding:14px 0;font-size:14px;line-height:1.6;min-height:48px}
+.help-document details[open]{padding-bottom:12px}.help-document details p{font-size:14px}
+.help-steps{list-style:none!important;padding:0!important;counter-reset:help-step}.help-steps>li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;border-bottom:1px solid var(--help-line);padding:12px 0;margin:0!important}.help-steps>li:last-child{border:0}
+.help-steps>li:before{counter-increment:help-step;content:counter(help-step);width:26px;height:26px;border-radius:50%;background:#e8eee1;color:#456348;font-size:12px;display:grid;place-items:center;margin-top:2px}
+.help-steps strong{display:block;color:var(--help-ink);font-size:15px}.help-steps p{margin:3px 0!important;font-size:14px}
+.help-example{margin:18px 0;padding:16px;background:#faf7ef;border:1px solid #e8dfcb;border-radius:12px}.help-example>p:first-child{margin-top:0;font-size:11px;color:#8a7655;letter-spacing:1px}.help-example p:last-child{margin-bottom:0}
+.help-figure{margin:20px 0;border:1px solid var(--help-line);border-radius:12px;overflow:hidden;background:#f7f9f3}.help-figure svg{display:block;width:100%;height:auto;max-width:600px;margin:0 auto;color:var(--help-ink)}
+.help-figure svg text{font-family:system-ui,"Microsoft YaHei",sans-serif;fill:currentColor}.help-figure figcaption{margin:0;padding:10px 14px;border-top:1px solid var(--help-line);font-size:12px;color:var(--help-muted);line-height:1.6}
+.help-document .help-next{border:1px solid #d2ddcb;background:#edf2e7;color:#315541;border-radius:9px;min-height:44px;padding:10px 16px;font:inherit;font-size:14px;cursor:pointer;margin-top:12px;width:100%}
+.help-document .help-meta{font-size:12px;color:var(--help-muted);margin-top:24px}.help-document code{font-size:12px;word-break:break-all}
+@media(max-width:600px){.help-document{padding:18px 16px 36px;font-size:14px}.help-document h1{font-size:24px}.help-document h2{font-size:20px}.help-tabs{margin-bottom:20px}.help-tabs button{font-size:12px}.help-document th,.help-document td{padding:10px 8px;font-size:12px}.help-document h3{font-size:17px}}
+@media print{.help-tabs,.help-method-select,.help-next{display:none!important}.help-document [hidden]{display:block!important}.help-document{max-width:none;padding:0;font-size:11pt}.help-document [data-help-panel]{break-before:page}.help-document [data-help-panel=start]{break-before:auto}.help-document details>*{display:block}.help-document table,.help-figure{break-inside:avoid}.help-document h2,.help-document h3{break-after:avoid}.help-document details{border:0;padding:0}.help-document summary{font-weight:600}}
+
+.help-figure svg .figure-inverse{fill:#fff}

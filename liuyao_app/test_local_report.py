@@ -79,7 +79,12 @@ class UserGuideHTTPChecks(unittest.TestCase):
         text = data.decode()
         for label in ('新人使用说明', '枚卜丸', '太极丸', '报告整理超时', '导出案例'):
             self.assertIn(label, text)
-        self.assertNotIn('<script', text)
+        # Navigation is bundled for offline use; no remote script/image asset is needed.
+        self.assertIn('<script id="guide-script">', text)
+        self.assertNotRegex(text, r'<script[^>]+src=')
+        self.assertNotRegex(text, r'<(?:img|link)[^>]+(?:src|href)=["\']https?://')
+        for label in ('开始使用', '起卦图解', '查看结果', '常见问题'):
+            self.assertIn(label, text)
         status, _, _ = self.request('GET', '/api/help/export', cookie=False)
         self.assertEqual(status, 401)
 

@@ -79,8 +79,7 @@
   });
   showDraw(0);
   for (const id of ["save-case", "analyze-case"]) $(id).addEventListener("click", () => {
-    var _a2;
-    if (phone.matches && ((_a2 = document.querySelector('input[name="casting-method"]:checked')) == null ? void 0 : _a2.value) === "meibu") {
+    if (phone.matches && $("casting-method").value === "meibu") {
       const missing = draws.findIndex((_, i) => !document.querySelector('input[name="meibu-'.concat(i + 1, '"]:checked')));
       if (missing !== -1) showDraw(missing);
     }
