@@ -45,7 +45,7 @@ class V5Tests(unittest.TestCase):
         if profile:data['person_info']={'subject':'self','profile_id':profile['person_id']}
         return self.store.create_case(self.actor,data,idempotency_key='case')['case_id']
     def run_case(self,case,provider=None):
-        return run_analysis(self.path,self.actor,case,'deepseek','synthetic',1,provider_call=provider or NewReportProvider())
+        return run_analysis(self.path,self.actor,case,'deepseek','synthetic',1,use_ai_report=True,provider_call=provider or NewReportProvider())
     def test_sixty_day_empty_pairs(self):
         stems='甲乙丙丁戊己庚辛壬癸';branches=base_chart.BRANCHES
         expected=['戌亥','申酉','午未','辰巳','寅卯','子丑']
