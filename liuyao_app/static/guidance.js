@@ -14,8 +14,6 @@
   const learn=el('button','查看卜筮用途与使用方法','text-button');learn.type='button';intro.append(learn);$('person-details').before(intro);
   $('question').placeholder='我准备做什么？已有条件是什么？哪一点还拿不准？若在查问题，写清待查对象与范围。';
   learn.onclick=()=>{$('rules-open').click();window.RuleWorkbench.show('usage');};
-  const how=details('起卦与“重新解卦”有什么区别？');how.append(el('p','起卦是实际摸取或摇卦并记录结果。“保存并排盘”把结果翻译为卦盘；“保存并分析”和“重新解卦”调用 AI 解读已记录的卦，不会自动产生新卦。相关的细问可用“再起一卦”接入本系列，无关问题新建系列。'));
-  $('casting-instruction').after(how);
 
   function ledger(host,traces,title){
     host.replaceChildren(el('h4',title));const label=el('label','选择一个爻，看分数怎么得来'),select=el('select');select.setAttribute('aria-label',title+'爻位');label.append(select);host.append(label);

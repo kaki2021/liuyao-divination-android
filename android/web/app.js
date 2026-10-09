@@ -19,7 +19,7 @@ var __spreadValues = (a, b) => {
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 (() => {
-  var _a;
+  var _a, _b, _c;
   const $ = (id) => document.getElementById(id);
   const STATES = [
     { value: "old_yin", label: "老阴", marker: "×", yang: false, moving: true },
@@ -58,11 +58,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     el.replaceChildren();
   }
   function readable(value) {
-    var _a2, _b, _c, _d, _e, _f, _g, _h;
+    var _a2, _b2, _c2, _d, _e, _f, _g, _h;
     if (value === void 0 || value === null) return "";
     if (typeof value === "string" || typeof value === "number") return String(value);
     if (Array.isArray(value)) return value.map(readable).filter(Boolean).join("\n");
-    if (typeof value === "object") return readable((_h = (_g = (_f = (_e = (_d = (_c = (_b = (_a2 = value.text) != null ? _a2 : value.content) != null ? _b : value.message) != null ? _c : value.description) != null ? _d : value.question) != null ? _e : value.reason) != null ? _f : value.summary) != null ? _g : value.gap) != null ? _h : "");
+    if (typeof value === "object") return readable((_h = (_g = (_f = (_e = (_d = (_c2 = (_b2 = (_a2 = value.text) != null ? _a2 : value.content) != null ? _b2 : value.message) != null ? _c2 : value.description) != null ? _d : value.question) != null ? _e : value.reason) != null ? _f : value.summary) != null ? _g : value.gap) != null ? _h : "");
     return "";
   }
   function dateText(value) {
@@ -89,7 +89,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     return window.LiuyaoCompat.requestId();
   }
   async function api(path, { method = "GET", data, idempotencyKey } = {}) {
-    var _a2, _b;
+    var _a2, _b2;
     const headers = { "X-App-Request": "1", Accept: "application/json" };
     if (method !== "GET") {
       headers["Content-Type"] = "application/json";
@@ -113,7 +113,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     }
     if (!response.ok || payload.error && !payload.status) {
       const error = new Error(((_a2 = payload.error) == null ? void 0 : _a2.message) || "操作未完成，请重试。");
-      error.code = (_b = payload.error) == null ? void 0 : _b.code;
+      error.code = (_b2 = payload.error) == null ? void 0 : _b2.code;
       throw error;
     }
     return payload;
@@ -129,9 +129,14 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     $("analyze-current-case").textContent = value && state.analyzing ? "分析进行中…" : "重新解卦";
     $("context-analyze").textContent = value && state.analyzing ? "正在回复…" : "发送追问";
     if (runSelect) runSelect.disabled = value;
+    if (!value) {
+      window.YarrowInput.refresh();
+      window.RandomCoinInput.refresh();
+    }
   }
   function showView(view, { scroll = false } = {}) {
     var _a2;
+    window.RandomCoinInput.cancel();
     const requested = ["input", "results", "feedback"].includes(view) ? view : "input";
     state.view = state.caseId ? requested : "input";
     document.body.dataset.view = state.view;
@@ -143,7 +148,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       tab.tabIndex = selected ? 0 : -1;
       tab.disabled = name !== "input" && !state.caseId;
     });
-    const headings = { input: ["从一个真实的问题开始。", "选择起卦方式，记录结果，理清此刻关心的事。"], results: ["看清卦象，回答所问。", "查看排盘、综合结论与判断依据，也可以补充情况继续解卦。"], feedback: ["记下后来发生的事。", "将实际进展与这次案例的分析保存在一起。"] };
+    const headings = { input: ["写下这次的所问", "一事一问，留存卦象与后续进展。"], results: ["看清卦象，回答所问。", "查看排盘、综合结论与判断依据，也可以补充情况继续解卦。"], feedback: ["记下后来发生的事。", "将实际进展与这次案例的分析保存在一起。"] };
     $("workspace-title").textContent = headings[state.view][0];
     $("workspace-description").textContent = headings[state.view][1];
     $("feedback-question").textContent = ((_a2 = state.input) == null ? void 0 : _a2.question) || "";
@@ -203,7 +208,16 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       row.append(fieldset);
       $("taiji-inputs").append(row);
     });
-    document.querySelectorAll('input[name="casting-method"]').forEach((radio) => radio.addEventListener("change", updateCastingMode));
+    window.YarrowInput.init($("yarrow-inputs"), onInputChange);
+    window.RandomCoinInput.init($("random-coin-inputs"), ({ firstDraw }) => {
+      if (firstDraw && !$("cast-time").value) {
+        $("cast-time").value = localDateTime(/* @__PURE__ */ new Date());
+        $("time-details").open = true;
+      }
+      onInputChange();
+      persistDraft();
+    });
+    $("casting-method").addEventListener("change", updateCastingMode);
     updateCastingMode();
   }
   function makeCastingOption(name, value, label, detail, accessibleLabel, extraClass) {
@@ -220,10 +234,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     return option;
   }
   function castingMethod() {
-    var _a2;
-    return ((_a2 = document.querySelector('input[name="casting-method"]:checked')) == null ? void 0 : _a2.value) || "meibu";
+    return $("casting-method").value || "meibu";
   }
   function selectedCastingResults(method = castingMethod()) {
+    if (method === "yarrow") return window.YarrowInput.read();
+    if (method === "random_coin") return window.RandomCoinInput.read();
     const count = method === "meibu" ? 3 : 6;
     return Array.from({ length: count }, (_, index) => {
       var _a2;
@@ -234,6 +249,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     return typeof value === "string" && /^[23]{3}$/.test(value) ? [...value].sort().join("") : null;
   }
   function linesFromCasting(method, results) {
+    if (method === "yarrow") return window.YarrowInput.derive(results);
+    if (method === "random_coin") return window.RandomCoinInput.derive(results);
     if (method === "taiji") return Array.from({ length: 6 }, (_, index) => TAIJI[taijiCombination(results[index])] || null);
     if (method !== "meibu" || results.length !== 3 || results.some((value) => !MEIBU.some((item) => item.value === value))) return Array(6).fill(null);
     const bits = [...MEIBU.find((item) => item.value === results[0]).bits, ...MEIBU.find((item) => item.value === results[1]).bits];
@@ -252,16 +269,22 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }
   function updateCastingMode() {
     const method = castingMethod();
+    if (method !== "random_coin") window.RandomCoinInput.cancel();
     $("meibu-inputs").hidden = method !== "meibu";
     $("taiji-inputs").hidden = method !== "taiji";
     $("line-inputs").hidden = method !== "direct";
-    $("casting-instruction").textContent = method === "meibu" ? "三次摸取：第一次定下卦，第二次定上卦，第三次定动爻。" : method === "taiji" ? "每次选三颗丸显示的组合，共记录六次；223、233 不区分数字先后。" : "已有六爻结果时，从初爻到上爻依次选择阴阳动静。";
+    $("yarrow-inputs").hidden = method !== "yarrow";
+    window.YarrowInput.refresh();
+    $("random-coin-inputs").hidden = method !== "random_coin";
+    window.RandomCoinInput.refresh();
+    $("casting-instruction").textContent = method === "meibu" ? "三次摸取：第一次定下卦，第二次定上卦，第三次定动爻。" : method === "taiji" ? "每次选三颗丸显示的组合，共记录六次；223、233 不区分数字先后。" : method === "yarrow" ? "每变记录左右余策，三变成一爻，共六爻。初次使用请打开“操作图解”。" : "从初爻到上爻，依次录入阴阳动静。硬币或蓍草／筹策的最终结果也可在此填写。";
+    if (method === "random_coin") $("casting-instruction").textContent = "每次模拟三枚硬币，依次生成初爻至上爻。六次结果都会保存。";
     document.querySelector(".casting-layout").classList.toggle("meibu-layout", method === "meibu");
     onInputChange();
   }
   function hasEnteredData() {
     var _a2;
-    return Boolean($("question").value.trim() || $("cast-time").value || getPersonInfo(false) || ((_a2 = window.Buzhai) == null ? void 0 : _a2.read(false)) || document.querySelector('#case-form input[type="radio"]:checked:not([name="casting-method"])'));
+    return Boolean($("question").value.trim() || $("cast-time").value || getPersonInfo(false) || ((_a2 = window.Buzhai) == null ? void 0 : _a2.read(false)) || window.RandomCoinInput.read().some(Boolean) || document.querySelector('#case-form input[type="radio"]:checked:not([name="casting-method"])'));
   }
   function updatePersonFields({ clearIrrelevant = false } = {}) {
     const isSelf = ($("person-subject").value || "unspecified") === "self";
@@ -336,7 +359,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     return "".concat(date.getFullYear(), "-").concat(pad(date.getMonth() + 1), "-").concat(pad(date.getDate()), "T").concat(pad(date.getHours()), ":").concat(pad(date.getMinutes()), ":").concat(pad(date.getSeconds()));
   }
   function getInput(validate = true) {
-    var _a2, _b;
+    var _a2, _b2;
     const question = $("question").value;
     if (validate && !question.trim()) {
       $("question").focus();
@@ -352,6 +375,21 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         throw new Error("请补选".concat(POSITIONS[missing], "，六爻都需要明确的阴阳动静。"));
       }
       input.lines = lines;
+    } else if (method === "yarrow") {
+      const results = window.YarrowInput.read();
+      if (validate && [].concat(...results).some((item) => !item)) {
+        const missing = window.YarrowInput.focusMissing();
+        throw new Error("请记录".concat(POSITIONS[Math.floor(missing / 3)], "第").concat(missing % 3 + 1, "变的两侧余策。"));
+      }
+      input.casting = { method, results };
+    } else if (method === "random_coin") {
+      const results = window.RandomCoinInput.read();
+      const missing = results.findIndex((value) => !value);
+      if (validate && missing >= 0) {
+        $("random-coin-draw").focus();
+        throw new Error("请完成第".concat(missing + 1, "次随机模拟（").concat(POSITIONS[missing], "），六次结果齐全后再保存。"));
+      }
+      input.casting = { method, results };
     } else {
       let results = selectedCastingResults(method);
       const missing = results.findIndex((item) => !item);
@@ -369,15 +407,15 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     }
     const personInfo = getPersonInfo(validate);
     if (personInfo) input.person_info = personInfo;
-    const buzhai = (_b = window.Buzhai) == null ? void 0 : _b.read(validate);
+    const buzhai = (_b2 = window.Buzhai) == null ? void 0 : _b2.read(validate);
     if (buzhai) input.buzhai = buzhai;
     return input;
   }
   function inputsEqual(first, second) {
-    var _a2, _b;
+    var _a2, _b2;
     if (!first || !second || first.question !== second.question || (first.actual_cast_time || null) !== (second.actual_cast_time || null)) return false;
     if (JSON.stringify(canonicalPersonInfo(first.person_info)) !== JSON.stringify(canonicalPersonInfo(second.person_info))) return false;
-    if (((_a2 = window.Buzhai) == null ? void 0 : _a2.canonical(first.buzhai)) !== ((_b = window.Buzhai) == null ? void 0 : _b.canonical(second.buzhai))) return false;
+    if (((_a2 = window.Buzhai) == null ? void 0 : _a2.canonical(first.buzhai)) !== ((_b2 = window.Buzhai) == null ? void 0 : _b2.canonical(second.buzhai))) return false;
     if (first.casting || second.casting) return Boolean(first.casting && second.casting && first.casting.method === second.casting.method && JSON.stringify(first.casting.results) === JSON.stringify(second.casting.results));
     return JSON.stringify(first.lines) === JSON.stringify(second.lines);
   }
@@ -397,22 +435,24 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     else $("case-state").textContent = state.caseId ? "已保存" : "新案例";
   }
   function fillInput(input) {
-    var _a2, _b, _c, _d;
+    var _a2, _b2, _c2, _d;
     $("case-form").reset();
     $("question").value = (input == null ? void 0 : input.question) || "";
     (_a2 = window.Buzhai) == null ? void 0 : _a2.fill(input == null ? void 0 : input.buzhai);
     const person = canonicalPersonInfo(input == null ? void 0 : input.person_info);
     $("person-subject").value = (person == null ? void 0 : person.subject) || "unspecified";
-    (_b = window.LiuyaoV5) == null ? void 0 : _b.setProfile((person == null ? void 0 : person.profile_id) || "");
+    (_b2 = window.LiuyaoV5) == null ? void 0 : _b2.setProfile((person == null ? void 0 : person.profile_id) || "");
     $("querent-age").value = (person == null ? void 0 : person.querent_age) === void 0 ? "" : String(person.querent_age);
     $("subject-age").value = (person == null ? void 0 : person.subject_age) === void 0 ? "" : String(person.subject_age);
     $("person-relationship").value = (person == null ? void 0 : person.relationship) || "";
     $("person-background").value = (person == null ? void 0 : person.background) || "";
     $("person-details").open = Boolean(person);
     updatePersonFields();
-    state.originalCasting = (input == null ? void 0 : input.casting) ? { method: input.casting.method, results: [...input.casting.results] } : null;
-    const method = ["meibu", "taiji"].includes((_c = input == null ? void 0 : input.casting) == null ? void 0 : _c.method) ? input.casting.method : input ? "direct" : "meibu";
-    document.querySelector('input[name="casting-method"][value="'.concat(method, '"]')).checked = true;
+    state.originalCasting = (input == null ? void 0 : input.casting) ? JSON.parse(JSON.stringify(input.casting)) : null;
+    const method = ["meibu", "taiji", "yarrow", "random_coin"].includes((_c2 = input == null ? void 0 : input.casting) == null ? void 0 : _c2.method) ? input.casting.method : input ? "direct" : "meibu";
+    window.YarrowInput.fill(method === "yarrow" ? input.casting.results : null);
+    window.RandomCoinInput.fill(method === "random_coin" ? input.casting.results : null);
+    $("casting-method").value = method;
     if (method !== "direct") (((_d = input == null ? void 0 : input.casting) == null ? void 0 : _d.results) || []).forEach((raw, index) => {
       const value = method === "taiji" ? taijiCombination(raw) : raw;
       if (method === "meibu" && MEIBU.some((item) => item.value === value) || method === "taiji" && TAIJI[value]) {
@@ -524,12 +564,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     if (state.branchParent) $("form-title").textContent = "这次想细问什么？";
   }
   function startRelatedCase() {
-    var _a2;
     if (state.busy || !state.caseId) return;
     const draft = window.LiuyaoSeries.relatedDraft(
       state,
       $("context-text").value,
-      (_a2 = document.querySelector('input[name="casting-method"]:checked')) == null ? void 0 : _a2.value
+      $("casting-method").value
     );
     const series = state.series;
     if (!resetCase({ transferContext: true })) return;
@@ -537,7 +576,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     state.series = series;
     state.seriesId = (series == null ? void 0 : series.series_id) || draft.parent.caseId;
     fillInput(draft.input);
-    document.querySelector('input[name="casting-method"][value="'.concat(draft.method, '"]')).checked = true;
+    $("casting-method").value = draft.method;
     updateCastingMode();
     onInputChange();
     renderBranchDraft();
@@ -600,11 +639,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     if (!context.childElementCount) context.append(node("p", "empty-state", "尚无背景补充。各次占问的关系会随分析一并提供。"));
   }
   function latestInput(record) {
-    var _a2, _b;
-    return ((_b = (_a2 = record.revisions) == null ? void 0 : _a2.at(-1)) == null ? void 0 : _b.input) || record.original_input || record.input || {};
+    var _a2, _b2;
+    return ((_b2 = (_a2 = record.revisions) == null ? void 0 : _a2.at(-1)) == null ? void 0 : _b2.input) || record.original_input || record.input || {};
   }
   async function loadCase(caseId, { keepForm = false, quiet = false, keepView = false } = {}) {
-    var _a2, _b, _c;
+    var _a2, _b2, _c2;
     const token = ++state.loadToken;
     const payload = await api("/api/cases/".concat(encodeURIComponent(caseId)));
     if (token !== state.loadToken) return;
@@ -617,14 +656,14 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       state.pendingContext = null;
     }
     state.caseId = caseId;
-    state.revision = ((_b = (_a2 = record.revisions) == null ? void 0 : _a2.at(-1)) == null ? void 0 : _b.revision_seq) || payload.revision_seq || record.revision_seq || 1;
+    state.revision = ((_b2 = (_a2 = record.revisions) == null ? void 0 : _a2.at(-1)) == null ? void 0 : _b2.revision_seq) || payload.revision_seq || record.revision_seq || 1;
     state.input = latestInput(record);
     state.chart = payload.chart || record.chart;
     state.runs = record.analysis_runs || [];
     state.branchParent = null;
     state.pendingCreate = null;
     state.series = payload.series || null;
-    state.seriesId = ((_c = payload.series) == null ? void 0 : _c.series_id) || caseId;
+    state.seriesId = ((_c2 = payload.series) == null ? void 0 : _c2.series_id) || caseId;
     seriesVisits.set(state.seriesId, caseId);
     renderBranchDraft();
     renderSeries(state.series);
@@ -659,9 +698,9 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     container.append(block);
   }
   function renderChart(chart, input = state.input, scope = "当前已保存输入的排盘") {
-    var _a2, _b, _c, _d;
+    var _a2, _b2, _c2, _d;
     (_a2 = window.LiuyaoV5) == null ? void 0 : _a2.setAnalysisContext(input);
-    (_b = window.Buzhai) == null ? void 0 : _b.render(chart);
+    (_b2 = window.Buzhai) == null ? void 0 : _b2.render(chart);
     $("result-question").textContent = (input == null ? void 0 : input.question) || "这次的排盘与解卦";
     clear($("chart-summary"));
     clear($("chart-lines"));
@@ -669,7 +708,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     $("chart-question").textContent = (input == null ? void 0 : input.question) || "";
     $("chart-question").hidden = !(input == null ? void 0 : input.question);
     renderPersonSummary(input == null ? void 0 : input.person_info);
-    (_c = window.LiuyaoV5) == null ? void 0 : _c.renderComprehensive(chart);
+    (_c2 = window.LiuyaoV5) == null ? void 0 : _c2.renderComprehensive(chart);
     renderFoundation(chart == null ? void 0 : chart.basic_analysis);
     renderChartContext(chart);
     const casting = input == null ? void 0 : input.casting;
@@ -680,6 +719,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       return "".concat(["下卦", "上卦", "动爻"][index], " ").concat(((_a3 = MEIBU.find((item) => item.value === value)) == null ? void 0 : _a3.label) || value);
     }).join(" → "));
     else if ((casting == null ? void 0 : casting.method) === "taiji") record.textContent = "太极丸原始记录（初爻至上爻）：".concat(casting.results.join(" / "));
+    else if ((casting == null ? void 0 : casting.method) === "random_coin") record.textContent = "随机模拟掷币原始记录（系统随机数；初爻至上爻；阴2、阳3）：".concat(casting.results.join(" / "));
+    else if ((casting == null ? void 0 : casting.method) === "yarrow") record.textContent = "蓍草／筹策十八变原始记录（每项为左、右余策）：".concat(casting.results.map((pairs, index) => "".concat(POSITIONS[index], " ").concat(pairs.map((pair) => "".concat(pair[0], "与").concat(pair[1])).join(" → "))).join("；"));
     else record.textContent = "";
     if (!(chart == null ? void 0 : chart.main)) {
       window.LiuyaoPhoneChart.render(null);
@@ -778,7 +819,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     });
   }
   function renderChartContext(chart) {
-    var _a2, _b;
+    var _a2, _b2;
     const summary = $("calendar-summary");
     clear(summary);
     const calendar = chart == null ? void 0 : chart.calendar;
@@ -796,7 +837,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     } else summary.append(node("p", "small-note", (calendar == null ? void 0 : calendar.message) || "这份记录尚无四柱与六神资料。"));
     $("calendar-details").hidden = !(calendar == null ? void 0 : calendar.convention_label);
     $("calendar-convention").textContent = (calendar == null ? void 0 : calendar.convention_label) || "";
-    const bodyLine = (_b = (_a2 = chart == null ? void 0 : chart.main) == null ? void 0 : _a2.lines) == null ? void 0 : _b.find((line) => line.is_shi_body || line.position === chart.shi_body_position);
+    const bodyLine = (_b2 = (_a2 = chart == null ? void 0 : chart.main) == null ? void 0 : _a2.lines) == null ? void 0 : _b2.find((line) => line.is_shi_body || line.position === chart.shi_body_position);
     const bodyPosition = bodyLine ? POSITIONS[bodyLine.position - 1] : null;
     const guaPositions = (chart == null ? void 0 : chart.gua_body_positions) || [];
     $("body-summary").hidden = !(chart == null ? void 0 : chart.main);
@@ -894,7 +935,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     container.append(draft);
   }
   async function loadRawReplies(force = false) {
-    var _a2, _b;
+    var _a2, _b2;
     const details = $("ai-raw-replies");
     if (!details.open || !state.caseId || !state.runId) return;
     if (rawLoading) {
@@ -920,7 +961,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       rawSignature = signature;
       clear(container);
       state.rawReplyLoaded = true;
-      const attempts = ((_b = (_a2 = payload.analysis_runs) == null ? void 0 : _a2.find((run) => run.analysis_run_id === runId)) == null ? void 0 : _b.attempts) || [];
+      const attempts = ((_b2 = (_a2 = payload.analysis_runs) == null ? void 0 : _a2.find((run) => run.analysis_run_id === runId)) == null ? void 0 : _b2.attempts) || [];
       if (!attempts.length) {
         container.append(node("p", "small-note", "尚未收到完整回复。AI 正在处理时不会逐字显示；每一步返回后这里自动更新。若调用失败，这里会显示报错。"));
         return;
@@ -958,9 +999,9 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           const status = node("span", "small-note ai-copy-status");
           status.setAttribute("role", "status");
           copy.addEventListener("click", async () => {
-            var _a4, _b2;
+            var _a4, _b3;
             try {
-              if (!((_b2 = (_a4 = window.navigator) == null ? void 0 : _a4.clipboard) == null ? void 0 : _b2.writeText)) throw new Error("clipboard unavailable");
+              if (!((_b3 = (_a4 = window.navigator) == null ? void 0 : _a4.clipboard) == null ? void 0 : _b3.writeText)) throw new Error("clipboard unavailable");
               await window.navigator.clipboard.writeText(raw);
               status.textContent = "已复制。";
             } catch (_) {
@@ -985,7 +1026,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     }
   }
   function renderAnalysis(result, status = "saved", runId = null, notice = "") {
-    var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
+    var _a2, _b2, _c2, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
     $("analysis-content").removeAttribute("data-preview-run");
     $("run-history").hidden = status === "running" || state.runs.length < 2;
     state.runId = runId || null;
@@ -995,7 +1036,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     if ($("audit-report")) $("audit-report").hidden = true;
     if (runId) {
       const run = state.runs.find((item) => item.analysis_run_id === runId);
-      const snapshotChart = ((_b = (_a2 = run == null ? void 0 : run.outcome) == null ? void 0 : _a2.result) == null ? void 0 : _b.chart_snapshot) || ((_e = (_d = (_c = run == null ? void 0 : run.outcome) == null ? void 0 : _c.result) == null ? void 0 : _d.report) == null ? void 0 : _e.chart) || (result == null ? void 0 : result.chart) || null;
+      const snapshotChart = ((_b2 = (_a2 = run == null ? void 0 : run.outcome) == null ? void 0 : _a2.result) == null ? void 0 : _b2.chart_snapshot) || ((_e = (_d = (_c2 = run == null ? void 0 : run.outcome) == null ? void 0 : _c2.result) == null ? void 0 : _d.report) == null ? void 0 : _e.chart) || (result == null ? void 0 : result.chart) || null;
       renderChart(snapshotChart, ((_f = run == null ? void 0 : run.input_snapshot) == null ? void 0 : _f.input) || null, "所选分析当时的排盘".concat((run == null ? void 0 : run.analyzed_at) ? " · " + dateText(run.analyzed_at) : ""));
     } else renderChart(state.chart, state.input);
     const container = $("analysis-content");
@@ -1036,10 +1077,10 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     if (!hasReport && !((_l = result.clarifying_questions) == null ? void 0 : _l.length) && !((_m = result.unresolved) == null ? void 0 : _m.length) && !result.error) container.append(node("p", "empty-state", status === "failed" ? "本次分析未完成，输入与排盘已保留。可以重试或更换模型。" : "尚未形成可展示的完整报告。输入与本次分析过程已经保留。"));
   }
   function renderRun(run, { notice = "" } = {}) {
-    var _a2, _b;
+    var _a2, _b2;
     const stored = ((_a2 = run.outcome) == null ? void 0 : _a2.result) || run.result || null;
     const result = (stored == null ? void 0 : stored.report) && (stored.report.display_report || stored.report.stage_outputs || stored.report.is_demo !== void 0) ? stored.report : stored;
-    renderAnalysis(result, run.status || ((_b = run.outcome) == null ? void 0 : _b.status) || "running", run.analysis_run_id, notice);
+    renderAnalysis(result, run.status || ((_b2 = run.outcome) == null ? void 0 : _b2.status) || "running", run.analysis_run_id, notice);
   }
   function renderRunSelector() {
     const area = $("run-history");
@@ -1123,8 +1164,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     return state.caseId;
   }
   function chosenProvider() {
-    var _a2, _b;
-    return (_b = (_a2 = state.config) == null ? void 0 : _a2.providers) == null ? void 0 : _b.find((item) => item.id === $("provider-select").value);
+    var _a2, _b2;
+    return (_b2 = (_a2 = state.config) == null ? void 0 : _a2.providers) == null ? void 0 : _b2.find((item) => item.id === $("provider-select").value);
   }
   function modelSettings() {
     return { provider: $("provider-select").value, model: $("model-select").value };
@@ -1172,7 +1213,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     updateModelLabel();
   }
   async function loadConfig() {
-    var _a2, _b;
+    var _a2, _b2;
     state.config = await api("/api/config");
     const select = $("provider-select");
     clear(select);
@@ -1190,7 +1231,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       preference = JSON.parse(((_a2 = window.LiuyaoAndroid) == null ? void 0 : _a2.readPreference()) || localStorage.getItem("liuyao-model-preference") || "null");
     } catch (_) {
     }
-    const deepseek = (_b = state.config.providers) == null ? void 0 : _b.find((p) => p.id === "deepseek");
+    const deepseek = (_b2 = state.config.providers) == null ? void 0 : _b2.find((p) => p.id === "deepseek");
     if ((preference == null ? void 0 : preference.defaults) !== "deepseek-pro-max" && (preference == null ? void 0 : preference.provider) === "deepseek" && ["deepseek-flash", "deepseek-v4-flash", "deepseek-chat", "deepseek-reasoner"].includes(preference.model) && (deepseek == null ? void 0 : deepseek.default_model) === "deepseek-v4-pro") preference = __spreadProps(__spreadValues({}, preference), { model: deepseek.default_model });
     if ([...select.options].some((item) => item.value === (preference == null ? void 0 : preference.provider))) select.value = preference.provider;
     else if ([...select.options].some((item) => item.value === state.config.default_provider)) select.value = state.config.default_provider;
@@ -1198,7 +1239,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     storePreference();
   }
   async function analyzeSavedCase(caseId) {
-    var _a2, _b, _c, _d, _e;
+    var _a2, _b2, _c2, _d, _e;
     const provider = chosenProvider();
     if (!provider || !provider.configured && provider.id !== "demo" || !$("model-select").value) {
       $("settings-dialog").showModal();
@@ -1238,7 +1279,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     await loadCase(caseId, { keepForm: true, quiet: true });
     if (job.result || job.error) renderAnalysis(__spreadProps(__spreadValues({}, job.result), { error: ((_a2 = job.result) == null ? void 0 : _a2.error) || job.error }), job.status, job.analysis_run_id);
     if (job.status === "failed") banner("");
-    else banner(job.status === "completed" || ((_c = (_b = job.result) == null ? void 0 : _b.display_report) == null ? void 0 : _c.conclusion) ? "解卦已保存。可以补充情况继续分析，或在后续反馈中记录实际进展。" : "本次分析已保存，请查看需要补充或尚未确定的部分。", job.status === "completed" || ((_e = (_d = job.result) == null ? void 0 : _d.display_report) == null ? void 0 : _e.conclusion) ? "" : "warning");
+    else banner(job.status === "completed" || ((_c2 = (_b2 = job.result) == null ? void 0 : _b2.display_report) == null ? void 0 : _c2.conclusion) ? "解卦已保存。可以补充情况继续分析，或在后续反馈中记录实际进展。" : "本次分析已保存，请查看需要补充或尚未确定的部分。", job.status === "completed" || ((_e = (_d = job.result) == null ? void 0 : _d.display_report) == null ? void 0 : _e.conclusion) ? "" : "warning");
     await refreshHistory();
     return job;
   }
@@ -1364,7 +1405,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     }
   });
   async function appendCaseEvent(kind, { reanalyze = false } = {}) {
-    var _a2, _b, _c, _d, _e;
+    var _a2, _b2, _c2, _d, _e;
     if (state.busy || !state.caseId) return;
     const field = $(kind === "context" ? "context-text" : "feedback-text");
     const text = field.value;
@@ -1378,8 +1419,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     if (kind === "feedback") {
       if (state.runId) payload.analysis_run_id = state.runId;
       if ((_a2 = $("feedback-occurred")) == null ? void 0 : _a2.value) payload.occurred_at = new Date($("feedback-occurred").value).toISOString();
-      payload.match_degree = ((_b = $("feedback-match")) == null ? void 0 : _b.value) || "pending";
-      payload.user_notes = ((_c = $("feedback-notes")) == null ? void 0 : _c.value) || "";
+      payload.match_degree = ((_b2 = $("feedback-match")) == null ? void 0 : _b2.value) || "pending";
+      payload.user_notes = ((_c2 = $("feedback-notes")) == null ? void 0 : _c2.value) || "";
     }
     setBusy(true);
     banner("");
@@ -1486,8 +1527,63 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     event.preventDefault();
     appendCaseEvent("feedback");
   });
-  $("settings-open").addEventListener("click", () => $("settings-dialog").showModal());
-  $("guide-open").addEventListener("click", () => $("guide-dialog").showModal());
+  $("settings-open").addEventListener("click", () => {
+    window.RandomCoinInput.cancel();
+    $("settings-dialog").showModal();
+  });
+  let guideLoading;
+  function sizeUserHelp() {
+    const dialog = $("user-help-dialog");
+    if (!dialog.open) return;
+    const viewport = window.visualViewport;
+    const available = viewport ? viewport.height : window.innerHeight;
+    const height = Math.min(860, Math.max(0, available - 16));
+    dialog.style.height = "".concat(height, "px");
+    dialog.style.top = "".concat((viewport ? viewport.offsetTop : 0) + (available - height) / 2, "px");
+  }
+  window.addEventListener("resize", sizeUserHelp);
+  (_b = window.visualViewport) == null ? void 0 : _b.addEventListener("resize", sizeUserHelp);
+  (_c = window.visualViewport) == null ? void 0 : _c.addEventListener("scroll", sizeUserHelp);
+  $("user-help-dialog").addEventListener("close", () => document.documentElement.classList.remove("help-is-open"));
+  async function openUserHelp(section = "start") {
+    window.RandomCoinInput.cancel();
+    const dialog = $("user-help-dialog"), target = $("user-help-body");
+    if (!dialog.open) dialog.showModal();
+    document.documentElement.classList.add("help-is-open");
+    sizeUserHelp();
+    if (!target.querySelector(".help-document")) {
+      if (!guideLoading) {
+        target.textContent = "正在打开使用说明…";
+        guideLoading = (async () => {
+          const response = await fetch("/api/help/export", { credentials: "same-origin" });
+          if (!response.ok) throw new Error("说明暂时无法打开，请关闭后重试。");
+          const page = new DOMParser().parseFromString(await response.text(), "text/html");
+          const article = page.querySelector(".help-document");
+          if (!article) throw new Error("说明内容不完整，请重新安装完整版本。");
+          target.replaceChildren(document.importNode(article, true));
+        })();
+      }
+      try {
+        await guideLoading;
+      } catch (error) {
+        target.textContent = error.message;
+        guideLoading = null;
+        return;
+      }
+    }
+    if (!dialog.open) return;
+    window.LiuyaoHelp.mount(target.querySelector(".help-document"), { section, method: castingMethod() });
+    target.scrollTop = 0;
+  }
+  $("guide-open").addEventListener("click", () => openUserHelp("casting"));
+  $("user-help-open").addEventListener("click", () => openUserHelp("start"));
+  document.addEventListener("click", (event) => {
+    const menu = $("result-export-menu");
+    if (menu.open && (!menu.contains(event.target) || event.target.closest("a"))) menu.open = false;
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") $("result-export-menu").open = false;
+  });
   $("settings-done").addEventListener("click", () => {
     storePreference();
     updateModelLabel();
@@ -1564,6 +1660,13 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           if ("checked" in f) el.checked = f.checked;
         }
       });
+      if (!fields["casting-method"]) {
+        const oldMethod = ["meibu", "taiji", "yarrow", "direct", "random_coin"].find((method) => {
+          var _a2;
+          return (_a2 = fields["casting-method::" + method]) == null ? void 0 : _a2.checked;
+        });
+        if (oldMethod) $("casting-method").value = oldMethod;
+      }
       updateCastingMode();
       updatePersonFields();
       $("buzhai-enabled").dispatchEvent(new Event("change", { bubbles: true }));

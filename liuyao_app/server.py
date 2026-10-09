@@ -535,7 +535,7 @@ class Handler(BaseHTTPRequestHandler):
         try:
             self.guard(mutation)
             path=urlsplit(self.path).path
-            if not mutation and path in ('/','/index.html','/app.js','/styles.css','/static/app.js','/static/styles.css','/chart-display.js','/static/chart-display.js','/v5-features.js','/static/v5-features.js','/static/report-views.js','/static/buzhai.js','/static/mobile.js','/static/mobile.css','/static/compat.js','/static/phone-chart.js','/static/analysis-status.js','/static/guidance.js','/static/rules-ui.js','/static/condition-rules.js','/static/rules.css','/static/series.js','/favicon.ico'):
+            if not mutation and path in ('/','/index.html','/app.js','/styles.css','/static/app.js','/static/styles.css','/chart-display.js','/static/chart-display.js','/v5-features.js','/static/v5-features.js','/static/report-views.js','/static/buzhai.js','/static/mobile.js','/static/mobile.css','/static/compat.js','/static/phone-chart.js','/static/analysis-status.js','/static/guidance.js','/static/rules-ui.js','/static/condition-rules.js','/static/rules.css','/static/series.js','/static/yarrow.js','/static/random-coin.js','/static/help-ui.js','/static/help.css','/static/workspace-ui.css','/favicon.ico'):
                 if path=='/favicon.ico':
                     self._headers(204,'image/x-icon',0);return
                 name='index.html' if path in ('/','/index.html') else path.rsplit('/',1)[-1]
@@ -555,6 +555,10 @@ class Handler(BaseHTTPRequestHandler):
             app=self.server.app
             parts=path.strip('/').split('/')
             if not mutation:
+                if path=='/api/help/export':
+                    raw=(Path(__file__).parent/'static/user-guide.html').read_bytes()
+                    self._headers(200,'text/html; charset=utf-8',len(raw),{'Content-Disposition':'attachment; filename="liuyao-guide.html"'})
+                    self.wfile.write(raw);return
                 if path=='/api/config':self.send_json(app.config());return
                 if path=='/api/cases':self.send_json({'cases':app.list_cases(actor)});return
                 if path=='/api/series':

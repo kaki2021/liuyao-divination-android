@@ -24,8 +24,8 @@
   panels.answer.append(analysis);
   const professional=el('section','','paper-card professional-card');professional.id='professional-content';panels.professional.append(professional);
   const log=el('dialog','','analysis-log-dialog');log.id='analysis-log-dialog';log.setAttribute('aria-labelledby','analysis-log-title');
-  const logHeading=el('div','','log-heading'),logTitle=el('h2','分析 Log');logTitle.id='analysis-log-title';
-  const closeLog=el('button','×','icon-button');closeLog.id='analysis-log-close';closeLog.type='button';closeLog.title='关闭 Log';closeLog.setAttribute('aria-label','关闭 Log');closeLog.onclick=()=>log.close();
+  const logHeading=el('div','','log-heading'),logTitle=el('h2','分析运行记录');logTitle.id='analysis-log-title';
+  const closeLog=el('button','×','icon-button');closeLog.id='analysis-log-close';closeLog.type='button';closeLog.title='关闭运行记录';closeLog.setAttribute('aria-label','关闭运行记录');closeLog.onclick=()=>log.close();
   logHeading.append(logTitle,closeLog);const model=el('div');model.id='model-info-content';log.append(logHeading,model,analysis.querySelector('#audit-report'),analysis.querySelector('#ai-raw-replies'));document.body.append(log);
   log.addEventListener('click',event=>{if(event.target===log){const rect=log.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)log.close();}});
   const followup=$('context-card');panels.answer.append(followup);
@@ -85,7 +85,7 @@
     const c=report.conclusion||result?.stage_outputs?.interpretation?.conclusion,plain=!isDemo&&(report.plain_language|| (c?fallback(c):null));
     let shown=false;
     if(plain){const hero=el('div','','answer-hero');hero.append(el('p','本次结论','eyebrow'),el('h3',plain.answer,'direct-answer'));if(plain.reason)hero.append(el('p',plain.reason,'answer-reason'));container.append(hero);shown=true;
-      const grid=el('div','','answer-grid');for(const [key,label] of [['watch_for','需要留意'],['next_steps','接下来怎么做']]){if(!plain[key]?.length)continue;const card=el('section','','answer-note');card.append(el('h4',label));const list=el('ul');plain[key].slice(0,3).forEach(t=>list.append(el('li',t)));card.append(list);grid.append(card);}container.append(grid);
+      const grid=el('div','','answer-grid');for(const [key,label] of [['watch_for','需要留意'],['next_steps','接下来怎么做']]){if(!plain[key]?.length)continue;const card=el('section','','answer-note');card.append(el('h4',label));const list=el('ul');(plain.source==='local'?plain[key]:plain[key].slice(0,3)).forEach(t=>list.append(el('li',t)));card.append(list);grid.append(card);}container.append(grid);
       if(plain.timing)container.append(el('p','时间判断：'+plain.timing,'answer-timing'));
       if(plain.source==='compatibility')container.append(el('p','当前展示简要结论；完整原文和依据在“专业分析”。','small-note'));
     }else if(report.summary){container.append(el('p',report.summary,'report-summary'));shown=true;}

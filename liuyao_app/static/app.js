@@ -92,8 +92,10 @@
     $('analyze-current-case').textContent = value && state.analyzing ? '分析进行中…' : '重新解卦';
     $('context-analyze').textContent = value && state.analyzing ? '正在回复…' : '发送追问';
     if (runSelect) runSelect.disabled = value;
+    if (!value) { window.YarrowInput.refresh(); window.RandomCoinInput.refresh(); }
   }
   function showView(view, { scroll = false } = {}) {
+    window.RandomCoinInput.cancel();
     const requested = ['input', 'results', 'feedback'].includes(view) ? view : 'input';
     state.view = state.caseId ? requested : 'input';
     document.body.dataset.view = state.view;
@@ -103,7 +105,7 @@
       tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1;
       tab.disabled = name !== 'input' && !state.caseId;
     });
-    const headings = { input: ['从一个真实的问题开始。', '选择起卦方式，记录结果，理清此刻关心的事。'], results: ['看清卦象，回答所问。', '查看排盘、综合结论与判断依据，也可以补充情况继续解卦。'], feedback: ['记下后来发生的事。', '将实际进展与这次案例的分析保存在一起。'] };
+    const headings = { input: ['写下这次的所问', '一事一问，留存卦象与后续进展。'], results: ['看清卦象，回答所问。', '查看排盘、综合结论与判断依据，也可以补充情况继续解卦。'], feedback: ['记下后来发生的事。', '将实际进展与这次案例的分析保存在一起。'] };
     $('workspace-title').textContent = headings[state.view][0]; $('workspace-description').textContent = headings[state.view][1];
     $('feedback-question').textContent = state.input?.question || '';
     if (scroll) $(`${state.view}-section`).scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -155,7 +157,14 @@
       });
       row.append(fieldset); $('taiji-inputs').append(row);
     });
-    document.querySelectorAll('input[name="casting-method"]').forEach(radio => radio.addEventListener('change', updateCastingMode));
+    window.YarrowInput.init($('yarrow-inputs'), onInputChange);
+    window.RandomCoinInput.init($('random-coin-inputs'), ({ firstDraw }) => {
+      if (firstDraw && !$('cast-time').value) {
+        $('cast-time').value = localDateTime(new Date()); $('time-details').open = true;
+      }
+      onInputChange(); persistDraft();
+    });
+    $('casting-method').addEventListener('change', updateCastingMode);
     updateCastingMode();
   }
   function makeCastingOption(name, value, label, detail, accessibleLabel, extraClass) {
@@ -165,13 +174,17 @@
     const face = node('span', 'option-face'); face.append(node('strong', 'casting-option-label', label), node('small', 'casting-option-detail', detail));
     option.append(radio, face); radio.addEventListener('change', onInputChange); return option;
   }
-  function castingMethod() { return document.querySelector('input[name="casting-method"]:checked')?.value || 'meibu'; }
+  function castingMethod() { return $('casting-method').value || 'meibu'; }
   function selectedCastingResults(method = castingMethod()) {
+    if (method === 'yarrow') return window.YarrowInput.read();
+    if (method === 'random_coin') return window.RandomCoinInput.read();
     const count = method === 'meibu' ? 3 : 6;
     return Array.from({ length: count }, (_, index) => document.querySelector(`input[name="${method}-${index + 1}"]:checked`)?.value || null);
   }
   function taijiCombination(value) { return typeof value === 'string' && /^[23]{3}$/.test(value) ? [...value].sort().join('') : null; }
   function linesFromCasting(method, results) {
+    if (method === 'yarrow') return window.YarrowInput.derive(results);
+    if (method === 'random_coin') return window.RandomCoinInput.derive(results);
     if (method === 'taiji') return Array.from({ length: 6 }, (_, index) => TAIJI[taijiCombination(results[index])] || null);
     if (method !== 'meibu' || results.length !== 3 || results.some(value => !MEIBU.some(item => item.value === value))) return Array(6).fill(null);
     const bits = [...MEIBU.find(item => item.value === results[0]).bits, ...MEIBU.find(item => item.value === results[1]).bits];
@@ -187,12 +200,16 @@
   }
   function updateCastingMode() {
     const method = castingMethod();
+    if (method !== 'random_coin') window.RandomCoinInput.cancel();
     $('meibu-inputs').hidden = method !== 'meibu'; $('taiji-inputs').hidden = method !== 'taiji'; $('line-inputs').hidden = method !== 'direct';
-    $('casting-instruction').textContent = method === 'meibu' ? '三次摸取：第一次定下卦，第二次定上卦，第三次定动爻。' : method === 'taiji' ? '每次选三颗丸显示的组合，共记录六次；223、233 不区分数字先后。' : '已有六爻结果时，从初爻到上爻依次选择阴阳动静。';
+    $('yarrow-inputs').hidden = method !== 'yarrow'; window.YarrowInput.refresh();
+    $('random-coin-inputs').hidden = method !== 'random_coin'; window.RandomCoinInput.refresh();
+    $('casting-instruction').textContent = method === 'meibu' ? '三次摸取：第一次定下卦，第二次定上卦，第三次定动爻。' : method === 'taiji' ? '每次选三颗丸显示的组合，共记录六次；223、233 不区分数字先后。' : method === 'yarrow' ? '每变记录左右余策，三变成一爻，共六爻。初次使用请打开“操作图解”。' : '从初爻到上爻，依次录入阴阳动静。硬币或蓍草／筹策的最终结果也可在此填写。';
+    if (method === 'random_coin') $('casting-instruction').textContent = '每次模拟三枚硬币，依次生成初爻至上爻。六次结果都会保存。';
     document.querySelector('.casting-layout').classList.toggle('meibu-layout', method === 'meibu');
     onInputChange();
   }
-  function hasEnteredData() { return Boolean($('question').value.trim() || $('cast-time').value || getPersonInfo(false) || window.Buzhai?.read(false) || document.querySelector('#case-form input[type="radio"]:checked:not([name="casting-method"])')); }
+  function hasEnteredData() { return Boolean($('question').value.trim() || $('cast-time').value || getPersonInfo(false) || window.Buzhai?.read(false) || window.RandomCoinInput.read().some(Boolean) || document.querySelector('#case-form input[type="radio"]:checked:not([name="casting-method"])')); }
   function updatePersonFields({ clearIrrelevant = false } = {}) {
     const isSelf = ($('person-subject').value || 'unspecified') === 'self';
     if (isSelf && clearIrrelevant) ['subject-age', 'person-relationship'].forEach(id => { $(id).value = ''; });
@@ -264,6 +281,19 @@
       const lines = selectedLines(); const missing = lines.findIndex(item => !item);
       if (validate && missing !== -1) { document.querySelector(`input[name="line-${missing + 1}"]`).focus(); throw new Error(`请补选${POSITIONS[missing]}，六爻都需要明确的阴阳动静。`); }
       input.lines = lines;
+    } else if (method === 'yarrow') {
+      const results = window.YarrowInput.read();
+      if (validate && [].concat(...results).some(item => !item)) {
+        const missing = window.YarrowInput.focusMissing();
+        throw new Error(`请记录${POSITIONS[Math.floor(missing / 3)]}第${missing % 3 + 1}变的两侧余策。`);
+      }
+      input.casting = { method, results };
+    } else if (method === 'random_coin') {
+      const results = window.RandomCoinInput.read(); const missing = results.findIndex(value => !value);
+      if (validate && missing >= 0) {
+        $('random-coin-draw').focus(); throw new Error(`请完成第${missing + 1}次随机模拟（${POSITIONS[missing]}），六次结果齐全后再保存。`);
+      }
+      input.casting = { method, results };
     } else {
       let results = selectedCastingResults(method); const missing = results.findIndex(item => !item);
       if (validate && missing !== -1) { document.querySelector(`input[name="${method}-${missing + 1}"]`).focus(); throw new Error(method === 'meibu' ? `请补选第${missing + 1}次摸取的结果。` : `请补选第${missing + 1}次摇卦的数字组合。`); }
@@ -310,9 +340,11 @@
     $('person-background').value = person?.background || '';
     $('person-details').open = Boolean(person);
     updatePersonFields();
-    state.originalCasting = input?.casting ? { method: input.casting.method, results: [...input.casting.results] } : null;
-    const method = ['meibu', 'taiji'].includes(input?.casting?.method) ? input.casting.method : input ? 'direct' : 'meibu';
-    document.querySelector(`input[name="casting-method"][value="${method}"]`).checked = true;
+    state.originalCasting = input?.casting ? JSON.parse(JSON.stringify(input.casting)) : null;
+    const method = ['meibu', 'taiji', 'yarrow', 'random_coin'].includes(input?.casting?.method) ? input.casting.method : input ? 'direct' : 'meibu';
+    window.YarrowInput.fill(method === 'yarrow' ? input.casting.results : null);
+    window.RandomCoinInput.fill(method === 'random_coin' ? input.casting.results : null);
+    $('casting-method').value = method;
     if (method !== 'direct') (input?.casting?.results || []).forEach((raw, index) => {
       const value = method === 'taiji' ? taijiCombination(raw) : raw;
       if ((method === 'meibu' && MEIBU.some(item => item.value === value)) || (method === 'taiji' && TAIJI[value])) {
@@ -376,12 +408,12 @@
   function startRelatedCase() {
     if (state.busy || !state.caseId) return;
     const draft = window.LiuyaoSeries.relatedDraft(state,$('context-text').value,
-      document.querySelector('input[name="casting-method"]:checked')?.value);
+      $('casting-method').value);
     const series = state.series;
     if (!resetCase({ transferContext:true })) return;
     state.branchParent = draft.parent; state.series = series; state.seriesId = series?.series_id || draft.parent.caseId;
     fillInput(draft.input);
-    document.querySelector(`input[name="casting-method"][value="${draft.method}"]`).checked = true;
+    $('casting-method').value = draft.method;
     updateCastingMode(); onInputChange(); renderBranchDraft(); renderHistoryActive();
     showView('input'); $('question').focus(); persistDraft();
   }
@@ -466,6 +498,8 @@
     const casting = input?.casting; const record = $('casting-record'); record.hidden = !casting;
     if (casting?.method === 'meibu') record.textContent = `枚卜丸原始记录：${casting.results.map((value, index) => `${['下卦', '上卦', '动爻'][index]} ${MEIBU.find(item => item.value === value)?.label || value}`).join(' → ')}`;
     else if (casting?.method === 'taiji') record.textContent = `太极丸原始记录（初爻至上爻）：${casting.results.join(' / ')}`;
+    else if (casting?.method === 'random_coin') record.textContent = `随机模拟掷币原始记录（系统随机数；初爻至上爻；阴2、阳3）：${casting.results.join(' / ')}`;
+    else if (casting?.method === 'yarrow') record.textContent = `蓍草／筹策十八变原始记录（每项为左、右余策）：${casting.results.map((pairs, index) => `${POSITIONS[index]} ${pairs.map(pair => `${pair[0]}与${pair[1]}`).join(' → ')}`).join('；')}`;
     else record.textContent = '';
     if (!chart?.main) { window.LiuyaoPhoneChart.render(null); $('chart-summary').append(node('p', 'empty-state', '这份记录没有可显示的排盘快照。')); document.querySelector('.chart-note').textContent = ''; return; }
     appendMiniChart($('chart-summary'), chart.main, '本卦');
@@ -1003,8 +1037,51 @@
   $('open-feedback').addEventListener('click', () => showView('feedback', { scroll: true }));
   $('feedback-return').addEventListener('click', () => showView('results', { scroll: true }));
   $('feedback-form').addEventListener('submit', event => { event.preventDefault(); appendCaseEvent('feedback'); });
-  $('settings-open').addEventListener('click', () => $('settings-dialog').showModal());
-  $('guide-open').addEventListener('click', () => $('guide-dialog').showModal());
+  $('settings-open').addEventListener('click', () => { window.RandomCoinInput.cancel(); $('settings-dialog').showModal(); });
+  let guideLoading;
+  function sizeUserHelp() {
+    const dialog = $('user-help-dialog');
+    if (!dialog.open) return;
+    const viewport = window.visualViewport;
+    const available = viewport ? viewport.height : window.innerHeight;
+    const height = Math.min(860, Math.max(0, available - 16));
+    dialog.style.height = `${height}px`;
+    dialog.style.top = `${(viewport ? viewport.offsetTop : 0) + (available - height) / 2}px`;
+  }
+  window.addEventListener('resize', sizeUserHelp);
+  window.visualViewport?.addEventListener('resize', sizeUserHelp);
+  window.visualViewport?.addEventListener('scroll', sizeUserHelp);
+  $('user-help-dialog').addEventListener('close', () => document.documentElement.classList.remove('help-is-open'));
+  async function openUserHelp(section = 'start') {
+    window.RandomCoinInput.cancel();
+    const dialog = $('user-help-dialog'), target = $('user-help-body');
+    if (!dialog.open) dialog.showModal();
+    document.documentElement.classList.add('help-is-open'); sizeUserHelp();
+    if (!target.querySelector('.help-document')) {
+      if (!guideLoading) {
+        target.textContent = '正在打开使用说明…';
+        guideLoading = (async () => {
+          const response = await fetch('/api/help/export', {credentials:'same-origin'});
+          if (!response.ok) throw new Error('说明暂时无法打开，请关闭后重试。');
+          const page = new DOMParser().parseFromString(await response.text(), 'text/html');
+          const article = page.querySelector('.help-document');
+          if (!article) throw new Error('说明内容不完整，请重新安装完整版本。');
+          target.replaceChildren(document.importNode(article, true));
+        })();
+      }
+      try { await guideLoading; } catch (error) { target.textContent = error.message; guideLoading = null; return; }
+    }
+    if (!dialog.open) return;
+    window.LiuyaoHelp.mount(target.querySelector('.help-document'), {section, method:castingMethod()});
+    target.scrollTop = 0;
+  }
+  $('guide-open').addEventListener('click', () => openUserHelp('casting'));
+  $('user-help-open').addEventListener('click', () => openUserHelp('start'));
+  document.addEventListener('click', event => {
+    const menu = $('result-export-menu');
+    if (menu.open && (!menu.contains(event.target) || event.target.closest('a'))) menu.open = false;
+  });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') $('result-export-menu').open = false; });
   $('settings-done').addEventListener('click', () => { storePreference(); updateModelLabel(); $('settings-dialog').close(); });
   $('provider-select').addEventListener('change', () => updateModels());
   $('model-select').addEventListener('change', updateModelLabel);
@@ -1034,6 +1111,10 @@
       const fields=draft.fields||{};
       if (!draft.caseId) state.pendingCreate = draft.pendingCreate || null;
       document.querySelectorAll('#case-form input,#case-form textarea,#case-form select,#context-text,#feedback-form input,#feedback-form textarea,#feedback-form select').forEach(el=>{const f=fields[el.id||el.name+'::'+el.value];if(f&&el.type!=='file'){el.value=f.value;if('checked' in f)el.checked=f.checked;}});
+      if (!fields['casting-method']) {
+        const oldMethod = ['meibu','taiji','yarrow','direct','random_coin'].find(method => fields['casting-method::'+method]?.checked);
+        if (oldMethod) $('casting-method').value = oldMethod;
+      }
       updateCastingMode();updatePersonFields();$('buzhai-enabled').dispatchEvent(new Event('change',{bubbles:true}));onInputChange();
       showView(draft.view);if(!draft.caseId&&$('question').value)banner('已恢复上次尚未保存的输入。');
     }catch(_){banner('上次输入未能完整恢复，已保存的案例可在档案中查看。','warning');}

@@ -35,7 +35,7 @@ public final class MainActivity extends Activity {
             else v.setPadding(insets.getSystemWindowInsetLeft(),insets.getSystemWindowInsetTop(),insets.getSystemWindowInsetRight(),insets.getSystemWindowInsetBottom());
             return insets;
         });
-        setContentView(root);loading("观象", "正在准备你的六爻工作台…");
+        setContentView(root);loading("六爻占问", "正在准备你的六爻工作台…");
         AppRuntime.WORK.execute(()->{try {String url=AppRuntime.start(this);runOnUiThread(()->open(url));} catch(Exception e){runOnUiThread(()->failure());}});
     }
     private int dp(int value){return Math.round(value*getResources().getDisplayMetrics().density);}
@@ -59,7 +59,7 @@ public final class MainActivity extends Activity {
             @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request){
                 Uri uri=request.getUrl();
                 if(local(uri.toString())){
-                    if(uri.getPath().startsWith("/api/")){export(uri.toString(),uri.getPath().contains("rules")?"六爻规则库.xlsx":"六爻案例.json");return true;}
+                    if(uri.getPath().startsWith("/api/")){export(uri.toString(),uri.getPath().contains("help")?"六爻占问_使用说明.html":uri.getPath().contains("rules")?"六爻规则库.xlsx":"六爻案例.json");return true;}
                     return false;
                 }
                 if(request.hasGesture()&&"https".equals(uri.getScheme()))try{startActivity(new Intent(Intent.ACTION_VIEW,uri));}catch(ActivityNotFoundException ignored){}
@@ -131,6 +131,7 @@ public final class MainActivity extends Activity {
         if(!local(url)||!URI.create(url).getPath().startsWith("/api/")){toast("无法导出此文件。");return;}
         if(exporting){toast("请先完成当前文件的保存。");return;}exporting=true;
         String safe=filename==null?"六爻记录.json":filename.replaceAll("[\\\\/:*?\"<>|\\p{Cntrl}]","_");if(safe.length()>120)safe="六爻记录.json";final String name=safe;
+        final String mime=name.endsWith(".xlsx")?"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":name.endsWith(".html")?"text/html":name.endsWith(".md")?"text/markdown":"application/json";
         String cookie=CookieManager.getInstance().getCookie(origin);
         FILES.execute(()->{
             HttpURLConnection connection=null;File file=null;
@@ -139,7 +140,7 @@ public final class MainActivity extends Activity {
                 if(connection.getResponseCode()!=200)throw new IOException("export failed");file=File.createTempFile("export-",".tmp",getCacheDir());
                 try(InputStream in=connection.getInputStream();OutputStream out=new FileOutputStream(file)){byte[] buffer=new byte[16384];int n,total=0;while((n=in.read(buffer))>0){total+=n;if(total>50*1024*1024)throw new IOException("too large");out.write(buffer,0,n);}}
                 pendingExport=file;
-                runOnUiThread(()->{try{Intent save=new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(name.endsWith(".xlsx")?"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":"application/json").putExtra(Intent.EXTRA_TITLE,name);startActivityForResult(save,SAVE_FILE);}catch(ActivityNotFoundException e){clearExport();toast("此手机没有可用的文件保存器。");}});
+                runOnUiThread(()->{try{Intent save=new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(mime).putExtra(Intent.EXTRA_TITLE,name);startActivityForResult(save,SAVE_FILE);}catch(ActivityNotFoundException e){clearExport();toast("此手机没有可用的文件保存器。");}});
             }catch(Exception e){if(file!=null)file.delete();exporting=false;toast("导出未完成，请重试。");}finally{if(connection!=null)connection.disconnect();}
         });
     }

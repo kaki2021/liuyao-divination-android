@@ -7,7 +7,7 @@ android {
     compileSdk 35
     defaultConfig {
         applicationId separateInstall ? 'cn.guanxiang.liuyao.study' : 'cn.guanxiang.liuyao'
-        manifestPlaceholders = [appLabel: separateInstall ? '观象研习' : '六爻占问']
+        manifestPlaceholders = [appLabel: '六爻占问']
         minSdk 26
         targetSdk 35
         versionCode 6

@@ -58,13 +58,13 @@
   const log = el("dialog", "", "analysis-log-dialog");
   log.id = "analysis-log-dialog";
   log.setAttribute("aria-labelledby", "analysis-log-title");
-  const logHeading = el("div", "", "log-heading"), logTitle = el("h2", "分析 Log");
+  const logHeading = el("div", "", "log-heading"), logTitle = el("h2", "分析运行记录");
   logTitle.id = "analysis-log-title";
   const closeLog = el("button", "×", "icon-button");
   closeLog.id = "analysis-log-close";
   closeLog.type = "button";
-  closeLog.title = "关闭 Log";
-  closeLog.setAttribute("aria-label", "关闭 Log");
+  closeLog.title = "关闭运行记录";
+  closeLog.setAttribute("aria-label", "关闭运行记录");
   closeLog.onclick = () => log.close();
   logHeading.append(logTitle, closeLog);
   const model = el("div");
@@ -294,7 +294,7 @@
         const card = el("section", "", "answer-note");
         card.append(el("h4", label));
         const list = el("ul");
-        plain[key].slice(0, 3).forEach((t) => list.append(el("li", t)));
+        (plain.source === "local" ? plain[key] : plain[key].slice(0, 3)).forEach((t) => list.append(el("li", t)));
         card.append(list);
         grid.append(card);
       }

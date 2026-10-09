@@ -3,6 +3,7 @@ import copy
 import http.client
 import json
 import os
+import re
 from pathlib import Path
 import sys
 import tempfile
@@ -196,6 +197,20 @@ class HTTPChecks(unittest.TestCase):
                 return result
             threading.Event().wait(.01)
         self.fail('job did not finish')
+
+    def test_index_referenced_static_assets_are_served(self):
+        status, _, page = self.request('GET', '/')
+        self.assertEqual(status, 200)
+        assets = re.findall(r'(?:src|href)="(/static/[^\"]+)"', page.decode())
+        self.assertIn('/static/yarrow.js', assets)
+        self.assertIn('/static/random-coin.js', assets)
+        for path in assets:
+            with self.subTest(path=path):
+                status, headers, body = self.request('GET', path)
+                self.assertEqual(status, 200)
+                self.assertIsInstance(body, bytes)
+                self.assertGreater(len(body), 0)
+                self.assertNotIn('application/json', headers['Content-Type'])
 
     def test_cookie_and_security_headers(self):
         status, headers, _ = self.request('GET', '/')

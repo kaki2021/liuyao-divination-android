@@ -18,7 +18,7 @@
   const note=el('p','analysis-lock-note','','small-note');
   box.append(title,meta,stepText,bar,list,time,connection,hint,error,actions,note);
   const floating=el('button','analysis-floating','正在解卦 · 查看进度');floating.type='button';floating.hidden=true;document.body.append(floating);
-  const shortcut=el('button','analysis-records-open','Log','text-button');shortcut.type='button';shortcut.setAttribute('aria-haspopup','dialog');shortcut.setAttribute('aria-controls','analysis-log-dialog');document.querySelector('.analysis-actions').append(shortcut);
+  const shortcut=el('button','analysis-records-open','运行记录','text-button');shortcut.type='button';shortcut.setAttribute('aria-haspopup','dialog');shortcut.setAttribute('aria-controls','analysis-log-dialog');document.querySelector('.analysis-actions').append(shortcut);
   let job=null,receivedAt=0,disconnected='',callbacks={};
   const running=()=>job&&['queued','running'].includes(job.status);
   const duration=s=>{s=Math.max(0,Math.floor(s||0));return s<60?`${s} 秒`:`${Math.floor(s/60)} 分 ${s%60} 秒`;};
@@ -43,7 +43,7 @@
     bar.value=done.length;stepText.textContent=`已完成 ${done.length} / 4 步${job.result?.is_demo?' · 演示未调用 AI':''}`;
     for(const [key]of stages){const item=$('analysis-stage-'+key);item.dataset.state=done.includes(key)?'done':key===stage?(failed?'error':'current'):'pending';item.setAttribute('aria-label',item.textContent+'：'+(done.includes(key)?'已完成':key===stage?(failed?'未完成':'当前步骤'):'尚未开始'));}
     hint.textContent=active?(job.phase==='validating'?'本阶段已收到回复，正在校验。':job.phase==='repairing'||job.attempt===2?'上一份回复格式未通过校验，正在自动修复；可展开查看草稿和原因。':job.phase==='stage_done'?'本阶段已保存，正在进入下一步。':'尚未收到本阶段的完整回复。max 模式可能等待较久；每一步返回后即可查看正文。'):'已返回的回复和报错保存在本次分析记录中。';
-    if(preview)hint.textContent=`解卦结论已生成，可先看答案。报告整理最多等待 ${job.report_timeout_seconds||90} 秒（含格式修复），超时会保留现有结论。`;
+    if(preview)hint.textContent=job.report_timeout_seconds===0?'解卦结论已生成，正在本机整理报告。':`解卦结论已生成，可先看答案。报告整理最多等待 ${job.report_timeout_seconds||90} 秒（含格式修复），超时会保留现有结论。`;
     if(fallback){title.textContent='解卦已完成 · 已保留结论';hint.textContent=job.result.report_status.message;stepText.textContent=`已完成 ${done.length} / 4 步 · 报告使用程序排版`;}
     error.hidden=!issue;error.textContent=issue?`${issue.code||'分析错误'}：${issue.message||'请查看本次回复与报错。'}`:'';
     note.textContent=active?'分析期间暂不重复发起请求；刷新状态不会重新解卦或再次调用 AI。':'现在可以重新解卦；新分析将另建记录。';

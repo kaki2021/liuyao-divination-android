@@ -3,12 +3,12 @@
   "tool": "esbuild 0.25.10",
   "files": {
     "analysis-status.js": {
-      "source": "65416305358502ca5b3836fd1271c5debe508791b96a685501b72aa77713d0ba",
-      "output": "faedee383fa6bc19f40fe16cc4b2772081c56595a97546e8b9ae9645d575c13c"
+      "source": "537c7feec5aa1e6dc591cfa3cc9a5ef3135a84129329ae5730dcaf4177105e28",
+      "output": "f6477c9635cdeee863030b44d061b5fd78bd27e8c07573cf38416509620d5dcf"
     },
     "app.js": {
-      "source": "442c464970a4263f66c1722f223848faa50d2aac7242e63df54f30c6792bf8d9",
-      "output": "eb2426be033e9cbd98770c2cc6508c97892406116041df555b188832398807ed"
+      "source": "0094b69e468c6f75731e9f85c2d45ae1d275887b55c11332ff80f3a68f3b5ec3",
+      "output": "5c99129c85f02d5c8b46e3980d397fbb108347ac22c4cd22301f219d1abfac3b"
     },
     "buzhai.js": {
       "source": "4cfc99fa96a4ea23e377d7ea3c28fa3a0452eec3764028a015962f6124374bc0",
@@ -27,20 +27,28 @@
       "output": "95010c86be55f9c1e337d8a561c7f09d4e3daba102144badda904c75f5a0078a"
     },
     "guidance.js": {
-      "source": "5cc700e2d5d132d491fbb4e1ea39513772ba87b216e5293cf2ed2983651bb6a3",
-      "output": "de0cd54f7eafc947e8923e4661b53fdb818027953b2ffc58784ccab5659ad89a"
+      "source": "0e72b2b6b6117a977c5a8803bd14bec9cd2f07749353b6fbd780eb01b05217c9",
+      "output": "b570a43ff722624175ec4e541cb57e98271c9d1fad3d7974237b7167f7886795"
+    },
+    "help-ui.js": {
+      "source": "e22ee2c79e88d7e7fbdff9580afc2e2e9e8287439be731287b916fecbb3ae09f",
+      "output": "ea99dae2b76603583f6d07ae930fe62c80a704bcbf7b5fa909b7c1997d50b01a"
     },
     "mobile.js": {
-      "source": "0579825123d5ac419533fd49526d45cc119f93b1c60c4d7870653363d2bebcb3",
-      "output": "48a2c257a58d150627bc43b7415bbed6e22ac662d4292ebec436ff319d92760c"
+      "source": "a3c923014ebc64d703e551b51b86bfd16bd89e5501b9c03b6633cea60f6ad45c",
+      "output": "54f93026c129c789d2d0df2a18d6645b0f7e9a04bb48517e9229b59cf0c209e0"
     },
     "phone-chart.js": {
       "source": "8a81c78a10ead8bbfe77f50942e9d4231a6b39df9b43a614c3148bad9546fa83",
       "output": "8c65225629e66f14ea1f4376a50475f6f9082307e566568505e5cc62bc87df6d"
     },
+    "random-coin.js": {
+      "source": "01736d19e6a4f9566e9694a1c9342c441a37d03ea12984f5e8099b2a0076c997",
+      "output": "ce0ec09dcf09a2d8ce1bea7d52710b4a89276e904587aea757cf6d6346c2419a"
+    },
     "report-views.js": {
-      "source": "1ece8efdd97af9aa64838ff0c8de7b7ea1478a7652510bfdc7ff92d5c5b47eff",
-      "output": "0a92868d38397983cd227f2e7bad271886caf1334a0f54bae9b853962e080d63"
+      "source": "f81ab5f2c69b5c663416073845ecf026a74a34010adb32affd149013fcfa26ac",
+      "output": "ef7ca5d331da7e383957d74d14bae848903b5a3c5413f6bd0e79d16a7eda5e0c"
     },
     "rules-ui.js": {
       "source": "7c48379ee70c8f8fdcf14f521ead7d6ce2782045e29b486a1487ce4301f07908",
@@ -53,6 +61,10 @@
     "v5-features.js": {
       "source": "6cf142420e70512826f94560ac117ecbd0b94d76d0443013674cb0c6b77a67ae",
       "output": "b89de70ef0ade4334d07429254dd1af880fe75a658cd8e00dd3f300f1026afe7"
+    },
+    "yarrow.js": {
+      "source": "0d9cb1c5ca5b7d26efb9b83ed50a0d30c30ddac771b298f6da306a314ba6788b",
+      "output": "efcbcb62be0f91e5c30c3a043c2ec3ee2b4e6b2a7dff7f906c30f52c5c8d844d"
     }
   }
 }

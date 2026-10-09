@@ -83,7 +83,7 @@ class FunctionalExplanationFlowTests(unittest.TestCase):
     def run_model(self, **options):
         provider = FunctionalExplanationProvider(**options)
         result = run_analysis(self.path, self.actor, self.case, "deepseek", "synthetic-model", 1,
-                              provider_call=provider)
+                              use_ai_report=True, provider_call=provider)
         return result, provider
 
     def test_functional_explanation_reaches_report_without_a_repair_call(self):

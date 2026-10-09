@@ -94,7 +94,7 @@ const check=(name,value)=>{assert.ok(value,name);checks.push(name);console.log('
  await page.locator('#edit-case-input').click();await page.locator('.mobile-step-back').click();await page.locator('#question').fill('修改后的问题：合同本月能签成吗？');await page.locator('#mobile-next').click();await page.locator('#save-case').click();
  await page.waitForFunction(()=>document.querySelector('#global-message').textContent.includes('修改原因'));check('缺少修改原因时提示并保留输入',await page.locator('#question').inputValue()==='修改后的问题：合同本月能签成吗？');
  await page.locator('#revision-reason').fill('实际情况变化');await page.locator('#save-case').click();await page.waitForFunction(()=>document.body.dataset.view==='results');check('修改原案例可保存',true);
- await page.locator('#mobile-history').click();await page.locator('#new-case').click();await page.locator('#question').fill('新的分析按钮测试');await page.locator('#mobile-next').click();await page.locator('input[name="casting-method"][value="direct"]').check();
+ await page.locator('#mobile-history').click();await page.locator('#new-case').click();await page.locator('#question').fill('新的分析按钮测试');await page.locator('#mobile-next').click();await page.locator('#casting-method').selectOption('direct');
  for(let i=1;i<=6;i++)await page.locator(`input[name="line-${i}"][value="young_yang"]`).check();
  await page.locator('#analyze-case').click();await page.waitForFunction(()=>document.querySelector('#analysis-content').textContent.includes('离线演示'));check('保存并分析按钮从新案例完成全流程',true);
  check('分析进度通知原生接口',await page.evaluate(()=>nativeCalls.some(c=>c[0]==='analysis'&&c[1]===true)));
@@ -125,7 +125,7 @@ check('桌面布局继续可用',!await page.locator('.mobile-nav').isVisible()&
  await page.locator('#context-text').fill('细问：这次合作的付款时间会延迟吗？');await page.locator('#cast-related').click();
  check('再起一卦将追问带入新问题并保留父卦',await page.locator('#related-draft').isVisible()&&await page.locator('#question').inputValue()==='细问：这次合作的付款时间会延迟吗？'&&await page.locator('#case-form').getAttribute('data-mobile-step')==='1');
  check('再起一卦不复用六爻与起卦时间',await page.evaluate(()=>!document.querySelector('#cast-time').value&&![...document.querySelectorAll('#case-form input:checked')].some(e=>/^(line|meibu|taiji)-/.test(e.name))));
- await page.locator('#mobile-next').click();await page.locator('input[name="casting-method"][value="meibu"]').check();
+ await page.locator('#mobile-next').click();await page.locator('#casting-method').selectOption('meibu');
  check('系列细问重新从第一次摸取开始',await page.locator('.meibu-group').first().isVisible()&&!await page.locator('.meibu-group').last().isVisible());
  await page.locator('input[name="meibu-1"][value="1"]').check();await page.locator('.mobile-draw-next').click();
  await page.locator('input[name="meibu-2"][value="5"]').check();await page.locator('.mobile-draw-next').click();await page.locator('input[name="meibu-3"][value="5"]').check();
