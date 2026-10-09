@@ -81,7 +81,7 @@ let server,browser;
     const before=await page.locator('#user-help-body').evaluate(el=>el.scrollTop);await swipe(false);
     assert.ok(await page.locator('#user-help-body').evaluate(el=>el.scrollTop)<before,'can scroll back up');
     await page.locator('#user-help-dialog .dialog-close').click();
-    assert.equal(await page.evaluate(()=>document.documentElement.classList.contains('help-is-open')),false);
+    await page.waitForFunction(()=>!document.documentElement.classList.contains('help-is-open'));
   }
   await touch.detach();await page.setViewportSize({width:390,height:844});
   await page.locator('#user-help-body .help-document').evaluate(el=>{el.style.fontSize='';});
