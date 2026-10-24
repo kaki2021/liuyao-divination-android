@@ -56,7 +56,7 @@ class CaseStore:
             raise
         # Database guards prevent accidental replacement of historical records.
         # Privileged retention/erasure workflows require a separately designed path.
-        for table in ('cases','case_revisions','context_events','analysis_runs','analysis_outcomes','ai_events','feedback','intake_failures','case_series'):
+        for table in ('cases','case_revisions','context_events','analysis_runs','analysis_outcomes','ai_events','feedback','intake_failures','case_series','conversation_turns','conversation_outcomes'):
             for operation in ('UPDATE','DELETE'):
                 self.db.execute(f"CREATE TRIGGER IF NOT EXISTS immutable_{table}_{operation.lower()} BEFORE {operation} ON {table} BEGIN SELECT RAISE(ABORT, 'append-only service history'); END")
 
@@ -253,6 +253,8 @@ class CaseStore:
                 event=dict(event);event['attempt']=json.loads(event.pop('event_json'));run['ai_events'].append(event)
             result['analysis_runs'].append(run)
         result['feedback']=[dict(r) for r in self.db.execute('SELECT * FROM feedback WHERE case_id=? ORDER BY recorded_at,feedback_id',(case_id,))]
+        from liuyao_app.conversation import list_turns
+        result['conversation_turns']=list_turns(self,actor,case_id)
         result['usage_policy']={'service_case_archive':True,'public_use':False,'training_use':False}
         return result
 

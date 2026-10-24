@@ -2,6 +2,12 @@
 
 “解卦结论”下方保留“进一步交流”输入框，提供“发送追问”和“再起一卦”。发送时沿用当前卦解读；再起一卦把输入带入新问题，清空旧卦象和起卦时间，并在同一系列中建立父子关系。系列树和共用背景在结果上方可折叠查看，Log 仍只从“重新解卦”右边的按钮打开。
 
+连续对话与真太阳时回归：仓库根目录运行 `PYTHONPATH=software_prep:. python -m unittest liuyao_app.test_conversation liuyao_app.test_solar_time`。使用临时案例、公开占位规则及模型替身，不使用私有规则或收费模型。
+
+`node android/tests/conversation_dom.cjs` 需要可选依赖 `jsdom`，执行真实 HTTP 服务和 Android 编译脚本，验证两轮角色上下文、报告保留、案例重开、HTML 文本安全、太阳时预览、定位失败、回调和案例切换时的过期定位。它不验证页面尺寸、Android 权限弹窗或 GPS。测试时区用 `TZ=Asia/Shanghai`，使合成地点与控件显示保持一致。
+
+`node android/tests/conversation_browser.cjs` 需要 Playwright 和可用 Chromium，可用 `CHROMIUM_PATH` 指定路径。它另外检查 320、390、768 像素宽度的输入与对话布局。两个脚本共用 `conversation_server.py` 隔离服务，追问必须走 `/conversation`，不能走 `/analyze`。
+
 使用 `node tests/series_model.cjs` 检查生产代码的父卦选择、草稿信息继承、新起卦数据隔离、分支顺序和深层树遍历，无需浏览器。仓库根目录使用 `PYTHONPATH=software_prep:. python -m unittest liuyao_app.test_series` 检查系列存储、旧案例迁移、访问隔离、共享背景快照、父卦条件与边界、报告更新状态及系列导出。全部使用临时数据库和模型替身，不需要私有规则；完整导出契约校验需要可选的 `jsonschema`。
 
 使用 `node tests/report_views_browser.cjs` 独立验证专业页的意念与取象表格、折叠候选和引文、结论条件、判断边界、缺失条件，以及不占结果分页的 Log 弹窗。它使用实际页面、CSS 和编译后的 Android 脚本，不依赖私有规则包，不启动后台服务，不调用模型。覆盖弹窗关闭与焦点恢复、三分页键盘导航、早期缺口已解决、待澄清、历史报告、演示、切换分析及 320 到 1280 像素宽度。

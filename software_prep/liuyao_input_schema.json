@@ -233,6 +233,49 @@
       ],
       "additionalProperties": false,
       "description": "用户主动启用的卜宅专题；记录一个对象、场所、方案与阶段。无此字段时不启用专题规则。"
+    },
+    "time_basis": {
+      "type": "string",
+      "enum": [
+        "beijing_standard",
+        "true_solar"
+      ],
+      "description": "省略时沿用北京时间；真太阳时日时柱使用经度与均时差，节气仍按真实时刻。"
+    },
+    "cast_location": {
+      "type": "object",
+      "properties": {
+        "longitude": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "latitude": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "accuracy_m": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10000000
+        },
+        "captured_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "device",
+            "manual"
+          ]
+        }
+      },
+      "required": [
+        "longitude"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -250,6 +293,25 @@
       "required": [
         "casting"
       ]
+    }
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "time_basis": {
+            "const": "true_solar"
+          }
+        },
+        "required": [
+          "time_basis"
+        ]
+      },
+      "then": {
+        "required": [
+          "cast_location"
+        ]
+      }
     }
   ]
 }

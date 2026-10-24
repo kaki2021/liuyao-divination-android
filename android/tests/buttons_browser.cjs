@@ -86,11 +86,11 @@ const check=(name,value)=>{assert.ok(value,name);checks.push(name);console.log('
  await page.waitForFunction(()=>document.querySelector('#feedback-list').textContent.includes('已经签约'));check('后续反馈能保存',true);
  await page.locator('#feedback-return').click();await page.locator('#result-tab-answer').click();
  check('追问输入框位于解卦结论页',await page.locator('#result-answer #context-form').isVisible()&&await page.locator('#feedback-section #context-form').count()===0);
- const followupResponse=page.waitForResponse(response=>response.request().method()==='POST'&&/\/api\/cases\/[^/]+\/analyze$/.test(response.url()));
+ const followupResponse=page.waitForResponse(response=>response.request().method()==='POST'&&/\/api\/cases\/[^/]+\/conversation$/.test(response.url()));
  await page.locator('#context-text').fill('测试补充：对方已确认条款。');await page.locator('#context-analyze').click();
- check('发送追问会发起本案的新分析',Boolean((await (await followupResponse).json()).job_id));
+ check('发送追问会发起独立对话任务',Boolean((await (await followupResponse).json()).job_id));
  await page.waitForFunction(()=>document.querySelector('#case-form').getAttribute('aria-busy')==='false'&&document.querySelector('#context-text').value==='');
- await page.waitForFunction(()=>document.querySelector('#context-list').textContent.includes('对方已确认条款'));await page.locator('#context-history>summary').click();check('追问自动保存并可展开回看',await page.locator('#context-list').isVisible());
+ await page.waitForFunction(()=>document.querySelector('#conversation-list').textContent.includes('对方已确认条款'));check('追问自动保存并显示问答',await page.locator('#conversation-list').isVisible());
  await page.locator('#edit-case-input').click();await page.locator('.mobile-step-back').click();await page.locator('#question').fill('修改后的问题：合同本月能签成吗？');await page.locator('#mobile-next').click();await page.locator('#save-case').click();
  await page.waitForFunction(()=>document.querySelector('#global-message').textContent.includes('修改原因'));check('缺少修改原因时提示并保留输入',await page.locator('#question').inputValue()==='修改后的问题：合同本月能签成吗？');
  await page.locator('#revision-reason').fill('实际情况变化');await page.locator('#save-case').click();await page.waitForFunction(()=>document.body.dataset.view==='results');check('修改原案例可保存',true);
@@ -138,7 +138,7 @@ check('桌面布局继续可用',!await page.locator('.mobile-nav').isVisible()&
  await page.waitForFunction(()=>document.body.dataset.view==='results');
  check('从档案重开系列可查看树并继续追问',await page.locator('#series-tree').isVisible()&&await page.locator('#cast-related').isVisible());
  await page.locator(`.series-node[data-case-id="${parentId}"]`).click();await page.waitForFunction(id=>document.querySelector('#export-case').getAttribute('href').includes(id),parentId);
- check('系列树可回到父卦并保留其追问记录',await page.locator('#context-list').textContent().then(text=>text.includes('系列共同背景：对方已确认条款')));
+ check('系列树可回到父卦并保留其追问记录',await page.locator('#conversation-list').textContent().then(text=>text.includes('系列共同背景：对方已确认条款')));
  check('系列操作后前端无异常',errors.length===0);
  const result={status:'passed',checks,errors,live_api_calls:0};fs.writeFileSync(path.join(output,'browser_results.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result));
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{await browser?.close();server?.kill();});

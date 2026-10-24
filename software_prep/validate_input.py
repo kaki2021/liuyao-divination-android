@@ -88,7 +88,7 @@ def validate_input(value):
     errors = []
     if not isinstance(value, dict):
         return {'valid': False, 'errors': [problem('$', 'OBJECT_REQUIRED', '输入必须是对象')]}
-    allowed = {'question', 'lines', 'actual_cast_time', 'casting', 'person_info', 'buzhai'}
+    allowed = {'question', 'lines', 'actual_cast_time', 'casting', 'person_info', 'buzhai', 'time_basis', 'cast_location'}
     for key in value.keys() - allowed:
         errors.append(problem('$/' + key, 'UNEXPECTED_FIELD', '当前客户端入口不接收此字段'))
     question = value.get('question')
@@ -118,6 +118,25 @@ def validate_input(value):
         errors.extend(validate_person_info(value['person_info']))
     if 'buzhai' in value:
         errors.extend(validate_buzhai(value['buzhai']))
+    if value.get('time_basis', 'beijing_standard') not in ('beijing_standard', 'true_solar'):
+        errors.append(problem('$/time_basis', 'INVALID_TIME_BASIS', '请选择北京时间或当地真太阳时'))
+    location = value.get('cast_location')
+    if 'cast_location' in value:
+        valid = isinstance(location, dict) and not set(location) - {'longitude', 'latitude', 'accuracy_m', 'captured_at', 'source'}
+        if valid:
+            valid = type(location.get('longitude')) in (int, float) and -180 <= location['longitude'] <= 180
+            if 'latitude' in location:
+                valid = valid and type(location['latitude']) in (int, float) and -90 <= location['latitude'] <= 90
+            if 'accuracy_m' in location:
+                valid = valid and type(location['accuracy_m']) in (int, float) and 0 <= location['accuracy_m'] <= 10000000
+            if 'captured_at' in location:
+                valid = valid and valid_timestamp(location['captured_at'])
+            if 'source' in location:
+                valid = valid and location['source'] in ('device', 'manual')
+        if not valid:
+            errors.append(problem('$/cast_location', 'INVALID_LOCATION', '请填写有效经纬度与定位信息，经度东正西负'))
+    if value.get('time_basis') == 'true_solar' and not isinstance(location, dict):
+        errors.append(problem('$/cast_location', 'CAST_LOCATION_REQUIRED', '真太阳时需要起卦地点，请定位或手动填写经度'))
     return {'valid': not errors, 'errors': errors}
 
 def derive_six_lines(value):

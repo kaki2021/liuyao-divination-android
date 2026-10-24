@@ -9,6 +9,12 @@ PRIVATE_RULE_NAMES = {'compiled_rules.json', 'rules.xlsx', 'rules.xlsx.inspect.n
 
 def public_source(path):
     relative = path.relative_to(ROOT)
+    # Tests can leave temporary SQLite files under a source directory. Neither
+    # those nor any live case database belongs in the distributable payload.
+    if any(part.startswith('tmp') for part in relative.parts[:-1]):
+        return False
+    if path.suffix in ('.db', '.sqlite', '.sqlite3') or path.name.endswith(('-journal', '-wal', '-shm')):
+        return False
     if relative.parts[:1] == ('knowledge_base',):
         if path.name in PRIVATE_RULE_NAMES or relative.parts[1:2] == ('versions',):
             return False
@@ -51,6 +57,7 @@ else:
     raise FileNotFoundError('Missing timezone data: restore the verified content.zip or provide ROOT/tzdata')
 
 assert 'tzdata/zoneinfo/Asia/Shanghai' in payload, 'Missing bundled timezone data'
+assert not any(name.endswith(('.db', '.sqlite', '.sqlite3', '-journal', '-wal', '-shm')) for name in payload), 'Case database entered payload'
 assert not any(name == 'knowledge_base/compiled_rules.json' or
                name == 'knowledge_base/rules.xlsx' or
                name == 'knowledge_base/rules.xlsx.inspect.ndjson' or

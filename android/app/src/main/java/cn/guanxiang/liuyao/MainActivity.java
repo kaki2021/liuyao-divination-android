@@ -4,6 +4,7 @@ import android.app.*;
 import android.content.*;
 import android.graphics.Color;
 import android.net.Uri;
+import android.location.*;
 import android.os.*;
 import android.text.InputType;
 import android.view.*;
@@ -25,6 +26,11 @@ public final class MainActivity extends Activity {
     private boolean exporting;
     private String origin;
     private static final int CHOOSE_FILE=20, SAVE_FILE=21;
+    private static final int LOCATION_PERMISSION=40;
+    private final Handler locationHandler=new Handler(Looper.getMainLooper());
+    private String locationRequest;
+    private LocationListener locationListener;
+    private final Runnable locationTimeout=()->finishLocation(null,"定位超时，请到开阔处重试或手动填写经度。");
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -88,6 +94,16 @@ public final class MainActivity extends Activity {
     private boolean local(String url){try{URI u=URI.create(url),base=URI.create(origin);return u.getUserInfo()==null&&u.getScheme().equals("http")&&u.getHost().equals("127.0.0.1")&&u.getPort()==base.getPort();}catch(Exception e){return false;}}
     private void toast(String message){runOnUiThread(()->Toast.makeText(this,message,Toast.LENGTH_LONG).show());}
     public final class NativeBridge {
+        @JavascriptInterface public void requestLocation(String requestId){
+            if(requestId==null||!requestId.matches("[a-zA-Z0-9_-]{1,80}"))return;
+            runOnUiThread(()->{
+                if(web==null||!local(web.getUrl()))return;
+                if(locationRequest!=null)finishLocation(null,"已有新的定位请求。");
+                locationRequest=requestId;
+                if(!hasLocationPermission())requestPermissions(new String[]{"android.permission.ACCESS_COARSE_LOCATION","android.permission.ACCESS_FINE_LOCATION"},LOCATION_PERMISSION);
+                else locate();
+            });
+        }
         @JavascriptInterface public String readPreference(){return getPreferences(MODE_PRIVATE).getString("model","null");}
         @JavascriptInterface public void savePreference(String value){if(value!=null&&value.length()<2000)getPreferences(MODE_PRIVATE).edit().putString("model",value).apply();}
         @JavascriptInterface public String readDraft(){return getPreferences(MODE_PRIVATE).getString("draft","null");}
@@ -101,6 +117,56 @@ public final class MainActivity extends Activity {
             }
             // The native monitor stops after the server confirms completion, not after a tab change.
         });}
+    }
+    private boolean hasLocationPermission(){
+        return checkSelfPermission("android.permission.ACCESS_COARSE_LOCATION")==android.content.pm.PackageManager.PERMISSION_GRANTED
+            ||checkSelfPermission("android.permission.ACCESS_FINE_LOCATION")==android.content.pm.PackageManager.PERMISSION_GRANTED;
+    }
+    @Override public void onRequestPermissionsResult(int request,String[] permissions,int[] grants){
+        super.onRequestPermissionsResult(request,permissions,grants);
+        if(request==LOCATION_PERMISSION&&locationRequest!=null){
+            if(hasLocationPermission())locate();else finishLocation(null,"未获得定位权限，可以在下方手动填写起卦地点的经度。");
+        }
+    }
+    @SuppressWarnings("MissingPermission") private void locate(){
+        if(locationRequest==null)return;
+        LocationManager manager=getSystemService(LocationManager.class);
+        locationListener=new LocationListener(){
+            @Override public void onLocationChanged(Location value){
+                long age=SystemClock.elapsedRealtimeNanos()-value.getElapsedRealtimeNanos();
+                if(age>=0&&age<=120L*1000000000)finishLocation(value,null);
+            }
+            @Override public void onProviderEnabled(String provider){}
+            @Override public void onProviderDisabled(String provider){}
+            @Override public void onStatusChanged(String provider,int status,Bundle extras){}
+        };
+        boolean requested=false;
+        for(String provider:new String[]{LocationManager.NETWORK_PROVIDER,LocationManager.GPS_PROVIDER}){
+            try{
+                if(manager.isProviderEnabled(provider)){
+                    manager.requestSingleUpdate(provider,locationListener,Looper.getMainLooper());requested=true;
+                }
+            }catch(SecurityException|IllegalArgumentException ignored){}
+        }
+        if(requested)locationHandler.postDelayed(locationTimeout,20000);
+        else finishLocation(null,"请开启手机定位服务，或手动填写经度。");
+    }
+    private void finishLocation(Location value,String error){
+        if(locationRequest==null)return;
+        String request=locationRequest;locationRequest=null;
+        locationHandler.removeCallbacks(locationTimeout);
+        if(locationListener!=null){try{getSystemService(LocationManager.class).removeUpdates(locationListener);}catch(SecurityException ignored){}locationListener=null;}
+        if(web==null||isDestroyed()||!local(web.getUrl()))return;
+        JSONObject result=new JSONObject();
+        try{
+            if(value==null)result.put("error",error);
+            else{
+                result.put("longitude",value.getLongitude());result.put("latitude",value.getLatitude());
+                if(value.hasAccuracy())result.put("accuracy_m",value.getAccuracy());
+                result.put("captured_at",java.time.Instant.ofEpochMilli(value.getTime()).toString());result.put("source","device");
+            }
+            web.evaluateJavascript("window.LiuyaoLocation&&window.LiuyaoLocation.receive("+JSONObject.quote(request)+","+result.toString()+")",null);
+        }catch(Exception ignored){}
     }
     private void credentials(String provider){
         if(!provider.equals("deepseek")&&!provider.equals("doubao")){toast("离线演示无需密钥。");return;}
@@ -158,5 +224,6 @@ public final class MainActivity extends Activity {
         web.evaluateJavascript("(function(){if(window.MobileUI&&window.MobileUI.back())return true;if(window.LiuyaoApp){if(!window.LiuyaoApp.canLeave())return true;window.LiuyaoApp.persistDraft();}return false;})()",result->{if(!"true".equals(result))moveTaskToBack(true);});
     }
     @Override protected void onPause(){if(web!=null)web.evaluateJavascript("window.LiuyaoApp&&window.LiuyaoApp.persistDraft()",null);super.onPause();}
-    @Override protected void onDestroy(){if(chooser!=null){chooser.onReceiveValue(null);chooser=null;}if(web!=null){web.removeJavascriptInterface("LiuyaoAndroid");web.destroy();}super.onDestroy();}
+    @Override protected void onStop(){if(locationListener!=null)finishLocation(null,"应用已进入后台，定位已停止；返回后可以重试。");super.onStop();}
+    @Override protected void onDestroy(){finishLocation(null,"定位已取消。");if(chooser!=null){chooser.onReceiveValue(null);chooser=null;}if(web!=null){web.removeJavascriptInterface("LiuyaoAndroid");web.destroy();}super.onDestroy();}
 }

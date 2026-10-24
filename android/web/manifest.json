@@ -7,8 +7,8 @@
       "output": "faedee383fa6bc19f40fe16cc4b2772081c56595a97546e8b9ae9645d575c13c"
     },
     "app.js": {
-      "source": "442c464970a4263f66c1722f223848faa50d2aac7242e63df54f30c6792bf8d9",
-      "output": "eb2426be033e9cbd98770c2cc6508c97892406116041df555b188832398807ed"
+      "source": "01e2b02b0919384017a04973bba448f549cab904f27dd9966eeac428b27c68b6",
+      "output": "257407a4aebdc3caba1b5d40f3da3d6baf4e1681352318eeb1d936fa93797945"
     },
     "buzhai.js": {
       "source": "4cfc99fa96a4ea23e377d7ea3c28fa3a0452eec3764028a015962f6124374bc0",
@@ -49,6 +49,10 @@
     "series.js": {
       "source": "3450196fed46e9c40722b5b8b67ba0b33e685ddc655e6ea066c364d6e7e0e27f",
       "output": "d11a32872efa522a1bb34b0fe7859c82ffbcc6c4f8239d1720740875fc382089"
+    },
+    "solar-time.js": {
+      "source": "747723c92e6c3a99cbe07a5de0c6ceacb3c0efc88d375c38f6eb6328c2c7ec9a",
+      "output": "b0a51f416e76211e9c5e12cb53b758129070fed615ab3681ffba10a01bfed872"
     },
     "v5-features.js": {
       "source": "6cf142420e70512826f94560ac117ecbd0b94d76d0443013674cb0c6b77a67ae",

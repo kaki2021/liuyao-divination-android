@@ -43,6 +43,9 @@ def build_information_scope(input_data, chart):
         status = "unknown"
     if status == "computed" and (
         not provided or calendar.get("source_cast_time") != actual_time
+        or calendar.get('time_basis','beijing_standard') != input_data.get('time_basis','beijing_standard')
+        or (input_data.get('time_basis') == 'true_solar'
+            and calendar.get('cast_location',{}).get('longitude') != input_data.get('cast_location',{}).get('longitude'))
     ):
         status = "error"
     pillars = calendar.get("pillars") or {}

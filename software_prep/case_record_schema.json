@@ -585,6 +585,60 @@
         "training_use"
       ],
       "additionalProperties": false
+    },
+    "conversation_turns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "turn_id": {
+            "type": "string"
+          },
+          "case_id": {
+            "type": "string"
+          },
+          "analysis_run_id": {
+            "type": "string"
+          },
+          "recorded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_text": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "running",
+              "completed",
+              "failed"
+            ]
+          },
+          "replied_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "result": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "turn_id",
+          "case_id",
+          "analysis_run_id",
+          "recorded_at",
+          "user_text",
+          "status",
+          "replied_at",
+          "result"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "required": [
@@ -831,6 +885,49 @@
           ],
           "additionalProperties": false,
           "description": "用户主动启用的卜宅专题；记录一个对象、场所、方案与阶段。无此字段时不启用专题规则。"
+        },
+        "time_basis": {
+          "type": "string",
+          "enum": [
+            "beijing_standard",
+            "true_solar"
+          ],
+          "description": "省略时沿用北京时间；真太阳时日时柱使用经度与均时差，节气仍按真实时刻。"
+        },
+        "cast_location": {
+          "type": "object",
+          "properties": {
+            "longitude": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            },
+            "latitude": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "accuracy_m": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10000000
+            },
+            "captured_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "source": {
+              "type": "string",
+              "enum": [
+                "device",
+                "manual"
+              ]
+            }
+          },
+          "required": [
+            "longitude"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -849,6 +946,25 @@
           "required": [
             "casting"
           ]
+        }
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "time_basis": {
+                "const": "true_solar"
+              }
+            },
+            "required": [
+              "time_basis"
+            ]
+          },
+          "then": {
+            "required": [
+              "cast_location"
+            ]
+          }
         }
       ]
     },

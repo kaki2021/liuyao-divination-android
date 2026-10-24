@@ -305,7 +305,7 @@ def _facts(chart, evidence, selection):
                                calendar["pillars"][key], None))
         facts.append(_fact("CALENDAR_CONVENTION", "calculation", "四柱", "排盘约定",
                            calendar["convention_label"], None))
-        facts.append(_fact("CAST_TIME", "calculation", "本次起卦", "按排盘时区显示的时刻", calendar["cast_time"], None))
+        facts.append(_fact("CAST_TIME", "calculation", "本次起卦", "按选定时间口径显示的时刻", calendar["cast_time"], None))
         for line in chart["main"]["lines"]:
             pos = line["position"]
             facts.append(_fact(f"LINE_{pos}_SIX_SPIRIT", "calculation", f"主卦第{pos}爻", "按日干定位的六神",
@@ -618,6 +618,7 @@ def run_analysis(db_path, actor: Actor, case_id, provider, model, expected_revis
                              "pipeline": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                              "response_compat": hashlib.sha256(Path(__file__).with_name("response_compat.py").read_bytes()).hexdigest(),
                              "calendar": hashlib.sha256(Path(__file__).with_name("calendar_context.py").read_bytes()).hexdigest(),
+                             "solar_time": hashlib.sha256(Path(__file__).with_name("solar_time.py").read_bytes()).hexdigest(),
                              "interpretation_evidence": hashlib.sha256(Path(__file__).with_name("interpretation_evidence.py").read_bytes()).hexdigest(),
                              "casting": hashlib.sha256((FOUNDATION / "casting_input.py").read_bytes()).hexdigest(),
                              "input_schema": hashlib.sha256((FOUNDATION / "liuyao_input_schema.json").read_bytes()).hexdigest(),
