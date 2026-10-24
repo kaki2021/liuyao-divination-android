@@ -1051,8 +1051,8 @@
   $('person-subject').addEventListener('change', () => { window.LiuyaoV5?.selectSelf(); updatePersonFields({ clearIrrelevant: true }); onInputChange(); });
   ['querent-age', 'subject-age', 'person-relationship', 'person-background'].forEach(id => $(id).addEventListener('input', onInputChange));
   $('cast-time').addEventListener('change', onInputChange);
-  $('cast-now').addEventListener('click', () => { $('cast-time').value = localDateTime(new Date()); $('time-details').open = true; window.LiuyaoSolarTime.update(); onInputChange(); if($('time-basis').value==='true_solar')window.LiuyaoSolarTime.locate(); });
-  $('cast-clear').addEventListener('click', () => { $('cast-time').value = ''; window.LiuyaoSolarTime.update(); onInputChange(); });
+  $('cast-now').addEventListener('click', () => { $('cast-time').value = localDateTime(new Date()); $('time-details').open = true; window.LiuyaoSolarTime.useCurrentTime(); });
+  $('cast-clear').addEventListener('click', () => { $('cast-time').value = ''; window.LiuyaoSolarTime.clearTime(); onInputChange(); });
   $('new-case').addEventListener('click', resetCase);
   $('cast-related').addEventListener('click', startRelatedCase);
   $('cancel-related').addEventListener('click', () => { if (!state.busy && state.branchParent && mayDiscard()) loadCase(state.branchParent.caseId).then(persistDraft).catch(error => banner(getError(error),'error')); });
@@ -1116,7 +1116,7 @@
       const fields=draft.fields||{};
       if (!draft.caseId) state.pendingCreate = draft.pendingCreate || null;
       document.querySelectorAll('#case-form input,#case-form textarea,#case-form select,#context-text,#feedback-form input,#feedback-form textarea,#feedback-form select').forEach(el=>{const f=fields[el.id||el.name+'::'+el.value];if(f&&el.type!=='file'){el.value=f.value;if('checked' in f)el.checked=f.checked;}});
-      if(draft.solarInput)window.LiuyaoSolarTime.fill(draft.solarInput);
+      if(draft.solarInput)window.LiuyaoSolarTime.fill(draft.caseId?draft.solarInput:{...draft.solarInput,time_basis:'true_solar'});
       updateCastingMode();updatePersonFields();$('buzhai-enabled').dispatchEvent(new Event('change',{bubbles:true}));onInputChange();
       showView(draft.view);if(!draft.caseId&&$('question').value)banner('已恢复上次尚未保存的输入。');
     }catch(_){banner('上次输入未能完整恢复，已保存的案例可在档案中查看。','warning');}

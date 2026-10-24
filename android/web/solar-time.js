@@ -20,27 +20,31 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 (() => {
   "use strict";
   const $ = (id) => document.getElementById(id);
-  let location = null, pending = null, generation = 0, previewToken = 0, timer, api, changed;
+  let location = null, pending = null, legacy = null, generation = 0, previewToken = 0, timer, api, changed;
   const note = (text) => {
     $("location-status").textContent = text;
   };
   function read(validate = true) {
     if (validate && pending) throw new Error("正在获取起卦地点，请稍等或手动填写经度。");
-    const basis = $("time-basis").value, raw = $("cast-longitude").value.trim(), result = {};
-    if (basis !== "beijing_standard") result.time_basis = basis;
+    if (legacy) return __spreadValues({}, legacy);
+    const raw = $("cast-longitude").value.trim(), result = { time_basis: "true_solar" };
     if (raw) {
       const longitude = Number(raw);
       if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) throw new Error("经度应在 −180 至 180 之间，东经为正，西经为负。");
       result.cast_location = location && location.longitude === longitude ? __spreadValues({}, location) : { longitude, source: "manual" };
     }
-    if (validate && basis === "true_solar" && !result.cast_location) throw new Error("请选择定位或手动填写起卦地点的经度。");
+    if (validate && $("cast-time").value && !result.cast_location) throw new Error("请选择定位或手动填写起卦地点的经度。");
     return result;
   }
   function update() {
-    $("solar-location-fields").hidden = $("time-basis").value !== "true_solar";
+    $("solar-location-fields").hidden = false;
     clearTimeout(timer);
     const token = ++previewToken;
     $("solar-time-preview").textContent = "";
+    if (legacy) {
+      $("solar-time-preview").textContent = "该历史记录保留原排盘口径；填写原起卦地点后，可按真太阳时重新排盘。";
+      return;
+    }
     timer = setTimeout(async () => {
       if (!api || !$("cast-time").value) return;
       try {
@@ -50,7 +54,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         if (Number.isNaN(date.valueOf())) return;
         const value = await api("/api/calendar", { method: "POST", data: __spreadProps(__spreadValues({}, details), { actual_cast_time: date.toISOString() }) });
         if (token !== previewToken) return;
-        $("solar-time-preview").textContent = value.status === "computed" ? "".concat(value.time_basis === "true_solar" ? "当地真太阳时" : "北京时间", "：").concat(value.cast_time.slice(0, 19).replace("T", " ")).concat(value.solar_time ? "（较北京时间 ".concat(value.solar_time.total_correction_minutes >= 0 ? "+" : "").concat(value.solar_time.total_correction_minutes.toFixed(2), " 分钟）") : "") : value.message;
+        $("solar-time-preview").textContent = value.status === "computed" ? "当地真太阳时：".concat(value.cast_time.slice(0, 19).replace("T", " ")) : value.message;
       } catch (error) {
         if (token === previewToken) $("solar-time-preview").textContent = error.message;
       }
@@ -88,9 +92,9 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         else receive(id, { error: "当前环境无法定位，请手动填写起卦地点的经度。" });
       });
       if (epoch !== generation) return;
+      legacy = null;
       location = value;
       $("cast-longitude").value = String(value.longitude);
-      $("time-basis").value = "true_solar";
       note("已定位：".concat(value.longitude.toFixed(5), "°").concat(value.latitude !== void 0 ? "，".concat(value.latitude.toFixed(5), "°") : "").concat(value.accuracy_m !== void 0 ? "；精度约 ".concat(Math.round(value.accuracy_m), " 米") : "", "。补录旧卦请填写当时地点。"));
       update();
       changed();
@@ -117,21 +121,38 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       pending = null;
     }
     location = (input == null ? void 0 : input.cast_location) ? __spreadValues({}, input.cast_location) : null;
-    $("time-basis").value = (input == null ? void 0 : input.time_basis) || "beijing_standard";
+    legacy = input && (input.time_basis || "beijing_standard") !== "true_solar" ? __spreadValues(__spreadValues({}, input.time_basis ? { time_basis: input.time_basis } : {}), location ? { cast_location: __spreadValues({}, location) } : {}) : null;
     $("cast-longitude").value = location ? String(location.longitude) : "";
     $("location-button").disabled = false;
     note(location ? "已保存起卦地点；可手动更正经度。" : "定位仅在起卦时获取；补录旧卦请填写当时地点。");
     update();
   }
   window.LiuyaoLocation = { receive };
-  window.LiuyaoSolarTime = { read, fill, update, locate, bind(options) {
+  function useCurrentTime() {
+    legacy = null;
+    update();
+    changed();
+    locate();
+  }
+  function timeChanged() {
+    legacy = null;
+    update();
+    changed();
+    if ($("cast-time").value && !$("cast-longitude").value) locate();
+  }
+  function clearTime() {
+    generation++;
+    if (pending) {
+      pending.reject(new Error("已清空起卦时间。"));
+      pending = null;
+    }
+    legacy = null;
+    $("location-button").disabled = false;
+    update();
+  }
+  window.LiuyaoSolarTime = { read, fill, update, locate, useCurrentTime, clearTime, bind(options) {
     api = options.api;
     changed = options.changed;
-    $("time-basis").addEventListener("change", () => {
-      update();
-      changed();
-      if ($("time-basis").value === "true_solar" && !$("cast-longitude").value) locate();
-    });
     $("location-button").addEventListener("click", locate);
     $("cast-longitude").addEventListener("input", () => {
       generation++;
@@ -139,13 +160,14 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         pending.reject(new Error("已改用手动经度。"));
         pending = null;
       }
+      legacy = null;
       location = null;
       $("location-button").disabled = false;
       note("使用手动填写的起卦地点。");
       update();
       changed();
     });
-    $("cast-time").addEventListener("change", update);
+    $("cast-time").addEventListener("change", timeChanged);
     fill(null);
   } };
 })();

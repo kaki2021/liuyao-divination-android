@@ -301,10 +301,14 @@
         "properties": {
           "time_basis": {
             "const": "true_solar"
+          },
+          "actual_cast_time": {
+            "type": "string"
           }
         },
         "required": [
-          "time_basis"
+          "time_basis",
+          "actual_cast_time"
         ]
       },
       "then": {

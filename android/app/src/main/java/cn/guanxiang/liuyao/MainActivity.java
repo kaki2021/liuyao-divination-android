@@ -41,7 +41,7 @@ public final class MainActivity extends Activity {
             else v.setPadding(insets.getSystemWindowInsetLeft(),insets.getSystemWindowInsetTop(),insets.getSystemWindowInsetRight(),insets.getSystemWindowInsetBottom());
             return insets;
         });
-        setContentView(root);loading("观象", "正在准备你的六爻工作台…");
+        setContentView(root);loading("六爻占问", "正在准备你的六爻工作台…");
         AppRuntime.WORK.execute(()->{try {String url=AppRuntime.start(this);runOnUiThread(()->open(url));} catch(Exception e){runOnUiThread(()->failure());}});
     }
     private int dp(int value){return Math.round(value*getResources().getDisplayMetrics().density);}

@@ -1553,13 +1553,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   $("cast-now").addEventListener("click", () => {
     $("cast-time").value = localDateTime(/* @__PURE__ */ new Date());
     $("time-details").open = true;
-    window.LiuyaoSolarTime.update();
-    onInputChange();
-    if ($("time-basis").value === "true_solar") window.LiuyaoSolarTime.locate();
+    window.LiuyaoSolarTime.useCurrentTime();
   });
   $("cast-clear").addEventListener("click", () => {
     $("cast-time").value = "";
-    window.LiuyaoSolarTime.update();
+    window.LiuyaoSolarTime.clearTime();
     onInputChange();
   });
   $("new-case").addEventListener("click", resetCase);
@@ -1699,7 +1697,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           if ("checked" in f) el.checked = f.checked;
         }
       });
-      if (draft.solarInput) window.LiuyaoSolarTime.fill(draft.solarInput);
+      if (draft.solarInput) window.LiuyaoSolarTime.fill(draft.caseId ? draft.solarInput : __spreadProps(__spreadValues({}, draft.solarInput), { time_basis: "true_solar" }));
       updateCastingMode();
       updatePersonFields();
       $("buzhai-enabled").dispatchEvent(new Event("change", { bubbles: true }));

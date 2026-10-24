@@ -60,7 +60,7 @@ def _result(status, original, code, message):
     }
 
 
-def calculate_calendar(input_data):
+def _calculate_calendar(input_data):
     """Return JSON-ready calendar facts; never substitute entry/current time.
 
     ``actual_cast_time`` must be a full ISO-8601 instant with timezone/offset.
@@ -141,4 +141,19 @@ def calculate_calendar(input_data):
             timezone=None, timezone_label='当地真太阳时', true_solar_time=True,
             day_hour_basis='local_apparent_solar_time', term_boundary_basis='actual_instant_beijing_library',
             solar_time_algorithm=solar_details['algorithm'])
+    return result
+
+
+def calculate_calendar(input_data):
+    result = _calculate_calendar(input_data)
+    if (isinstance(input_data, dict) and input_data.get('time_basis') == 'true_solar'
+            and result['status'] != 'computed'):
+        # Unknown time or a missing location must not advertise a Beijing
+        # fallback when the user is recording a solar-time case.
+        result.update(time_basis='true_solar', timezone=None,
+            convention_label='当地真太阳时；按起卦地点经度及均时差换算。起卦时刻未知时不生成四柱。')
+        result['calculation_policy'].update(policy_id='local_apparent_lichun_jie_midnight_late_zi_v1',
+            timezone=None, timezone_label='当地真太阳时', true_solar_time=True,
+            day_hour_basis='local_apparent_solar_time', term_boundary_basis='actual_instant_beijing_library',
+            solar_time_algorithm='NOAA_Meeus_Julian_century_v1')
     return result

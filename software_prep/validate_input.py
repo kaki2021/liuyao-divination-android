@@ -135,7 +135,7 @@ def validate_input(value):
                 valid = valid and location['source'] in ('device', 'manual')
         if not valid:
             errors.append(problem('$/cast_location', 'INVALID_LOCATION', '请填写有效经纬度与定位信息，经度东正西负'))
-    if value.get('time_basis') == 'true_solar' and not isinstance(location, dict):
+    if value.get('time_basis') == 'true_solar' and actual_time and not isinstance(location, dict):
         errors.append(problem('$/cast_location', 'CAST_LOCATION_REQUIRED', '真太阳时需要起卦地点，请定位或手动填写经度'))
     return {'valid': not errors, 'errors': errors}
 

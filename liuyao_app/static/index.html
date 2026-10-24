@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light">
-  <title>观象 · 六爻研习</title>
+  <title>六爻占问</title>
   <link rel="stylesheet" href="/static/styles.css">
   <link rel="stylesheet" href="/static/mobile.css">
   <link rel="stylesheet" href="/static/rules.css">
@@ -25,7 +25,7 @@
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="/" aria-label="观象首页"><span class="brand-mark" aria-hidden="true">䷀</span><span>观象<small>六爻研习</small></span></a>
+    <a class="brand" href="/" aria-label="六爻占问首页"><span class="brand-mark" aria-hidden="true">䷀</span><span>六爻占问<small>真念取用 · 观象察变</small></span></a>
     <div class="header-meta"><span class="online-dot" aria-hidden="true"></span>本地工作台<button class="text-button" id="settings-open" type="button">模型设置 <span aria-hidden="true">↗</span></button></div>
   </header>
   <main class="workspace">
@@ -75,7 +75,7 @@
             <div class="preview-card"><p class="preview-label">变卦</p><h3 id="preview-changed-name">待录入完整</h3><div id="changed-preview-lines" class="preview-lines" aria-label="变卦六爻，从上爻到初爻"></div><p id="preview-changed-status" class="preview-empty">录入完整后显示</p></div>
           </div><p class="preview-footnote" id="preview-hint" aria-live="polite">完成选择后立即显示本卦与变卦，不需要先调用 AI。</p><p class="small-note">上爻在上，初爻在下；○／× 为动爻，箭头对应发生阴阳变化的位置。</p></section>
         </div>
-        <details class="time-details" id="time-details"><summary>实际起卦时间 <span>选填</span></summary><div class="time-fields"><label for="cast-time">当时摇卦的日期与时间</label><div class="time-row"><input id="cast-time" type="datetime-local" step="1"><button class="secondary-button" id="cast-now" type="button">现在起卦</button><button class="text-button" id="cast-clear" type="button">清空</button></div><p class="small-note" id="timezone-note"></p><label for="time-basis">排盘时间</label><select id="time-basis"><option value="beijing_standard">北京时间</option><option value="true_solar">当地真太阳时</option></select><div id="solar-location-fields" hidden><div class="time-row"><label for="cast-longitude">起卦地点经度</label><input id="cast-longitude" type="number" min="-180" max="180" step="any" inputmode="decimal" placeholder="东经为正，西经为负"><button id="location-button" type="button" class="secondary-button">获取手机定位</button></div><p class="small-note" id="location-status" role="status"></p></div><p class="small-note" id="solar-time-preview" aria-live="polite"></p><p class="small-note">不知道当时的时间，可以留空。保存时间会另行记录。</p></div></details>
+        <details class="time-details" id="time-details"><summary>起卦时间与地点 <span>真太阳时</span></summary><div class="time-fields"><label for="cast-time">起卦时手机显示的日期与时间</label><div class="time-row"><input id="cast-time" type="datetime-local" step="1"><button class="secondary-button" id="cast-now" type="button">现在起卦</button><button class="text-button" id="cast-clear" type="button">清空</button></div><p class="small-note" id="timezone-note"></p><p class="small-note">按起卦地点换算当地真太阳时。</p><div id="solar-location-fields"><div class="time-row"><label for="cast-longitude">起卦地点经度</label><input id="cast-longitude" type="number" min="-180" max="180" step="any" inputmode="decimal" placeholder="东经为正，西经为负"><button id="location-button" type="button" class="secondary-button">获取手机定位</button></div><p class="small-note" id="location-status" role="status"></p></div><p class="small-note" id="solar-time-preview" aria-live="polite"></p><p class="small-note">不知道当时的时间，可以留空。保存时间会另行记录。</p></div></details>
         <div id="revision-fields" class="revision-fields" hidden><label for="revision-reason">这次为什么修改？</label><input id="revision-reason" maxlength="1000" placeholder="例如：刚才把第三次摸取的结果记错了"><p class="small-note">修改后会保留之前的输入和分析记录。</p></div>
         <div class="form-actions"><span class="small-note model-current" id="model-current">正在读取模型设置…</span><div class="action-buttons"><button class="secondary-button" id="save-case" type="submit">保存并排盘</button><button class="primary-button" id="analyze-case" type="button">保存并分析 <span aria-hidden="true">↗</span></button></div></div>
       </form>

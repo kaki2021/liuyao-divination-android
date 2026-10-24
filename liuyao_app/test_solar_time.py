@@ -13,6 +13,15 @@ def solar(value,longitude=104.06):
 
 
 class SolarTimeChecks(unittest.TestCase):
+    def test_unknown_solar_time_can_be_recorded_without_inventing_location(self):
+        data={'question':'问题','lines':['young_yang']*6,'time_basis':'true_solar'}
+        self.assertTrue(validate_input(data)['valid'])
+        result=calculate_calendar(data)
+        self.assertEqual(result['status'],'missing')
+        self.assertEqual(result['time_basis'],'true_solar')
+        self.assertNotIn('北京时间',result['convention_label'])
+        self.assertFalse(validate_input({**data,'actual_cast_time':'2026-10-24T12:00:00+08:00'})['valid'])
+
     def test_equation_of_time_has_correct_sign_and_seasonal_scale(self):
         # Known annual extrema: about -14 min in February, +16 min in November.
         self.assertAlmostEqual(equation_of_time(datetime.fromisoformat('2024-02-11T12:00:00+00:00')),-14.2,delta=.4)

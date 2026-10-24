@@ -38,6 +38,8 @@ async function launchServer(){
   }});
   const w=dom.window,$=id=>w.document.getElementById(id),event=(el,name)=>el.dispatchEvent(new w.Event(name,{bubbles:true,cancelable:true}));
   await wait(()=>w.document.querySelector('.history-item'));
+  check('应用标题为六爻占问',w.document.title==='六爻占问');
+  check('新起卦默认真太阳时且没有时间制切换',!$('time-basis')&&w.LiuyaoSolarTime.read().time_basis==='true_solar'&&!$('solar-location-fields').hidden);
   w.document.querySelector('.history-item').click();
   await wait(()=>$('question').value.includes('工作'));
   $('context-text').value='你刚才说的条件是什么意思？';event($('context-form'),'submit');
@@ -50,20 +52,30 @@ async function launchServer(){
   check('前提改变时提示完整复评',$('conversation-list').textContent.includes('完整复评'));
   $('conversation-list').textContent='';w.document.querySelector('.history-item').click();await wait(()=>w.document.querySelectorAll('.conversation-user').length===2);
   check('重开案例保留问答',$('conversation-list').textContent.includes('待遇已确认'));
-  check('历史记录保留经度与排盘口径',$('cast-longitude').value==='104.06'&&$('time-basis').value==='true_solar');
-  await wait(()=>$('solar-time-preview').textContent.includes('较北京时间'));
+  check('历史记录保留经度与排盘口径',$('cast-longitude').value==='104.06'&&w.LiuyaoSolarTime.read().time_basis==='true_solar');
+  await wait(()=>$('solar-time-preview').textContent.includes('当地真太阳时'));
   check('本地接口返回太阳时预览',$('solar-time-preview').textContent.includes('当地真太阳时'));
   w.LiuyaoAndroid={saveDraft(){},analysisState(){},requestLocation(id){setTimeout(()=>w.LiuyaoLocation.receive(id,{error:'定位权限被拒绝'}),0);}};
   $('location-button').click();await wait(()=>$('location-status').textContent.includes('被拒绝'));
   check('定位失败后保留手动入口与原经度',$('cast-longitude').value==='104.06'&&!$('location-button').disabled);
   w.LiuyaoAndroid.requestLocation=id=>setTimeout(()=>w.LiuyaoLocation.receive(id,{longitude:120,latitude:30,source:'device',captured_at:'2026-10-24T04:00:00Z'}),0);
   $('location-button').click();await wait(()=>$('cast-longitude').value==='120');
-  check('原生定位结果写入真太阳时输入',w.LiuyaoSolarTime.read().cast_location.source==='device'&&$('time-basis').value==='true_solar');
+  check('原生定位结果写入真太阳时输入',w.LiuyaoSolarTime.read().cast_location.source==='device'&&w.LiuyaoSolarTime.read().time_basis==='true_solar');
   check('定位回调不会写入已切换案例',await(async()=>{
     let request;w.LiuyaoAndroid.requestLocation=id=>{request=id;};$('location-button').click();
     w.LiuyaoSolarTime.fill({time_basis:'true_solar',cast_location:{longitude:105,source:'manual'}});
     w.LiuyaoLocation.receive(request,{longitude:99,source:'device'});await pause(20);return $('cast-longitude').value==='105';
   })());
+  w.LiuyaoSolarTime.fill({});
+  check('历史卦不会静默改用新口径',!('time_basis' in w.LiuyaoSolarTime.read()));
+  w.LiuyaoSolarTime.fill(null);$('cast-time').value='';
+  check('未知时间可留空且保留太阳时默认',w.LiuyaoSolarTime.read().time_basis==='true_solar');
+  $('cast-time').value='2026-10-24T12:00';
+  let missing=false;try{w.LiuyaoSolarTime.read();}catch(error){missing=error.message.includes('经度');}
+  check('已知起卦时间要求定位或手动经度',missing);
+  let nowRequest;w.LiuyaoAndroid.requestLocation=id=>{nowRequest=id;};$('cast-now').click();
+  check('现在起卦自动获取手机定位',Boolean(nowRequest));
+  w.LiuyaoSolarTime.clearTime();$('cast-time').value='';
   await pause(350);check('页面脚本无异常',errors.length===0);
   console.log(JSON.stringify({status:'passed',checks:checks.length,errors,live_model_calls:0,layout_verified:false}));
 })().catch(error=>{console.error(error,errors,{banner:dom?.window.document.getElementById('global-message')?.textContent,status:dom?.window.document.getElementById('conversation-status')?.textContent,posts});process.exitCode=1;}).finally(()=>{dom?.window.close();server?.kill('SIGTERM');});

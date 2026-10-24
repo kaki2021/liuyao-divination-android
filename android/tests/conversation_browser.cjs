@@ -43,15 +43,15 @@ async function launchServer(){
   await page.waitForFunction(()=>document.querySelectorAll('.conversation-assistant').length===2);
   check('重新打开案例后保留连续对话',await page.locator('.conversation-user').count()===2);
   await page.locator('#tab-input').click();await page.locator('#time-details').evaluate(el=>el.open=true);
-  check('历史卦使用保存的经度与时间口径',await page.locator('#cast-longitude').inputValue()==='104.06'&&await page.locator('#time-basis').inputValue()==='true_solar');
+  check('历史卦使用保存的经度与时间口径',await page.locator('#cast-longitude').inputValue()==='104.06'&&await page.evaluate(()=>window.LiuyaoSolarTime.read().time_basis)==='true_solar');
   await page.waitForFunction(()=>document.querySelector('#solar-time-preview').textContent.includes('当地真太阳时'));
-  check('太阳时预览由本地历法生成',await page.locator('#solar-time-preview').textContent().then(text=>text.includes('较北京时间')));
+  check('太阳时预览由本地历法生成',await page.locator('#solar-time-preview').textContent().then(text=>text.includes('当地真太阳时')));
   await page.evaluate(()=>{window.LiuyaoAndroid={saveDraft(){},analysisState(){},requestLocation(id){setTimeout(()=>window.LiuyaoLocation.receive(id,{error:'定位权限被拒绝'}),0);}};});
   await page.locator('#location-button').click();await page.waitForFunction(()=>document.querySelector('#location-status').textContent.includes('被拒绝'));
   check('拒绝定位后仍保留手动经度',await page.locator('#cast-longitude').inputValue()==='104.06');
   await page.evaluate(()=>{window.LiuyaoAndroid.requestLocation=id=>setTimeout(()=>window.LiuyaoLocation.receive(id,{longitude:120,latitude:30,source:'device',captured_at:'2026-10-24T04:00:00Z'}),0);});
   await page.locator('#location-button').click();await page.waitForFunction(()=>document.querySelector('#cast-longitude').value==='120');
-  check('原生定位回调更新经度并保留真太阳时选项',await page.locator('#time-basis').inputValue()==='true_solar');
+  check('原生定位回调更新经度并保留真太阳时选项',await page.evaluate(()=>window.LiuyaoSolarTime.read().time_basis)==='true_solar');
   for(const width of [320,390,768]){
     await page.setViewportSize({width,height:844});
     check(width+' 像素输入页面无横向溢出',await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
