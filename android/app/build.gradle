@@ -1,13 +1,14 @@
 plugins { id 'com.android.application'; id 'com.chaquo.python' }
 
 def separateInstall = providers.gradleProperty('separateInstall').orNull == 'true'
+def previewInstall = providers.gradleProperty('previewInstall').orNull == 'true'
 
 android {
     namespace 'cn.guanxiang.liuyao'
     compileSdk 35
     defaultConfig {
-        applicationId separateInstall ? 'cn.guanxiang.liuyao.study' : 'cn.guanxiang.liuyao'
-        manifestPlaceholders = [appLabel: separateInstall ? '观象研习' : '六爻占问']
+        applicationId previewInstall ? 'cn.guanxiang.liuyao.preview' : (separateInstall ? 'cn.guanxiang.liuyao.study' : 'cn.guanxiang.liuyao')
+        manifestPlaceholders = [appLabel: previewInstall ? '观象新版' : (separateInstall ? '观象研习' : '六爻占问')]
         minSdk 26
         targetSdk 35
         versionCode 7

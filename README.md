@@ -238,6 +238,10 @@ cd android
 
 `separateInstall=true` 使用应用 ID `cn.guanxiang.liuyao.study` 和名称“观象研习”；不传时使用 `cn.guanxiang.liuyao`。升级已有安装必须保持相同应用 ID、签名证书，并递增 `versionCode`。
 
+`previewInstall=true` 使用独立应用 ID `cn.guanxiang.liuyao.preview` 和名称“观象新版”，适用于没有旧版签名时的并存测试；它优先于 `separateInstall`。
+
+经授权的私有安装包可设置 `LIUYAO_PRIVATE_RULES_DIR`，指向公开源码目录以外、已经校验的 `compiled_rules.json` 所在目录，再运行 `python android/prepare.py`。该模式只将正式编译规则加入安装包，首次使用时会自动安装到本机规则目录；不包含规则口令或原始 XLSX。此类 APK 及其 payload 只能在私有构建和交付流程中保存，不能提交到公开仓库或公开构建产物。未设置此变量时保持公开包不附真实规则的行为。
+
 ## AI 配置与隐私
 
 安装后从“模型设置”填写自己账户的 API 密钥。`.env.example` 只说明字段，不包含真实值；Android 版本以应用内 Keystore 配置为准。
