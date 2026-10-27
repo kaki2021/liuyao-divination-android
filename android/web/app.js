@@ -129,6 +129,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     $("analyze-current-case").textContent = value && state.analyzing ? "分析进行中…" : "重新解卦";
     $("context-analyze").textContent = value && state.analyzing ? "正在回复…" : "发送追问";
     if (runSelect) runSelect.disabled = value;
+    document.dispatchEvent(new Event("liuyao:busy"));
   }
   function showView(view, { scroll = false } = {}) {
     var _a2;
@@ -367,6 +368,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       if (Number.isNaN(date.valueOf())) throw new Error("请检查实际起卦时间。");
       input.actual_cast_time = state.originalTimeLocal === $("cast-time").value && state.originalTime ? state.originalTime : date.toISOString();
     }
+    Object.assign(input, window.LiuyaoSolarTime.read(validate));
     const personInfo = getPersonInfo(validate);
     if (personInfo) input.person_info = personInfo;
     const buzhai = (_b = window.Buzhai) == null ? void 0 : _b.read(validate);
@@ -376,6 +378,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   function inputsEqual(first, second) {
     var _a2, _b;
     if (!first || !second || first.question !== second.question || (first.actual_cast_time || null) !== (second.actual_cast_time || null)) return false;
+    if ((first.time_basis || "beijing_standard") !== (second.time_basis || "beijing_standard") || JSON.stringify(first.cast_location || null) !== JSON.stringify(second.cast_location || null)) return false;
     if (JSON.stringify(canonicalPersonInfo(first.person_info)) !== JSON.stringify(canonicalPersonInfo(second.person_info))) return false;
     if (((_a2 = window.Buzhai) == null ? void 0 : _a2.canonical(first.buzhai)) !== ((_b = window.Buzhai) == null ? void 0 : _b.canonical(second.buzhai))) return false;
     if (first.casting || second.casting) return Boolean(first.casting && second.casting && first.casting.method === second.casting.method && JSON.stringify(first.casting.results) === JSON.stringify(second.casting.results));
@@ -431,14 +434,16 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     state.originalTime = rawTime || null;
     state.originalTimeLocal = date && !Number.isNaN(date.valueOf()) ? localDateTime(date) : null;
     $("cast-time").value = state.originalTimeLocal || "";
+    state.originalTimeLocal = $("cast-time").value || null;
+    window.LiuyaoSolarTime.fill(input);
     $("time-details").open = Boolean(rawTime);
     $("revision-reason").value = "";
     updateCastingMode();
   }
-  function resetCase({ transferContext = false } = {}) {
+  function resetCase({ transferContext = false, preserveDraft = false } = {}) {
     var _a2;
     if (state.busy) return false;
-    if (!mayDiscard({ transferContext })) return false;
+    if (!preserveDraft && !mayDiscard({ transferContext })) return false;
     window.AnalysisStatus.clear();
     currentJob = null;
     state.loadToken++;
@@ -449,6 +454,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     state.runs = [];
     state.runId = null;
     state.pendingContext = null;
+    state.pendingConversation = null;
+    state.conversationTurns = [];
     state.seriesId = null;
     state.series = null;
     state.branchParent = null;
@@ -621,6 +628,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     state.input = latestInput(record);
     state.chart = payload.chart || record.chart;
     state.runs = record.analysis_runs || [];
+    state.conversationTurns = record.conversation_turns || [];
     state.branchParent = null;
     state.pendingCreate = null;
     state.series = payload.series || null;
@@ -647,7 +655,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     renderHistoryActive();
     if (!quiet) banner("");
     showView(keepView ? state.view : "results");
-    if (payload.active_job_id && !state.analyzing) resumeJob(payload.active_job_id, caseId);
+    if (payload.active_job_id && !state.analyzing) {
+      if (payload.active_job_kind === "conversation") resumeConversation(payload.active_job_id, caseId);
+      else resumeJob(payload.active_job_id, caseId);
+    }
+    document.dispatchEvent(new Event("liuyao:case-loaded"));
   }
   function appendMiniChart(container, structure, label) {
     const block = node("div", "chart-hex");
@@ -792,7 +804,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         pillars.append(pair);
       });
       summary.append(pillars);
-      if (calendar.cast_time) summary.append(node("p", "calendar-time", "起卦时间：".concat(calendar.cast_time.slice(0, 19).replace("T", " "), " · 北京时间（UTC+08:00）")));
+      if (calendar.cast_time) summary.append(node("p", "calendar-time", "排盘时间：".concat(calendar.cast_time.slice(0, 19).replace("T", " "), " · ").concat(calendar.time_basis === "true_solar" ? "当地真太阳时" : "北京时间（UTC+08:00）")));
+      if (calendar.solar_time) summary.append(node("p", "small-note", "原始时刻：".concat(calendar.source_cast_time, "；经度 ").concat(calendar.solar_time.longitude, "°；经度修正 ").concat(calendar.solar_time.longitude_correction_minutes.toFixed(2), " 分钟，均时差 ").concat(calendar.solar_time.equation_of_time_minutes.toFixed(2), " 分钟。")));
     } else summary.append(node("p", "small-note", (calendar == null ? void 0 : calendar.message) || "这份记录尚无四柱与六神资料。"));
     $("calendar-details").hidden = !(calendar == null ? void 0 : calendar.convention_label);
     $("calendar-convention").textContent = (calendar == null ? void 0 : calendar.convention_label) || "";
@@ -989,6 +1002,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     $("analysis-content").removeAttribute("data-preview-run");
     $("run-history").hidden = status === "running" || state.runs.length < 2;
     state.runId = runId || null;
+    renderConversation();
     if (runSelect) runSelect.value = state.runId || "";
     resetRawReplies();
     if ($("ai-raw-replies").open) loadRawReplies(true);
@@ -1040,6 +1054,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     const stored = ((_a2 = run.outcome) == null ? void 0 : _a2.result) || run.result || null;
     const result = (stored == null ? void 0 : stored.report) && (stored.report.display_report || stored.report.stage_outputs || stored.report.is_demo !== void 0) ? stored.report : stored;
     renderAnalysis(result, run.status || ((_b = run.outcome) == null ? void 0 : _b.status) || "running", run.analysis_run_id, notice);
+    renderConversation();
+    document.dispatchEvent(new Event("liuyao:case-loaded"));
   }
   function renderRunSelector() {
     const area = $("run-history");
@@ -1081,7 +1097,10 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       item.append(time, document.createTextNode(text));
       container.append(item);
     };
-    (record.context_events || []).forEach((item) => appendEvent($("context-list"), readable(item.content), item.recorded_at));
+    (record.context_events || []).filter((item) => {
+      var _a3;
+      return !((_a3 = item.content) == null ? void 0 : _a3.conversation_turn_id);
+    }).forEach((item) => appendEvent($("context-list"), readable(item.content), item.recorded_at));
     $("context-history").hidden = !$("context-list").childElementCount;
     (record.feedback || []).forEach((item) => {
       var _a3;
@@ -1363,7 +1382,119 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       }
     }
   });
-  async function appendCaseEvent(kind, { reanalyze = false } = {}) {
+  function renderConversation() {
+    const list = $("conversation-list");
+    clear(list);
+    (state.conversationTurns || []).filter((turn) => turn.analysis_run_id === state.runId).forEach((turn) => {
+      var _a2, _b;
+      const question = node("article", "conversation-message conversation-user");
+      question.append(node("strong", "", "你"), node("p", "", turn.user_text));
+      list.append(question);
+      const answer = node("article", "conversation-message conversation-assistant");
+      answer.append(node("strong", "", "解读助手"));
+      if (turn.status === "completed") {
+        answer.append(node("p", "", turn.result.answer));
+        if (turn.result.requires_reanalysis) answer.append(node("p", "small-note", "这条补充可能影响原分析，可点击“重新解卦”完整复评。"));
+      } else if (turn.status === "failed") {
+        answer.append(node("p", "small-note", ((_b = (_a2 = turn.result) == null ? void 0 : _a2.error) == null ? void 0 : _b.message) || "回复未完成，提问已保存。"));
+        const retry = node("button", "text-button", "重新发送这条追问");
+        retry.type = "button";
+        retry.disabled = state.busy;
+        retry.addEventListener("click", () => {
+          if (state.busy) return;
+          $("context-text").value = turn.user_text;
+          sendConversation();
+        });
+        answer.append(retry);
+      } else answer.append(node("p", "small-note", "正在回复…"));
+      list.append(answer);
+    });
+  }
+  async function resumeConversation(jobId, caseId) {
+    if (state.analyzing) return;
+    state.analyzing = true;
+    setBusy(true);
+    try {
+      await waitConversation(jobId, caseId);
+    } catch (error) {
+      banner(getError(error), "error");
+    } finally {
+      state.analyzing = false;
+      setBusy(false);
+      renderConversation();
+    }
+  }
+  async function waitConversation(jobId, caseId) {
+    var _a2, _b;
+    $("conversation-status").textContent = "正在结合原分析与对话回复…";
+    (_a2 = window.LiuyaoAndroid) == null ? void 0 : _a2.analysisState(true);
+    let failures = 0;
+    for (; ; ) {
+      let job;
+      try {
+        job = await api("/api/jobs/".concat(encodeURIComponent(jobId)));
+        failures = 0;
+      } catch (error) {
+        if (["SESSION_REQUIRED", "NOT_FOUND", "ACCESS_DENIED"].includes(error.code) || ++failures >= 3) throw error;
+        $("conversation-status").textContent = "连接中断，正在查询原回复任务…";
+      }
+      if (job && !["queued", "running"].includes(job.status)) {
+        state.pendingConversation = null;
+        await loadCase(caseId, { keepForm: true, quiet: true, keepView: true });
+        const run = state.runs.find((item) => item.analysis_run_id === job.conversation_analysis_run_id);
+        if (run) renderRun(run);
+        $("conversation-status").textContent = job.status === "completed" ? "回复已保存。" : ((_b = job.error) == null ? void 0 : _b.message) || "回复未完成，提问已保存。";
+        persistDraft();
+        return;
+      }
+      await new Promise((resolve) => setTimeout(resolve, failures ? 2500 : 1e3));
+    }
+  }
+  async function sendConversation() {
+    if (state.busy || !state.caseId) return;
+    const text = $("context-text").value.trim(), caseId = state.caseId;
+    if (!text) {
+      $("context-text").focus();
+      banner("请先写下追问。", "warning");
+      return;
+    }
+    if (!state.runId) {
+      banner("请先完成一次解卦，再继续对话。", "warning");
+      return;
+    }
+    try {
+      if (!inputsEqual(getInput(false), state.input)) {
+        banner("请先保存录入区的修改，再重新解卦。", "warning");
+        return;
+      }
+    } catch (error) {
+      banner(getError(error), "warning");
+      return;
+    }
+    state.analyzing = true;
+    setBusy(true);
+    banner("");
+    try {
+      let pending = state.pendingConversation;
+      if (!pending || pending.caseId !== caseId || pending.text !== text || pending.body.analysis_run_id !== state.runId) {
+        pending = { caseId, text, key: uuid(), body: __spreadProps(__spreadValues({}, modelSettings()), { text, analysis_run_id: state.runId, expected_revision_seq: state.revision }) };
+        state.pendingConversation = pending;
+      }
+      persistDraft();
+      const response = await api("/api/cases/".concat(encodeURIComponent(caseId), "/conversation"), { method: "POST", data: pending.body, idempotencyKey: pending.key });
+      if ($("context-text").value.trim() === text) $("context-text").value = "";
+      persistDraft();
+      await loadCase(caseId, { keepForm: true, quiet: true, keepView: true });
+      await waitConversation(response.job_id, caseId);
+    } catch (error) {
+      banner("".concat(getError(error), " 提问仍保留；重新打开案例可查询原回复任务。"), "error");
+    } finally {
+      state.analyzing = false;
+      setBusy(false);
+      renderConversation();
+    }
+  }
+  async function appendCaseEvent(kind) {
     var _a2, _b, _c, _d, _e;
     if (state.busy || !state.caseId) return;
     const field = $(kind === "context" ? "context-text" : "feedback-text");
@@ -1391,10 +1522,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       }
       await loadCase(caseId, { keepForm: true, quiet: true, keepView: true });
       await refreshHistory();
-      if (kind === "context" && reanalyze) {
-        const job = await analyzeSavedCase(caseId);
-        if (!job || job.status === "failed") return;
-      } else banner(kind === "context" ? "追问与补充已保存。点击“重新解卦”后，会把这些内容一并纳入。" : "反馈已独立保存，可继续补充后续进展。");
+      banner(kind === "context" ? "补充已保存。" : "反馈已独立保存，可继续补充后续进展。");
       if (field.value === text) field.value = "";
       if (kind === "feedback") {
         $("feedback-occurred").value = "";
@@ -1410,6 +1538,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     }
   }
   buildInputs();
+  window.LiuyaoSolarTime.bind({ api, changed: onInputChange });
   showView("input");
   $("timezone-note").textContent = "使用当前浏览器时区：".concat(Intl.DateTimeFormat().resolvedOptions().timeZone || "本地时区", "。");
   $("question").addEventListener("input", onInputChange);
@@ -1427,10 +1556,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   $("cast-now").addEventListener("click", () => {
     $("cast-time").value = localDateTime(/* @__PURE__ */ new Date());
     $("time-details").open = true;
-    onInputChange();
+    window.LiuyaoSolarTime.useCurrentTime();
   });
   $("cast-clear").addEventListener("click", () => {
     $("cast-time").value = "";
+    window.LiuyaoSolarTime.clearTime();
     onInputChange();
   });
   $("new-case").addEventListener("click", resetCase);
@@ -1464,7 +1594,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   $("analyze-current-case").addEventListener("click", () => startAnalysis({ savedCase: true }));
   $("context-form").addEventListener("submit", (event) => {
     event.preventDefault();
-    appendCaseEvent("context", { reanalyze: true });
+    sendConversation();
   });
   ["input", "results", "feedback"].forEach((name) => {
     const tab = $("tab-".concat(name));
@@ -1515,13 +1645,19 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     }
   });
   function persistDraft() {
+    var _a2, _b;
     if (!window.LiuyaoAndroid) return;
     const fields = {};
     document.querySelectorAll("#case-form input,#case-form textarea,#case-form select,#context-text,#feedback-form input,#feedback-form textarea,#feedback-form select").forEach((el, index) => {
       if (el.type === "file") return;
       fields[el.id || el.name + "::" + el.value] = { value: el.value, checked: el.checked };
     });
-    window.LiuyaoAndroid.saveDraft(JSON.stringify({ caseId: state.caseId, branchParent: state.branchParent, pendingCreate: state.pendingCreate, fields, view: state.view }));
+    let solarInput = null;
+    try {
+      solarInput = window.LiuyaoSolarTime.read(false);
+    } catch (_) {
+    }
+    window.LiuyaoAndroid.saveDraft(JSON.stringify({ caseId: state.caseId, branchParent: state.branchParent, pendingCreate: state.pendingCreate, pendingConversation: state.pendingConversation, solarInput, fields, view: state.view, workbench: (_a2 = window.SkillWorkbench) == null ? void 0 : _a2.draft(), dialogue: (_b = window.DialogueUI) == null ? void 0 : _b.draft() }));
   }
   let draftTimer;
   document.addEventListener("input", () => {
@@ -1536,8 +1672,72 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       draftTimer = setTimeout(persistDraft, 300);
     }
   });
-  window.LiuyaoApp = { reloadConfig: loadConfig, persistDraft, canLeave: mayDiscard, isAnalyzing: () => state.analyzing };
-  Promise.allSettled([loadConfig(), refreshHistory()]).then(async (results) => {
+  function captureCard() {
+    const fields = {};
+    document.querySelectorAll("#case-form input,#case-form textarea,#case-form select").forEach((el) => {
+      if (el.type !== "file") fields[el.id || el.name + "::" + el.value] = { value: el.value, checked: Boolean(el.checked) };
+    });
+    let solar_input = null;
+    try {
+      solar_input = window.LiuyaoSolarTime.read(false);
+    } catch (_) {
+    }
+    return { fields, solar_input };
+  }
+  function restoreCard(draft) {
+    document.querySelectorAll("#case-form input,#case-form textarea,#case-form select").forEach((el) => {
+      var _a2;
+      const f = (_a2 = draft.fields) == null ? void 0 : _a2[el.id || el.name + "::" + el.value];
+      if (f) {
+        el.value = f.value;
+        el.checked = f.checked;
+      }
+    });
+    if (draft.solar_input) window.LiuyaoSolarTime.fill(draft.solar_input);
+    $("profile-select").dispatchEvent(new Event("change", { bubbles: true }));
+    window.Buzhai.fill(window.Buzhai.read(false));
+    updateCastingMode();
+    updatePersonFields();
+    onInputChange();
+  }
+  async function prepareDialogue(prefill, profileId, draft) {
+    var _a2, _b;
+    if (state.busy) throw new Error("当前卦例仍在分析，请完成后再打开另一起卦卡片。");
+    resetCase({ preserveDraft: true });
+    const person = __spreadValues(__spreadValues({}, prefill.person), profileId ? { profile_id: profileId } : {});
+    fillInput(__spreadValues(__spreadValues({
+      question: prefill.question,
+      time_basis: "true_solar",
+      casting: { method: "meibu", results: [] }
+    }, Object.keys(person).length ? { person_info: person } : {}), prefill.buzhai ? { buzhai: prefill.buzhai } : {}));
+    if ((_a2 = window.LiuyaoV5) == null ? void 0 : _a2.loadProfiles) await window.LiuyaoV5.loadProfiles().catch(() => {
+    });
+    if (profileId) window.LiuyaoV5.setProfile(profileId);
+    else (_b = window.LiuyaoV5) == null ? void 0 : _b.selectSelf();
+    if (draft) {
+      restoreCard(draft);
+    } else if (prefill.time_policy === "current") $("cast-now").click();
+    else {
+      $("time-details").open = true;
+      $("cast-time").value = "";
+    }
+    onInputChange();
+    showView("input");
+  }
+  window.LiuyaoApp = {
+    reloadConfig: loadConfig,
+    persistDraft,
+    canLeave: mayDiscard,
+    isAnalyzing: () => state.analyzing,
+    loadCase,
+    prepareDialogue,
+    captureCard,
+    restoreCard,
+    showView,
+    context: () => ({ caseId: state.caseId, revision: state.revision, runId: state.runId, busy: state.busy, input: state.input, view: state.view })
+  };
+  const initialization = Promise.allSettled([loadConfig(), refreshHistory()]).then(async (results) => {
+    var _a2, _b;
     results.forEach((result) => {
       if (result.status === "rejected") banner(getError(result.reason), "error");
     });
@@ -1555,6 +1755,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         renderBranchDraft();
         renderHistoryActive();
       }
+      state.pendingConversation = draft.pendingConversation || null;
       const fields = draft.fields || {};
       if (!draft.caseId) state.pendingCreate = draft.pendingCreate || null;
       document.querySelectorAll("#case-form input,#case-form textarea,#case-form select,#context-text,#feedback-form input,#feedback-form textarea,#feedback-form select").forEach((el) => {
@@ -1564,14 +1765,18 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
           if ("checked" in f) el.checked = f.checked;
         }
       });
+      if (draft.solarInput) window.LiuyaoSolarTime.fill(draft.caseId ? draft.solarInput : __spreadProps(__spreadValues({}, draft.solarInput), { time_basis: "true_solar" }));
       updateCastingMode();
       updatePersonFields();
       $("buzhai-enabled").dispatchEvent(new Event("change", { bubbles: true }));
       onInputChange();
       showView(draft.view);
       if (!draft.caseId && $("question").value) banner("已恢复上次尚未保存的输入。");
+      if (draft.workbench) await ((_a2 = window.SkillWorkbench) == null ? void 0 : _a2.restoreDraft(draft.workbench));
+      if (draft.dialogue) (_b = window.DialogueUI) == null ? void 0 : _b.restoreDraft(draft.dialogue);
     } catch (_) {
       banner("上次输入未能完整恢复，已保存的案例可在档案中查看。", "warning");
     }
   });
+  window.LiuyaoApp.ready = initialization;
 })();

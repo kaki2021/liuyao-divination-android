@@ -4,10 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light">
-  <title>观象 · 六爻研习</title>
+  <title>六爻占问</title>
   <link rel="stylesheet" href="/static/styles.css">
   <link rel="stylesheet" href="/static/mobile.css">
   <link rel="stylesheet" href="/static/rules.css">
+  <link rel="stylesheet" href="/static/workbench.css">
+  <link rel="stylesheet" href="/static/dialogue.css">
   <script src="/static/compat.js" defer></script>
   <script src="/static/chart-display.js" defer></script>
   <script src="/static/rules-ui.js" defer></script>
@@ -19,14 +21,77 @@
   <script src="/static/guidance.js" defer></script>
   <script src="/static/analysis-status.js" defer></script>
   <script src="/static/series.js" defer></script>
+  <script src="/static/solar-time.js" defer></script>
   <script src="/static/app.js" defer></script>
   <script src="/static/mobile.js" defer></script>
+  <script src="/static/workbench.js" defer></script>
+  <script src="/static/dialogue.js" defer></script>
 </head>
-<body>
+<body class="chat-first">
   <header class="site-header">
-    <a class="brand" href="/" aria-label="观象首页"><span class="brand-mark" aria-hidden="true">䷀</span><span>观象<small>六爻研习</small></span></a>
+    <a class="brand" href="/" aria-label="六爻占问首页"><span class="brand-mark" aria-hidden="true">䷀</span><span>六爻占问<small>真念取用 · 观象察变</small></span></a>
     <div class="header-meta"><span class="online-dot" aria-hidden="true"></span>本地工作台<button class="text-button" id="settings-open" type="button">模型设置 <span aria-hidden="true">↗</span></button></div>
   </header>
+  <div class="dialogue-toolbar" aria-label="公共操作">
+    <button id="dialogue-new" type="button" class="text-button">＋ 新对话</button>
+    <div><button id="dialogue-history-open" type="button" class="text-button">历史</button><button id="dialogue-documents-open" type="button" class="text-button">资料</button><button id="dialogue-people-open" type="button" class="text-button">人物档案</button><button id="dialogue-more-open" type="button" class="text-button" aria-label="更多操作">···</button></div>
+  </div>
+  <main id="dialogue-workspace" class="dialogue-layout">
+    <aside class="dialogue-sidebar"><p class="eyebrow">留存每一次交流</p><div id="dialogue-recent"></div><section id="dialogue-people-panel"><h2>人物档案</h2><p class="small-note">资料可反复选用。本次关联的人物可随时更改。</p><label for="dialogue-profile">本次关联</label><select id="dialogue-profile"><option value="">暂不关联人物</option></select><button id="dialogue-profile-manage" type="button" class="text-button">管理人物资料 ↗</button><p id="dialogue-profile-note" class="small-note"></p></section></aside>
+    <section class="dialogue-main" aria-label="统一对话">
+      <header class="dialogue-heading"><div><p class="eyebrow">从此刻想问的事开始</p><h1 id="dialogue-title">今天想聊什么？</h1></div><a id="dialogue-export" class="text-button" href="#" download="六爻占问对话.json" hidden>导出对话</a></header>
+      <div id="dialogue-status" class="dialogue-status" role="status"></div>
+      <div id="dialogue-feed" class="dialogue-feed" aria-live="polite"><section class="dialogue-welcome"><span class="dialogue-seal" aria-hidden="true">䷀</span><h2>说说你想做什么。</h2><p>可以起一卦，也可以围绕你的资料继续讨论。</p><div class="dialogue-suggestions"><button type="button" data-dialogue-prompt="我想起一卦，问问最近的工作。">起一卦问工作</button><button type="button" data-dialogue-prompt="我想卜宅，看看备选的房子是否适合自住。">卜宅与选房</button><button type="button" data-dialogue-prompt="根据知识库资料，解释一下五行。">和资料聊一聊</button></div></section></div>
+      <form id="dialogue-form" class="dialogue-composer"><label class="sr-only" for="dialogue-input">发送消息</label><textarea id="dialogue-input" rows="2" maxlength="4000" placeholder="说说你的问题，也可以补充刚才的情况…" required></textarea><div class="dialogue-compose-tools"><span id="dialogue-context-label">我会根据你的问题展开需要的操作。</span><div><label class="sr-only" for="dialogue-mode">本条消息的用途</label><select id="dialogue-mode"><option value="auto">自动识别</option><option value="liuyao">新起一卦</option><option value="knowledge">查知识库</option><option value="feedback">提反馈</option></select><button id="dialogue-send" type="submit" class="primary-button">发送 ↗</button></div></div></form>
+    </section>
+  </main>
+  <div id="dialogue-parking" hidden></div>
+  <dialog id="dialogue-history-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭历史">×</button></form><h2>历史对话</h2><div id="dialogue-history-list"></div><details><summary>以前保存的卦例</summary><div id="dialogue-legacy-cases"></div></details></dialog>
+  <dialog id="dialogue-documents-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭资料">×</button></form><h2>我的资料</h2><p class="small-note">导入后，回到同一个对话框直接提问。</p></dialog>
+  <dialog id="dialogue-people-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭人物栏">×</button></form></dialog>
+  <dialog id="dialogue-more-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭更多操作">×</button></form><h2>更多</h2><button id="dialogue-feedback-open" type="button" class="secondary-button full-width">反馈与技能版本</button><button id="dialogue-rules-open" type="button" class="secondary-button full-width">规则与使用原理</button><button id="dialogue-settings-open" type="button" class="secondary-button full-width">模型设置</button></dialog>
+  <dialog id="dialogue-feedback-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭反馈记录">×</button></form></dialog>
+  <dialog id="dialogue-rules-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭规则">×</button></form></dialog>
+  <nav class="skill-nav" aria-label="选择技能">
+    <button type="button" data-skill-page="liuyao" aria-current="page">六爻占问</button>
+    <button type="button" data-skill-page="knowledge">知识库问答</button>
+    <button type="button" data-skill-page="issues">技能反馈</button>
+  </nav>
+  <section id="knowledge-workspace" class="skill-workspace" aria-labelledby="kb-title" hidden>
+    <div class="skill-heading"><div><p class="eyebrow">从原文出发</p><h1 id="kb-title">和你的资料聊一聊。</h1><p class="small-note">导入资料后提问，回答与引用一并保存。与六爻共用模型设置。</p></div><button type="button" class="text-button skill-settings">模型设置 ↗</button></div>
+    <p id="kb-status" class="skill-status" role="status"></p>
+    <details id="kb-library" class="paper-card" open><summary>我的资料 <span id="kb-document-count" class="soft-tag">0</span></summary>
+      <div id="kb-documents" class="kb-documents"></div>
+      <details class="kb-import"><summary>＋ 导入资料</summary>
+        <form id="kb-import-form">
+          <label for="kb-document-title">资料标题</label><input id="kb-document-title" maxlength="200" placeholder="例如：归墟场论 · 五行与系统" required>
+          <label for="kb-file">选择文件</label><input id="kb-file" type="file" accept=".txt,.md,.markdown,.docx,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+          <p class="small-note">支持 TXT、Markdown、DOCX，每个文件不超过 4 MB、正文不超过 30 万字。PDF 和扫描件需先转为文字。</p>
+          <label for="kb-import-text">或粘贴文字</label><textarea id="kb-import-text" rows="5" maxlength="300000" placeholder="粘贴需要保存到知识库的原文"></textarea>
+          <p class="small-note">资料保存在本机。使用联网模型回答时，只发送相关检索片段和本次对话。</p>
+          <button type="submit" class="secondary-button" id="kb-import-button">保存资料</button>
+        </form>
+      </details>
+    </details>
+    <section class="paper-card kb-chat-card" aria-label="知识库对话">
+      <div class="skill-toolbar"><label for="kb-chat-select" class="sr-only">选择知识库对话</label><select id="kb-chat-select"><option value="">开始一段新对话</option></select><button id="kb-new-chat" class="text-button" type="button">新对话</button><a id="kb-export" href="#" download="知识库对话.json" class="text-button" hidden>导出</a></div>
+      <div id="kb-turns" class="kb-turns" aria-live="polite"><p class="empty-state">可以问：“资料中怎样解释五行？”</p></div>
+      <form id="kb-ask-form"><label for="kb-question">向知识库提问</label><textarea id="kb-question" maxlength="4000" rows="3" placeholder="可以围绕同一问题继续追问" required></textarea><div class="skill-toolbar"><span id="kb-model-note" class="small-note"></span><button id="kb-send" class="primary-button" type="submit">发送问题 ↗</button></div></form>
+    </section>
+  </section>
+  <section id="issues-workspace" class="skill-workspace" aria-labelledby="skill-issues-title" hidden>
+    <div class="skill-heading"><div><p class="eyebrow">让技能逐步改进</p><h1 id="skill-issues-title">哪里需要改一改？</h1><p class="small-note">直接描述问题，不需要会使用 GitHub。反馈与处理记录保存在本机，可导出交给开发者。</p></div><button type="button" class="text-button skill-settings">模型设置 ↗</button></div>
+    <p id="skill-issue-status" class="skill-status" role="status"></p>
+    <form id="skill-issue-form" class="paper-card">
+      <label for="issue-skill">哪个技能？</label><select id="issue-skill"><option value="liuyao">六爻占问</option><option value="knowledge">知识库问答</option></select>
+      <label for="issue-title">问题标题</label><input id="issue-title" maxlength="200" required placeholder="例如：回答太长，希望先给结论">
+      <label for="issue-description">具体情况与期望</label><textarea id="issue-description" maxlength="8000" rows="5" required placeholder="发生了什么？你希望怎样改？可以粘贴相关片段。"></textarea>
+      <p class="small-note">AI 可自动调整本机技能的回答长度、组织和术语解释，保留版本供回退。代码、计算规则或资料问题会生成待修复任务。</p>
+      <div class="skill-toolbar"><button type="submit" class="secondary-button" id="issue-save">保存反馈</button><button type="button" class="primary-button" id="issue-process">提交并由 AI 处理 ↗</button></div>
+    </form>
+    <details class="paper-card skill-versions"><summary>技能版本与回退</summary><label for="version-skill">选择技能</label><select id="version-skill"><option value="liuyao">六爻占问</option><option value="knowledge">知识库问答</option></select><div id="skill-version-list"></div></details>
+    <section class="paper-card"><div class="skill-toolbar"><h2>反馈与修复记录</h2><button type="button" class="text-button" id="issues-refresh">刷新</button></div><div id="skill-issue-list"></div></section>
+  </section>
   <main class="workspace">
     <aside class="history-panel" aria-label="系列档案">
       <div class="section-heading"><h2>系列档案</h2><button class="icon-button" id="refresh-history" title="刷新档案" aria-label="刷新档案" type="button">↻</button></div>
@@ -74,7 +139,7 @@
             <div class="preview-card"><p class="preview-label">变卦</p><h3 id="preview-changed-name">待录入完整</h3><div id="changed-preview-lines" class="preview-lines" aria-label="变卦六爻，从上爻到初爻"></div><p id="preview-changed-status" class="preview-empty">录入完整后显示</p></div>
           </div><p class="preview-footnote" id="preview-hint" aria-live="polite">完成选择后立即显示本卦与变卦，不需要先调用 AI。</p><p class="small-note">上爻在上，初爻在下；○／× 为动爻，箭头对应发生阴阳变化的位置。</p></section>
         </div>
-        <details class="time-details" id="time-details"><summary>实际起卦时间 <span>选填</span></summary><div class="time-fields"><label for="cast-time">当时摇卦的日期与时间</label><div class="time-row"><input id="cast-time" type="datetime-local" step="1"><button class="secondary-button" id="cast-now" type="button">现在起卦</button><button class="text-button" id="cast-clear" type="button">清空</button></div><p class="small-note" id="timezone-note"></p><p class="small-note">不知道当时的时间，可以留空。保存时间会另行记录。</p></div></details>
+        <details class="time-details" id="time-details"><summary>起卦时间与地点 <span>真太阳时</span></summary><div class="time-fields"><label for="cast-time">起卦时手机显示的日期与时间</label><div class="time-row"><input id="cast-time" type="datetime-local" step="1"><button class="secondary-button" id="cast-now" type="button">现在起卦</button><button class="text-button" id="cast-clear" type="button">清空</button></div><p class="small-note" id="timezone-note"></p><p class="small-note">按起卦地点换算当地真太阳时。</p><div id="solar-location-fields"><div class="time-row"><label for="cast-longitude">起卦地点经度</label><input id="cast-longitude" type="number" min="-180" max="180" step="any" inputmode="decimal" placeholder="东经为正，西经为负"><button id="location-button" type="button" class="secondary-button">获取手机定位</button></div><p class="small-note" id="location-status" role="status"></p></div><p class="small-note" id="solar-time-preview" aria-live="polite"></p><p class="small-note">不知道当时的时间，可以留空。保存时间会另行记录。</p></div></details>
         <div id="revision-fields" class="revision-fields" hidden><label for="revision-reason">这次为什么修改？</label><input id="revision-reason" maxlength="1000" placeholder="例如：刚才把第三次摸取的结果记错了"><p class="small-note">修改后会保留之前的输入和分析记录。</p></div>
         <div class="form-actions"><span class="small-note model-current" id="model-current">正在读取模型设置…</span><div class="action-buttons"><button class="secondary-button" id="save-case" type="submit">保存并排盘</button><button class="primary-button" id="analyze-case" type="button">保存并分析 <span aria-hidden="true">↗</span></button></div></div>
       </form>
@@ -85,7 +150,7 @@
         <div class="paper-card chart-card"><div class="chart-toolbar"><h3>本卦与变卦</h3><button type="button" class="text-button" id="show-current-chart">查看当前已保存排盘</button></div><p class="chart-context" id="chart-context">当前已保存输入的排盘</p><p class="chart-question" id="chart-question" hidden></p><div id="chart-person-info" class="chart-person-info" hidden></div><div id="calendar-summary" class="calendar-summary"></div><p id="body-summary" class="body-summary"></p><details id="calendar-details" class="calendar-details" hidden><summary>历法口径</summary><p id="calendar-convention"></p></details><div class="chart-summary" id="chart-summary"></div><p id="casting-record" class="casting-record" hidden></p><div class="table-scroll"><table class="chart-table chart-comparison"><caption class="sr-only">本卦与变卦逐爻对照，从上爻到初爻排列；六亲、世应和身位标记属于本卦</caption><thead><tr><th rowspan="2" scope="col">爻位</th><th rowspan="2" scope="col">六神</th><th colspan="4" scope="colgroup">本卦</th><th rowspan="2" scope="col">变化</th><th colspan="2" scope="colgroup">变卦</th></tr><tr><th scope="col">爻象</th><th scope="col">地支五行</th><th scope="col">六亲</th><th scope="col">世应与身位</th><th scope="col">爻象</th><th scope="col">地支五行</th></tr></thead><tbody id="chart-lines"></tbody></table></div><p class="small-note chart-note">本卦与变卦逐爻对照，动爻位置明确标出。</p></div>
         <section class="paper-card foundation-card" id="foundation-card" aria-labelledby="foundation-title"><div class="section-heading"><h3 id="foundation-title">基础分析</h3><span class="soft-tag">程序计算</span></div><p class="small-note">确定的规则由程序计算；解卦时，这些结果会一并交给 AI，结合所问进行判断。</p><div id="foundation-content"></div><details class="computed-v5"><summary>综合强度、动变与伏神</summary><div id="comprehensive-content"></div></details></section>
         <section class="paper-card analysis-card" id="analysis-card" aria-live="polite"><div class="section-heading"><h3>综合解卦</h3><div class="analysis-actions"><span id="analysis-status" class="soft-tag">尚未分析</span><button class="secondary-button" id="analyze-current-case" type="button">重新解卦</button></div></div><div class="run-history" id="run-history" hidden></div><div class="analysis-progress" id="analysis-progress" hidden><span class="spinner" aria-hidden="true"></span><p id="analysis-progress-text">正在分析…</p></div><div id="analysis-content"><p class="empty-state">卦象已经排好。选择模型后，可以进一步梳理问题。</p></div><details id="audit-report" hidden><summary>研究审计</summary><div id="audit-content"></div></details><details id="ai-raw-replies" class="ai-raw-replies" hidden><summary>查看所选分析的 AI 原始回复</summary><p id="ai-raw-replies-context" class="small-note"></p><p class="small-note">每个阶段先生成一份回复，结构无法读取时自动修复一次；依据与解释问题另存研究审计。重新解卦会新增一次独立分析；这里的“首次生成／自动修复”是所选分析内的处理过程。</p><p class="small-note">未通过校验的草稿不作为解卦结论；正文可能包含本次问题和背景，仅在本机查看，复制分享前请自行检查。</p><div id="ai-raw-replies-content"></div></details></section>
-        <section id="context-card" class="paper-card follow-up-card" aria-labelledby="context-title"><h3 id="context-title">进一步交流</h3><p class="small-note">写下想问的内容：发送追问会结合此卦继续解读；再起一卦会在本系列中细问。补充会保留来源并共用于本系列。</p><form id="context-form"><label class="sr-only" for="context-text">追问或补充信息</label><textarea id="context-text" maxlength="5000" rows="3" placeholder="例如：对方审批可能延迟，这会影响签约吗？"></textarea><div class="context-actions"><button class="primary-button" type="submit" id="context-analyze">发送追问</button><button class="secondary-button" type="button" id="cast-related">再起一卦</button></div></form><details id="context-history" class="context-history" hidden><summary>已保存的追问与补充</summary><div id="context-list" class="event-list"></div></details></section>
+        <section id="context-card" class="paper-card follow-up-card" aria-labelledby="context-title"><h3 id="context-title">进一步交流</h3><p class="small-note">结合当前查看的分析与历次问答继续交流。补充信息会保存；需要完整重评时，可点击“重新解卦”。</p><div id="conversation-list" class="conversation-list" aria-label="本次分析的连续对话" aria-live="polite"></div><p id="conversation-status" class="small-note" role="status"></p><form id="context-form"><label class="sr-only" for="context-text">追问或补充信息</label><textarea id="context-text" maxlength="5000" rows="3" placeholder="例如：对方审批可能延迟，这会影响签约吗？"></textarea><div class="context-actions"><button class="primary-button" type="submit" id="context-analyze">发送追问</button><button class="secondary-button" type="button" id="cast-related">再起一卦</button></div></form><details id="context-history" class="context-history" hidden><summary>已保存的追问与补充</summary><div id="context-list" class="event-list"></div></details></section>
       </section>
       <section id="feedback-section" role="tabpanel" aria-labelledby="tab-feedback" hidden>
         <div class="results-heading"><div><p class="eyebrow">留存进展 · 回看判断</p><h2>后续反馈</h2></div><button class="text-button" id="feedback-return" type="button">返回排盘与解卦</button></div>

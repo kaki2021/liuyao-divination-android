@@ -9,6 +9,7 @@ def app_build_id():
     root = Path(__file__).resolve().parent
     digest = hashlib.sha256()
     paths = list(root.glob('*.py')) + list((root / 'static').glob('*'))
+    paths.extend(path for path in (root / 'skills').rglob('*') if path.is_file())
     foundation = root.parent / 'software_prep'
     paths.extend(foundation / name for name in (
         'base_chart.py', 'branch_relations.py', 'casting_input.py',

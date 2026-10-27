@@ -218,6 +218,8 @@ class Application:
         with self.jobs_db() as db:
             db.execute('CREATE TABLE IF NOT EXISTS jobs (job_id TEXT PRIMARY KEY, owner_id TEXT NOT NULL, case_id TEXT NOT NULL, idem_key TEXT NOT NULL, request_digest TEXT NOT NULL, payload TEXT NOT NULL, state TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(owner_id,idem_key))')
         self.recover()
+        from .workbench import Workbench
+        self.workbench = Workbench(self)
 
     def store(self):
         return CaseStore(self.db_path)
@@ -268,6 +270,33 @@ class Application:
         finally:
             store.close()
 
+        # A conversation interrupted by process death is never billed again.
+        store = self.store()
+        try:
+            from .conversation import finish_turn
+            pending = store.db.execute('''SELECT t.turn_id,t.case_id,c.owner_id FROM conversation_turns t
+                JOIN cases c USING(case_id) LEFT JOIN conversation_outcomes o USING(turn_id)
+                WHERE o.turn_id IS NULL''').fetchall()
+            for row in pending:
+                finish_turn(store,Actor(row['owner_id'],'recovery'),row['case_id'],row['turn_id'],'failed',
+                    {'error':{'code':'INTERRUPTED','message':'上次对话被中断，提问已保留，可以重新发送。'}})
+            # The reply may have committed just before the job acknowledgement
+            # was lost. Its retained outcome is authoritative after restart.
+            with self.jobs_db() as jobs:
+                rows=jobs.execute('SELECT job_id,state FROM jobs').fetchall()
+            for row in rows:
+                state=json.loads(row['state'])
+                if state.get('kind')!='conversation':continue
+                outcome=store.db.execute('SELECT status,result_json FROM conversation_outcomes WHERE turn_id=?',
+                                         (state.get('turn_id'),)).fetchone()
+                if outcome:
+                    value=json.loads(outcome['result_json'])
+                    result={'status':outcome['status'],'turn_id':state['turn_id']}
+                    if outcome['status']=='completed':result['conversation']=value
+                    else:result.update(value)
+                    self.update_job(row['job_id'],status=outcome['status'],stage='finished',result=result,error=value.get('error'))
+        finally:store.close()
+
     def session(self, token=None):
         with self.lock:
             if token in self.sessions:
@@ -303,11 +332,14 @@ class Application:
         if self.active(actor, case_id):
             raise ApiError(409, 'CASE_BUSY', '本案例正在分析，请等待完成后再更正或补充。')
 
-    def enqueue(self, actor, case_id, body, idem_key):
-        exact_fields(body, ('provider','model','expected_revision_seq'), ('provider','model','expected_revision_seq'))
+    def enqueue(self, actor, case_id, body, idem_key, *, conversation=False):
+        fields=('provider','model','expected_revision_seq') + (('text','analysis_run_id') if conversation else ())
+        exact_fields(body, fields, fields)
         revision_field(body['expected_revision_seq'])
         text_field(body['provider'], 40); text_field(body['model'], 200)
-        fingerprint = content_digest({'case_id':case_id, **body})
+        if conversation:
+            text_field(body['text']); text_field(body['analysis_run_id'],160)
+        fingerprint = content_digest({'case_id':case_id, 'kind':'conversation' if conversation else 'analysis', **body})
         with self.lock:
             with self.jobs_db() as db:
                 old = db.execute('SELECT * FROM jobs WHERE owner_id=? AND idem_key=?', (actor.owner_id, idem_key)).fetchone()
@@ -330,9 +362,24 @@ class Application:
                     raise ApiError(400, 'UNKNOWN_MODEL', '请选择后台已配置的厂商和模型。')
                 if not provider['configured']:
                     raise ApiError(400, 'PROVIDER_NOT_CONFIGURED', '该厂商尚未配置 API 密钥，案例和排盘已经保留。')
+                turn_id=None
+                if conversation:
+                    from .conversation import start_turn
+                    store=self.store()
+                    try:
+                        turn_id=start_turn(store,actor,case_id,body['analysis_run_id'],body['expected_revision_seq'],
+                                           body['text'],idempotency_key=idem_key)['turn_id']
+                    except ValueError as exc:
+                        if isinstance(exc,Conflict):raise
+                        raise ApiError(400,'CONVERSATION_UNAVAILABLE',str(exc)) from None
+                    finally:store.close()
+                    body={**body,'_kind':'conversation','_turn_id':turn_id}
+                body={**body,'_skill_snapshot':self.workbench.store.skill(actor.owner_id,'liuyao')}
                 job_id = 'job_'+uuid.uuid4().hex
                 state = {'job_id':job_id, 'case_id':case_id,'status':'queued','stage':'queued','analysis_run_id':None,'result':None,'error':None,
                          'provider':body['provider'],'model':body['model'],'completed_stages':[],'reply_count':0,'attempt':0,'phase':'queued'}
+                state.update(kind='conversation' if conversation else 'analysis',turn_id=turn_id,
+                             conversation_analysis_run_id=body.get('analysis_run_id') if conversation else None)
                 db.execute('INSERT INTO jobs VALUES (?,?,?,?,?,?,?,?,?)', (job_id, actor.owner_id, case_id, idem_key, fingerprint, json.dumps(body), json.dumps(state), stamp(), stamp()))
             self.pool.submit(self._work, job_id, actor, case_id, body)
         return {'job_id':job_id}
@@ -374,6 +421,15 @@ class Application:
 
     def _work(self, job_id, actor, case_id, body):
         try:
+            if body.get('_kind') == 'conversation':
+                from .conversation import reply
+                self.update_job(job_id,status='running',stage='conversation')
+                store=self.store()
+                try:result=reply(store,actor,case_id,body['_turn_id'],body['provider'],body['model'],
+                                 skill_snapshot=body.get('_skill_snapshot'))
+                finally:store.close()
+                self.update_job(job_id,status=result['status'],stage='finished',result=result,error=result.get('error'))
+                return
             from .pipeline import run_analysis
             self.update_job(job_id,status='running',stage='starting')
             def progress(value):
@@ -388,7 +444,7 @@ class Application:
                     if checkpoint.get('analysis_run_id') == value.get('analysis_run_id') and isinstance(checkpoint.get('user_report'), dict):
                         safe['_checkpoint'] = {k:v for k,v in checkpoint.items() if k in (
                             'analysis_run_id','status','chart','user_report','display_report','is_demo','unresolved','clarifying_questions',
-                            'rules_version','parameter_version','engine_build','ai_model','rules_snapshot','audit_report','stage_outputs','selection_note_reviews','logic_snapshot')}
+                            'rules_version','parameter_version','engine_build','ai_model','rules_snapshot','audit_report','stage_outputs','selection_note_reviews','logic_snapshot','skill_snapshot')}
                 if type(value.get('report_timeout_seconds')) is int:safe['report_timeout_seconds']=value['report_timeout_seconds']
                 self.update_job(job_id,**safe)
             extra = {}
@@ -399,11 +455,22 @@ class Application:
                         raise ProviderError('service_stopping','软件正在关闭，本次分析已停止，记录已经保留。')
                     return generate_json(*args, **kwargs)
                 extra['provider_call'] = provider_call
+                extra['skill_snapshot'] = body.get('_skill_snapshot')
             result=(self.pipeline or run_analysis)(self.db_path, actor, case_id, body['provider'], body['model'], body['expected_revision_seq'], progress=progress, **extra)
             self.update_job(job_id,status=result['status'],stage='finished',phase='finished',result=result,analysis_run_id=result.get('analysis_run_id'),error=result.get('error'),_checkpoint=None)
         except Exception:
             # Pipeline retains detailed safe failures. Never send tracebacks, environment or provider keys to clients.
             current = self.get_job(actor, job_id)
+            if body.get('_kind') == 'conversation':
+                from .conversation import finish_turn
+                error={'code':'CONVERSATION_FAILED','message':'回复未完成，提问已保留，请重新发送。'}
+                store=self.store()
+                try:
+                    if not store.db.execute('SELECT 1 FROM conversation_outcomes WHERE turn_id=?',(body['_turn_id'],)).fetchone():
+                        finish_turn(store,actor,case_id,body['_turn_id'],'failed',{'error':error})
+                finally:store.close()
+                self.update_job(job_id,status='failed',stage='failed',error=error)
+                return
             if current.get('analysis_run_id'):
                 store = self.store()
                 try:
@@ -438,7 +505,8 @@ class Application:
         return {'case':case,'series':series,'chart':calculate_chart(current['input'],load_rules(self.rules_directory)),
                 'result':latest['outcome']['result'].get('report') if latest and latest['outcome'] else None,
                 'report_is_current':bool(latest and latest['outcome'] and latest['outcome']['result'].get('report') and latest['revision_seq']==current['revision_seq'] and analyzed_context==current_context and series_current),
-                'active_job_id':active[0]['job_id'] if active else None}
+                'active_job_id':active[0]['job_id'] if active else None,
+                'active_job_kind':active[0].get('kind','analysis') if active else None}
 
     def list_cases(self, actor):
         store=self.store()
@@ -518,7 +586,7 @@ class Handler(BaseHTTPRequestHandler):
             raise ApiError(415,'JSON_REQUIRED','请求须为 JSON。')
         try:size=int(self.headers.get('Content-Length','0'))
         except ValueError:raise ApiError(400,'INVALID_LENGTH','请求长度无效。')
-        limit = 7_000_000 if urlsplit(self.path).path=='/api/rules/import' else 65536
+        limit = 7_000_000 if urlsplit(self.path).path in ('/api/rules/import','/api/workbench/documents') else 65536
         if size<1 or size>limit:
             raise ApiError(413,'BODY_LIMIT','请求内容过大或为空。')
         def unique(pairs):
@@ -535,7 +603,11 @@ class Handler(BaseHTTPRequestHandler):
         try:
             self.guard(mutation)
             path=urlsplit(self.path).path
-            if not mutation and path in ('/','/index.html','/app.js','/styles.css','/static/app.js','/static/styles.css','/chart-display.js','/static/chart-display.js','/v5-features.js','/static/v5-features.js','/static/report-views.js','/static/buzhai.js','/static/mobile.js','/static/mobile.css','/static/compat.js','/static/phone-chart.js','/static/analysis-status.js','/static/guidance.js','/static/rules-ui.js','/static/condition-rules.js','/static/rules.css','/static/series.js','/favicon.ico'):
+            if not mutation and path in ('/static/workbench.js','/static/workbench.css','/static/dialogue.js','/static/dialogue.css'):
+                raw=(Path(__file__).parent/'static'/path.rsplit('/',1)[-1]).read_bytes()
+                self._headers(200,(mimetypes.guess_type(path)[0] or 'application/octet-stream')+'; charset=utf-8',len(raw))
+                self.wfile.write(raw);return
+            if not mutation and path in ('/','/index.html','/app.js','/styles.css','/static/app.js','/static/styles.css','/chart-display.js','/static/chart-display.js','/v5-features.js','/static/v5-features.js','/static/report-views.js','/static/buzhai.js','/static/mobile.js','/static/mobile.css','/static/compat.js','/static/phone-chart.js','/static/analysis-status.js','/static/guidance.js','/static/rules-ui.js','/static/condition-rules.js','/static/rules.css','/static/series.js','/static/solar-time.js','/favicon.ico'):
                 if path=='/favicon.ico':
                     self._headers(204,'image/x-icon',0);return
                 name='index.html' if path in ('/','/index.html') else path.rsplit('/',1)[-1]
@@ -555,6 +627,9 @@ class Handler(BaseHTTPRequestHandler):
             app=self.server.app
             parts=path.strip('/').split('/')
             if not mutation:
+                if path.startswith('/api/workbench/'):
+                    from .workbench_api import dispatch
+                    dispatch(self,actor,False);return
                 if path=='/api/config':self.send_json(app.config());return
                 if path=='/api/cases':self.send_json({'cases':app.list_cases(actor)});return
                 if path=='/api/series':
@@ -646,6 +721,17 @@ class Handler(BaseHTTPRequestHandler):
                 body=self.body()
                 idem=self.headers.get('X-Idempotency-Key')
                 text_field(idem,160)
+                if path.startswith('/api/workbench/'):
+                    from .workbench_api import dispatch
+                    dispatch(self,actor,True,body,idem);return
+                if path=='/api/calendar':
+                    exact_fields(body,('actual_cast_time','time_basis','cast_location'))
+                    from .calendar_context import calculate_calendar
+                    from validate_input import validate_input
+                    validation=validate_input({'question':'时间换算','lines':['young_yang']*6,**body})
+                    if not validation['valid']:
+                        raise ApiError(400,'INVALID_CALENDAR_INPUT',validation['errors'][0]['message'])
+                    self.send_json(calculate_calendar(body));return
                 if path=='/api/profiles/bazi':
                     exact_fields(body,('birth_date','birth_time'))
                     from .birth_calendar import calculate_birth_chart
@@ -726,6 +812,8 @@ class Handler(BaseHTTPRequestHandler):
                     self.send_json(result,201);return
                 if len(parts)==4 and parts[:2]==['api','cases']:
                     case_id,action=parts[2:]
+                    if action=='conversation':
+                        self.send_json(app.enqueue(actor,case_id,body,idem,conversation=True),202);return
                     if action=='analyze':
                         load_rules(app.rules_directory)
                         self.send_json(app.enqueue(actor,case_id,body,idem),202);return

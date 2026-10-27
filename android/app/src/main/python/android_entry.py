@@ -66,7 +66,7 @@ def active():
     if not _app:
         return False
     from case_store import Actor
-    return bool(_app.active(Actor('local-user','android-service')))
+    return bool(_app.active(Actor('local-user','android-service')) or _app.workbench.store.pending('local-user'))
 
 
 def stop():

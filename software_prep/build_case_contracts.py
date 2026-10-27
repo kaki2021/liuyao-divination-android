@@ -35,6 +35,7 @@ outcome=obj({'analysis_run_id':S,'recorded_at':D,'status':{'enum':['completed','
 run=obj({'analysis_run_id':S,'case_id':S,'revision_seq':{'type':'integer','minimum':1},'parent_run_id':null_or(S),'analyzed_at':D,'input_snapshot_id':H,'input_snapshot':snapshot,'source_hash':H,'rules_digest':H,'prompt_digest':H,'engine_build':S,'outcome':null_or(outcome),'status':{'enum':['running','completed','partial','unresolved','failed']},'ai_events':array(ai_event)})
 feedback=obj({'feedback_id':S,'case_id':S,'analysis_run_id':null_or(S),'occurred_at':null_or(D),'recorded_at':D,'reported_outcome':S,'verification_status':{'enum':['self_reported','externally_supported','disputed','unknown']},'verification_method':null_or(S),'supersedes_feedback_id':null_or(S)})
 case=obj({'case_id':S,'owner_id':S,'session_id':S,'recorded_at':D,'original_input':ref('UserInput'),'revisions':array(revision),'context_events':array(ref('ContextEvent')),'analysis_runs':array(run),'feedback':array(feedback),'usage_policy':obj({'service_case_archive':{'const':True},'public_use':{'const':False},'training_use':{'const':False}})})
+case['properties']['conversation_turns']=array(OPAQUE)
 case_schema={'$schema':'https://json-schema.org/draft/2020-12/schema','$id':'urn:liuyao:service-case-record','title':'六爻服务案例记录契约',
              'description':'仅供可信服务端导出，不是客户端写入入口；允许保存失败与未决结果，不将无反馈解释为成败。',**case,
              '$defs':{'UserInput':user,'ContextEvent':context_event,

@@ -62,3 +62,14 @@ CREATE TABLE IF NOT EXISTS case_series (
 );
 CREATE INDEX IF NOT EXISTS case_series_root ON case_series(series_id);
 CREATE INDEX IF NOT EXISTS case_series_parent ON case_series(parent_case_id);
+CREATE TABLE IF NOT EXISTS conversation_turns (
+    turn_id TEXT PRIMARY KEY, case_id TEXT NOT NULL REFERENCES cases(case_id),
+    analysis_run_id TEXT NOT NULL REFERENCES analysis_runs(analysis_run_id),
+    recorded_at TEXT NOT NULL, user_text TEXT NOT NULL, context_json TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS conversation_case ON conversation_turns(case_id,recorded_at);
+CREATE TABLE IF NOT EXISTS conversation_outcomes (
+    turn_id TEXT PRIMARY KEY REFERENCES conversation_turns(turn_id),
+    recorded_at TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('completed','failed')),
+    result_json TEXT NOT NULL
+);

@@ -1,6 +1,6 @@
 """Create the APK's complete local payload, without build output or user data."""
 from pathlib import Path
-import hashlib, zipfile, json
+import hashlib, zipfile, json, os, sys
 
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = Path(__file__).resolve().parent / 'app/src/main/assets'
@@ -9,6 +9,12 @@ PRIVATE_RULE_NAMES = {'compiled_rules.json', 'rules.xlsx', 'rules.xlsx.inspect.n
 
 def public_source(path):
     relative = path.relative_to(ROOT)
+    # Tests can leave temporary SQLite files under a source directory. Neither
+    # those nor any live case database belongs in the distributable payload.
+    if any(part.startswith('tmp') for part in relative.parts[:-1]):
+        return False
+    if path.suffix in ('.db', '.sqlite', '.sqlite3') or path.name.endswith(('-journal', '-wal', '-shm')):
+        return False
     if relative.parts[:1] == ('knowledge_base',):
         if path.name in PRIVATE_RULE_NAMES or relative.parts[1:2] == ('versions',):
             return False
@@ -51,7 +57,21 @@ else:
     raise FileNotFoundError('Missing timezone data: restore the verified content.zip or provide ROOT/tzdata')
 
 assert 'tzdata/zoneinfo/Asia/Shanghai' in payload, 'Missing bundled timezone data'
-assert not any(name == 'knowledge_base/compiled_rules.json' or
+assert not any(name.endswith(('.db', '.sqlite', '.sqlite3', '-journal', '-wal', '-shm')) for name in payload), 'Case database entered payload'
+private_rules_directory = os.environ.get('LIUYAO_PRIVATE_RULES_DIR')
+private_book = None
+if private_rules_directory:
+    private_directory = Path(private_rules_directory).resolve()
+    if private_directory == ROOT or ROOT in private_directory.parents:
+        raise ValueError('Private rules must be supplied from outside the public source tree')
+    sys.path.insert(0, str(ROOT))
+    from liuyao_app.rulebook import load_rules
+    if not (private_directory / 'compiled_rules.json').is_file():
+        raise FileNotFoundError('Explicit private rules directory has no compiled_rules.json')
+    private_book = load_rules(private_directory)
+    payload['knowledge_base/compiled_rules.json'] = (json.dumps(private_book.compiled, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
+
+assert not any((name == 'knowledge_base/compiled_rules.json' and private_book is None) or
                name == 'knowledge_base/rules.xlsx' or
                name == 'knowledge_base/rules.xlsx.inspect.ndjson' or
                name.startswith('knowledge_base/versions/') for name in payload), 'Private rules entered public payload'
@@ -65,4 +85,5 @@ with zipfile.ZipFile(output) as z:
     assert 'liuyao_app/_vendor/lunar_python/util/HolidayUtil.py' in z.namelist()
 digest=hashlib.sha256(output.read_bytes()).hexdigest()
 (ASSETS / 'content.sha256').write_text(digest+'\n')
-print(json.dumps({'payload_bytes':output.stat().st_size,'files':len(payload),'sha256':digest}))
+print(json.dumps({'payload_bytes':output.stat().st_size,'files':len(payload),'sha256':digest,
+                  'private_rules_included':private_book is not None}))

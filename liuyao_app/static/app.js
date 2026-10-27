@@ -92,6 +92,7 @@
     $('analyze-current-case').textContent = value && state.analyzing ? '分析进行中…' : '重新解卦';
     $('context-analyze').textContent = value && state.analyzing ? '正在回复…' : '发送追问';
     if (runSelect) runSelect.disabled = value;
+    document.dispatchEvent(new Event('liuyao:busy'));
   }
   function showView(view, { scroll = false } = {}) {
     const requested = ['input', 'results', 'feedback'].includes(view) ? view : 'input';
@@ -275,6 +276,7 @@
       if (Number.isNaN(date.valueOf())) throw new Error('请检查实际起卦时间。');
       input.actual_cast_time = state.originalTimeLocal === $('cast-time').value && state.originalTime ? state.originalTime : date.toISOString();
     }
+    Object.assign(input,window.LiuyaoSolarTime.read(validate));
     const personInfo = getPersonInfo(validate);
     if (personInfo) input.person_info = personInfo;
     const buzhai = window.Buzhai?.read(validate);
@@ -283,6 +285,7 @@
   }
   function inputsEqual(first, second) {
     if (!first || !second || first.question !== second.question || (first.actual_cast_time || null) !== (second.actual_cast_time || null)) return false;
+    if ((first.time_basis||'beijing_standard') !== (second.time_basis||'beijing_standard') || JSON.stringify(first.cast_location||null) !== JSON.stringify(second.cast_location||null)) return false;
     if (JSON.stringify(canonicalPersonInfo(first.person_info)) !== JSON.stringify(canonicalPersonInfo(second.person_info))) return false;
     if (window.Buzhai?.canonical(first.buzhai) !== window.Buzhai?.canonical(second.buzhai)) return false;
     if (first.casting || second.casting) return Boolean(first.casting && second.casting && first.casting.method === second.casting.method && JSON.stringify(first.casting.results) === JSON.stringify(second.casting.results));
@@ -330,13 +333,17 @@
     state.originalTime = rawTime || null;
     state.originalTimeLocal = date && !Number.isNaN(date.valueOf()) ? localDateTime(date) : null;
     $('cast-time').value = state.originalTimeLocal || '';
+    // datetime-local may normalize :00 seconds away. Compare its canonical
+    // value so simply reopening a case does not change the saved instant.
+    state.originalTimeLocal = $('cast-time').value || null;
+    window.LiuyaoSolarTime.fill(input);
     $('time-details').open = Boolean(rawTime); $('revision-reason').value = ''; updateCastingMode();
   }
-  function resetCase({ transferContext = false } = {}) {
+  function resetCase({ transferContext = false, preserveDraft = false } = {}) {
     if (state.busy) return false;
-    if (!mayDiscard({ transferContext })) return false;
+    if (!preserveDraft && !mayDiscard({ transferContext })) return false;
     window.AnalysisStatus.clear(); currentJob=null;
-    state.loadToken++; state.caseId = null; state.revision = 0; state.input = null; state.chart = null; state.runs = []; state.runId = null; state.pendingContext = null;
+    state.loadToken++; state.caseId = null; state.revision = 0; state.input = null; state.chart = null; state.runs = []; state.runId = null; state.pendingContext = null; state.pendingConversation=null; state.conversationTurns=[];
     state.seriesId = null; state.series = null; state.branchParent = null; state.pendingCreate = null; renderBranchDraft(); $('series-card').hidden = true;
     resetRawReplies();
     fillInput(null); $('results-section').hidden = true; $('form-title').textContent = '此刻，你想问什么？';
@@ -429,6 +436,7 @@
     if (state.caseId !== caseId) { window.AnalysisStatus.clear(); currentJob=null; $('context-text').value = ''; $('feedback-text').value = ''; state.pendingContext = null; }
     state.caseId = caseId; state.revision = record.revisions?.at(-1)?.revision_seq || payload.revision_seq || record.revision_seq || 1;
     state.input = latestInput(record); state.chart = payload.chart || record.chart; state.runs = record.analysis_runs || [];
+    state.conversationTurns = record.conversation_turns || [];
     state.branchParent = null; state.pendingCreate = null; state.series = payload.series || null; state.seriesId = payload.series?.series_id || caseId;
     seriesVisits.set(state.seriesId,caseId); renderBranchDraft(); renderSeries(state.series);
     state.reportCurrent = payload.report_is_current !== false;
@@ -444,7 +452,11 @@
     else renderAnalysis(null, 'saved');
     onInputChange(); renderHistoryActive(); if (!quiet) banner('');
     showView(keepView ? state.view : 'results');
-    if (payload.active_job_id && !state.analyzing) resumeJob(payload.active_job_id, caseId);
+    if (payload.active_job_id && !state.analyzing) {
+      if(payload.active_job_kind==='conversation') resumeConversation(payload.active_job_id,caseId);
+      else resumeJob(payload.active_job_id, caseId);
+    }
+    document.dispatchEvent(new Event('liuyao:case-loaded'));
   }
   function appendMiniChart(container, structure, label) {
     const block = node('div', 'chart-hex'); const picture = node('div', 'chart-mini');
@@ -540,7 +552,8 @@
         const pair = node('div'); pair.append(node('dt', '', label), node('dd', '', calendar.pillars?.[key] || '—')); pillars.append(pair);
       });
       summary.append(pillars);
-      if (calendar.cast_time) summary.append(node('p', 'calendar-time', `起卦时间：${calendar.cast_time.slice(0, 19).replace('T', ' ')} · 北京时间（UTC+08:00）`));
+      if (calendar.cast_time) summary.append(node('p', 'calendar-time', `排盘时间：${calendar.cast_time.slice(0, 19).replace('T', ' ')} · ${calendar.time_basis==='true_solar'?'当地真太阳时':'北京时间（UTC+08:00）'}`));
+      if(calendar.solar_time)summary.append(node('p','small-note',`原始时刻：${calendar.source_cast_time}；经度 ${calendar.solar_time.longitude}°；经度修正 ${calendar.solar_time.longitude_correction_minutes.toFixed(2)} 分钟，均时差 ${calendar.solar_time.equation_of_time_minutes.toFixed(2)} 分钟。`));
     } else summary.append(node('p', 'small-note', calendar?.message || '这份记录尚无四柱与六神资料。'));
     $('calendar-details').hidden = !calendar?.convention_label;
     $('calendar-convention').textContent = calendar?.convention_label || '';
@@ -691,6 +704,7 @@
     $('analysis-content').removeAttribute('data-preview-run');
     $('run-history').hidden = status === 'running' || state.runs.length < 2;
     state.runId = runId || null;
+    renderConversation();
     if (runSelect) runSelect.value = state.runId || '';
     resetRawReplies();
     if ($('ai-raw-replies').open) loadRawReplies(true);
@@ -733,6 +747,8 @@
     const stored = run.outcome?.result || run.result || null;
     const result = stored?.report && (stored.report.display_report || stored.report.stage_outputs || stored.report.is_demo !== undefined) ? stored.report : stored;
     renderAnalysis(result, run.status || run.outcome?.status || 'running', run.analysis_run_id, notice);
+    renderConversation();
+    document.dispatchEvent(new Event('liuyao:case-loaded'));
   }
   function renderRunSelector() {
     const area = $('run-history'); clear(area); area.hidden = state.runs.length < 2;
@@ -752,7 +768,7 @@
     const appendEvent = (container, text, stamp) => {
       if (!text) return; const item = node('p', 'event-item'); const time = node('time', '', dateText(stamp)); if (stamp) time.dateTime = stamp; item.append(time, document.createTextNode(text)); container.append(item);
     };
-    (record.context_events || []).forEach(item => appendEvent($('context-list'), readable(item.content), item.recorded_at));
+    (record.context_events || []).filter(item=>!item.content?.conversation_turn_id).forEach(item => appendEvent($('context-list'), readable(item.content), item.recorded_at));
     $('context-history').hidden = !$('context-list').childElementCount;
     (record.feedback || []).forEach(item => appendEvent($('feedback-list'), [readable(item.reported_outcome ?? item.text), item.occurred_at ? '发生时间：'+dateText(item.occurred_at) : '', item.rules_version ? '规则版本：'+item.rules_version : '', item.match_degree ? '符合程度：'+({matched:'符合',partly_matched:'部分符合',unmatched:'不符合',pending:'尚待验证'}[item.match_degree] || item.match_degree) : '', item.user_notes || ''].filter(Boolean).join('\n'), item.recorded_at));
   }
@@ -929,7 +945,76 @@
       } catch(error){window.AnalysisStatus.offline(getError(error));}
     }
   });
-  async function appendCaseEvent(kind, { reanalyze = false } = {}) {
+  function renderConversation(){
+    const list=$('conversation-list');clear(list);
+    (state.conversationTurns||[]).filter(turn=>turn.analysis_run_id===state.runId).forEach(turn=>{
+      const question=node('article','conversation-message conversation-user');
+      question.append(node('strong','','你'),node('p','',turn.user_text));list.append(question);
+      const answer=node('article','conversation-message conversation-assistant');answer.append(node('strong','','解读助手'));
+      if(turn.status==='completed'){
+        answer.append(node('p','',turn.result.answer));
+        if(turn.result.requires_reanalysis)answer.append(node('p','small-note','这条补充可能影响原分析，可点击“重新解卦”完整复评。'));
+      }else if(turn.status==='failed'){
+        answer.append(node('p','small-note',turn.result?.error?.message||'回复未完成，提问已保存。'));
+        const retry=node('button','text-button','重新发送这条追问');retry.type='button';retry.disabled=state.busy;
+        retry.addEventListener('click',()=>{if(state.busy)return;$('context-text').value=turn.user_text;sendConversation();});answer.append(retry);
+      }else answer.append(node('p','small-note','正在回复…'));
+      list.append(answer);
+    });
+  }
+  async function resumeConversation(jobId,caseId){
+    if(state.analyzing)return;
+    state.analyzing=true;setBusy(true);
+    try{await waitConversation(jobId,caseId);}
+    catch(error){banner(getError(error),'error');}
+    finally{state.analyzing=false;setBusy(false);renderConversation();}
+  }
+  async function waitConversation(jobId,caseId){
+    $('conversation-status').textContent='正在结合原分析与对话回复…';
+    window.LiuyaoAndroid?.analysisState(true);
+    let failures=0;
+    for(;;){
+      let job;
+      try{job=await api(`/api/jobs/${encodeURIComponent(jobId)}`);failures=0;}
+      catch(error){
+        if(['SESSION_REQUIRED','NOT_FOUND','ACCESS_DENIED'].includes(error.code)||++failures>=3)throw error;
+        $('conversation-status').textContent='连接中断，正在查询原回复任务…';
+      }
+      if(job&&!['queued','running'].includes(job.status)){
+        state.pendingConversation=null;
+        await loadCase(caseId,{keepForm:true,quiet:true,keepView:true});
+        const run=state.runs.find(item=>item.analysis_run_id===job.conversation_analysis_run_id);
+        if(run)renderRun(run);
+        $('conversation-status').textContent=job.status==='completed'?'回复已保存。':(job.error?.message||'回复未完成，提问已保存。');
+        persistDraft();return;
+      }
+      await new Promise(resolve=>setTimeout(resolve,failures?2500:1000));
+    }
+  }
+  async function sendConversation(){
+    if(state.busy||!state.caseId)return;
+    const text=$('context-text').value.trim(),caseId=state.caseId;
+    if(!text){$('context-text').focus();banner('请先写下追问。','warning');return;}
+    if(!state.runId){banner('请先完成一次解卦，再继续对话。','warning');return;}
+    try{if(!inputsEqual(getInput(false),state.input)){banner('请先保存录入区的修改，再重新解卦。','warning');return;}}
+    catch(error){banner(getError(error),'warning');return;}
+    state.analyzing=true;setBusy(true);banner('');
+    try{
+      let pending=state.pendingConversation;
+      if(!pending||pending.caseId!==caseId||pending.text!==text||pending.body.analysis_run_id!==state.runId){
+        pending={caseId,text,key:uuid(),body:{...modelSettings(),text,analysis_run_id:state.runId,expected_revision_seq:state.revision}};
+        state.pendingConversation=pending;
+      }
+      persistDraft();
+      const response=await api(`/api/cases/${encodeURIComponent(caseId)}/conversation`,{method:'POST',data:pending.body,idempotencyKey:pending.key});
+      if($('context-text').value.trim()===text)$('context-text').value='';
+      persistDraft();
+      await loadCase(caseId,{keepForm:true,quiet:true,keepView:true});
+      await waitConversation(response.job_id,caseId);
+    }catch(error){banner(`${getError(error)} 提问仍保留；重新打开案例可查询原回复任务。`,'error');}
+    finally{state.analyzing=false;setBusy(false);renderConversation();}
+  }
+  async function appendCaseEvent(kind) {
     if (state.busy || !state.caseId) return;
     const field = $(kind === 'context' ? 'context-text' : 'feedback-text'); const text = field.value;
     if (!text.trim()) { field.focus(); banner(kind === 'context' ? '请先写下追问或补充信息。' : '请先写下实际进展或结果。', 'warning'); return; }
@@ -949,10 +1034,7 @@
       }
       await loadCase(caseId, { keepForm: true, quiet: true, keepView: true });
       await refreshHistory();
-      if (kind === 'context' && reanalyze) {
-        const job = await analyzeSavedCase(caseId);
-        if (!job || job.status === 'failed') return;
-      } else banner(kind === 'context' ? '追问与补充已保存。点击“重新解卦”后，会把这些内容一并纳入。' : '反馈已独立保存，可继续补充后续进展。');
+      banner(kind === 'context' ? '补充已保存。' : '反馈已独立保存，可继续补充后续进展。');
       if (field.value === text) field.value = '';
       if (kind === 'feedback') { $('feedback-occurred').value=''; $('feedback-notes').value=''; $('feedback-match').value='pending'; }
       if (kind === 'context') state.pendingContext = null;
@@ -962,6 +1044,7 @@
   }
 
   buildInputs();
+  window.LiuyaoSolarTime.bind({api,changed:onInputChange});
   showView('input');
   $('timezone-note').textContent = `使用当前浏览器时区：${Intl.DateTimeFormat().resolvedOptions().timeZone || '本地时区'}。`;
   $('question').addEventListener('input', onInputChange);
@@ -971,8 +1054,8 @@
   $('person-subject').addEventListener('change', () => { window.LiuyaoV5?.selectSelf(); updatePersonFields({ clearIrrelevant: true }); onInputChange(); });
   ['querent-age', 'subject-age', 'person-relationship', 'person-background'].forEach(id => $(id).addEventListener('input', onInputChange));
   $('cast-time').addEventListener('change', onInputChange);
-  $('cast-now').addEventListener('click', () => { $('cast-time').value = localDateTime(new Date()); $('time-details').open = true; onInputChange(); });
-  $('cast-clear').addEventListener('click', () => { $('cast-time').value = ''; onInputChange(); });
+  $('cast-now').addEventListener('click', () => { $('cast-time').value = localDateTime(new Date()); $('time-details').open = true; window.LiuyaoSolarTime.useCurrentTime(); });
+  $('cast-clear').addEventListener('click', () => { $('cast-time').value = ''; window.LiuyaoSolarTime.clearTime(); onInputChange(); });
   $('new-case').addEventListener('click', resetCase);
   $('cast-related').addEventListener('click', startRelatedCase);
   $('cancel-related').addEventListener('click', () => { if (!state.busy && state.branchParent && mayDiscard()) loadCase(state.branchParent.caseId).then(persistDraft).catch(error => banner(getError(error),'error')); });
@@ -988,7 +1071,7 @@
   });
   $('analyze-case').addEventListener('click', () => startAnalysis());
   $('analyze-current-case').addEventListener('click', () => startAnalysis({ savedCase: true }));
-  $('context-form').addEventListener('submit', event => { event.preventDefault(); appendCaseEvent('context', { reanalyze: true }); });
+  $('context-form').addEventListener('submit', event => { event.preventDefault(); sendConversation(); });
   ['input', 'results', 'feedback'].forEach(name => {
     const tab = $(`tab-${name}`);
     tab.addEventListener('click', () => showView(name));
@@ -1014,13 +1097,41 @@
   function persistDraft(){
     if(!window.LiuyaoAndroid)return;
     const fields={};document.querySelectorAll('#case-form input,#case-form textarea,#case-form select,#context-text,#feedback-form input,#feedback-form textarea,#feedback-form select').forEach((el,index)=>{if(el.type==='file')return;fields[el.id||el.name+'::'+el.value]={value:el.value,checked:el.checked};});
-    window.LiuyaoAndroid.saveDraft(JSON.stringify({caseId:state.caseId,branchParent:state.branchParent,pendingCreate:state.pendingCreate,fields,view:state.view}));
+    let solarInput=null;try{solarInput=window.LiuyaoSolarTime.read(false);}catch(_){}
+    window.LiuyaoAndroid.saveDraft(JSON.stringify({caseId:state.caseId,branchParent:state.branchParent,pendingCreate:state.pendingCreate,pendingConversation:state.pendingConversation,solarInput,fields,view:state.view,workbench:window.SkillWorkbench?.draft(),dialogue:window.DialogueUI?.draft()}));
   }
   let draftTimer;
   document.addEventListener('input',()=>{if(window.LiuyaoAndroid){clearTimeout(draftTimer);draftTimer=setTimeout(persistDraft,300);}});
   document.addEventListener('change',()=>{if(window.LiuyaoAndroid){clearTimeout(draftTimer);draftTimer=setTimeout(persistDraft,300);}});
-  window.LiuyaoApp={reloadConfig:loadConfig,persistDraft,canLeave:mayDiscard,isAnalyzing:()=>state.analyzing};
-  Promise.allSettled([loadConfig(), refreshHistory()]).then(async results => {
+  function captureCard(){
+    const fields={};document.querySelectorAll('#case-form input,#case-form textarea,#case-form select').forEach(el=>{if(el.type!=='file')fields[el.id||el.name+'::'+el.value]={value:el.value,checked:Boolean(el.checked)};});
+    let solar_input=null;try{solar_input=window.LiuyaoSolarTime.read(false);}catch(_){}
+    return {fields,solar_input};
+  }
+  function restoreCard(draft){
+    document.querySelectorAll('#case-form input,#case-form textarea,#case-form select').forEach(el=>{const f=draft.fields?.[el.id||el.name+'::'+el.value];if(f){el.value=f.value;el.checked=f.checked;}});
+    if(draft.solar_input)window.LiuyaoSolarTime.fill(draft.solar_input);
+    $('profile-select').dispatchEvent(new Event('change',{bubbles:true}));
+    window.Buzhai.fill(window.Buzhai.read(false));updateCastingMode();updatePersonFields();onInputChange();
+  }
+  async function prepareDialogue(prefill,profileId,draft){
+    if(state.busy)throw new Error('当前卦例仍在分析，请完成后再打开另一起卦卡片。');
+    resetCase({preserveDraft:true});
+    const person={...prefill.person,...(profileId?{profile_id:profileId}:{})};
+    fillInput({question:prefill.question,time_basis:'true_solar',casting:{method:'meibu',results:[]},
+      ...(Object.keys(person).length?{person_info:person}:{}),...(prefill.buzhai?{buzhai:prefill.buzhai}:{})});
+    if(window.LiuyaoV5?.loadProfiles)await window.LiuyaoV5.loadProfiles().catch(()=>{});
+    if(profileId)window.LiuyaoV5.setProfile(profileId);else window.LiuyaoV5?.selectSelf();
+    if(draft){
+      restoreCard(draft);
+    }else if(prefill.time_policy==='current')$('cast-now').click();
+    else {$('time-details').open=true;$('cast-time').value='';}
+    onInputChange();showView('input');
+  }
+  window.LiuyaoApp={reloadConfig:loadConfig,persistDraft,canLeave:mayDiscard,isAnalyzing:()=>state.analyzing,
+    loadCase,prepareDialogue,captureCard,restoreCard,showView,
+    context:()=>({caseId:state.caseId,revision:state.revision,runId:state.runId,busy:state.busy,input:state.input,view:state.view})};
+  const initialization=Promise.allSettled([loadConfig(), refreshHistory()]).then(async results => {
     results.forEach(result => { if (result.status === 'rejected') banner(getError(result.reason), 'error'); });
     if(!window.LiuyaoAndroid)return;
     try{
@@ -1031,11 +1142,16 @@
         state.branchParent = draft.branchParent; state.series = parent.series; state.seriesId = parent.series.series_id;
         fillInput(null); renderBranchDraft(); renderHistoryActive();
       }
+      state.pendingConversation=draft.pendingConversation||null;
       const fields=draft.fields||{};
       if (!draft.caseId) state.pendingCreate = draft.pendingCreate || null;
       document.querySelectorAll('#case-form input,#case-form textarea,#case-form select,#context-text,#feedback-form input,#feedback-form textarea,#feedback-form select').forEach(el=>{const f=fields[el.id||el.name+'::'+el.value];if(f&&el.type!=='file'){el.value=f.value;if('checked' in f)el.checked=f.checked;}});
+      if(draft.solarInput)window.LiuyaoSolarTime.fill(draft.caseId?draft.solarInput:{...draft.solarInput,time_basis:'true_solar'});
       updateCastingMode();updatePersonFields();$('buzhai-enabled').dispatchEvent(new Event('change',{bubbles:true}));onInputChange();
       showView(draft.view);if(!draft.caseId&&$('question').value)banner('已恢复上次尚未保存的输入。');
+      if(draft.workbench)await window.SkillWorkbench?.restoreDraft(draft.workbench);
+      if(draft.dialogue)window.DialogueUI?.restoreDraft(draft.dialogue);
     }catch(_){banner('上次输入未能完整恢复，已保存的案例可在档案中查看。','warning');}
   });
+  window.LiuyaoApp.ready=initialization;
 })();

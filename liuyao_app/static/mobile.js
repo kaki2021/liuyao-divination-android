@@ -43,7 +43,7 @@
   const button=make('button','secondary-button mobile-key-button','配置 API 密钥');button.type='button';button.id='mobile-key';button.onclick=()=>native.configureModel($('provider-select').value);$('settings-done').before(button);
   const hint=make('p','small-note','密钥加密保存在此手机。排盘与档案可离线使用，AI 分析需要联网。');button.after(hint);
   document.addEventListener('click',e=>{const a=e.target.closest('a[download]');if(a&&a.href.startsWith(location.origin+'/api/')){e.preventDefault();native.exportFile(a.href,a.download||'六爻记录.json');}},true);
-  new MutationObserver(()=>native.analysisState($('analysis-progress').dataset.running==='true')).observe($('analysis-progress'),{attributes:true,attributeFilter:['data-running']});
+  new MutationObserver(()=>native.analysisState($('analysis-progress').dataset.running==='true'||Boolean(window.SkillWorkbench?.isBusy())||Boolean(window.DialogueUI?.isBusy()))).observe($('analysis-progress'),{attributes:true,attributeFilter:['data-running']});
   window.addEventListener('pagehide',()=>window.LiuyaoApp?.persistDraft());
   document.addEventListener('visibilitychange',()=>{if(document.hidden)window.LiuyaoApp?.persistDraft();});
  }

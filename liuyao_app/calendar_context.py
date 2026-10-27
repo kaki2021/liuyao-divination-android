@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, timezone
 import re
 
 from ._vendor.lunar_python import Solar
+from .solar_time import solar_clock
 
 
 BEIJING_STANDARD_TIME = timezone(timedelta(hours=8))
@@ -51,6 +52,7 @@ def _result(status, original, code, message):
         "source_cast_time": original, "cast_time": None,
         "timezone": "UTC+08:00", "source_utc_offset": None,
         "timezone_converted": None,
+        "time_basis": "beijing_standard",
         "convention_label": CONVENTION_LABEL,
         "calculation_policy": {**CALCULATION_POLICY, "supported_beijing_years": [1900, 2100]},
         "calendar_library": dict(LIBRARY_INFO),
@@ -58,11 +60,12 @@ def _result(status, original, code, message):
     }
 
 
-def calculate_calendar(input_data):
+def _calculate_calendar(input_data):
     """Return JSON-ready calendar facts; never substitute entry/current time.
 
     ``actual_cast_time`` must be a full ISO-8601 instant with timezone/offset.
-    All four pillars are computed after conversion to fixed UTC+08:00. The
+    Legacy inputs use fixed UTC+08:00. With true_solar selected, day/hour use
+    the local apparent clock while year/month retain actual term boundaries. The
     original instant, converted instant, dependency and convention are returned
     together so a saved analysis can freeze exactly what its chart used.
     """
@@ -92,6 +95,29 @@ def calculate_calendar(input_data):
         eight_char.setSect(2)
         pillars = {"year": eight_char.getYear(), "month": eight_char.getMonth(),
                    "day": eight_char.getDay(), "hour": eight_char.getTime()}
+        solar_details = None
+        basis = input_data.get('time_basis', 'beijing_standard')
+        if basis not in ('beijing_standard', 'true_solar'):
+            return _result('error', original, 'TIME_BASIS_INVALID', '请选择北京时间或当地真太阳时。')
+        if basis == 'true_solar':
+            location = input_data.get('cast_location')
+            longitude = location.get('longitude') if isinstance(location, dict) else None
+            if type(longitude) not in (int, float) or not -180 <= longitude <= 180:
+                return _result('error', original, 'CAST_LOCATION_REQUIRED', '真太阳时需要起卦地点的经度，请定位或手动填写。')
+            clock, equation = solar_clock(source_time, longitude)
+            if not 1900 <= clock.year <= 2100:
+                return _result('error', original, 'CAST_TIME_OUT_OF_RANGE', '换算后的真太阳时超出支持年份。')
+            solar_char = Solar.fromYmdHms(clock.year, clock.month, clock.day, clock.hour,
+                                         clock.minute, clock.second).getLunar().getEightChar()
+            solar_char.setSect(2)
+            # Terms are physical instants in the library's Beijing chronology.
+            # Only day/hour use the apparent clock; never shift a term boundary.
+            pillars.update(day=solar_char.getDay(), hour=solar_char.getTime())
+            solar_details = {'clock': clock.isoformat(timespec='seconds'), 'longitude': longitude,
+                             'longitude_correction_minutes': round(4 * (longitude - 120), 6),
+                             'equation_of_time_minutes': round(equation, 6),
+                             'total_correction_minutes': round(4 * (longitude - 120) + equation, 6),
+                             'algorithm': 'NOAA_Meeus_Julian_century_v1'}
     except (ValueError, IndexError, ArithmeticError):
         return _result("error", original, "CALENDAR_COMPUTATION_FAILED",
                        "该起卦时间未能生成四柱，请核对时间；卦象仍可保留。")
@@ -104,4 +130,30 @@ def calculate_calendar(input_data):
         "source_utc_offset": source_time.strftime("%z")[:3] + ":" + source_time.strftime("%z")[3:],
         "timezone_converted": source_time.utcoffset() != timedelta(hours=8),
     })
+    if solar_details:
+        label = ('当地真太阳时；立春与节令交接按实际时刻；日柱按当地太阳时零点换日；'
+                 '23时晚子时时柱按次日子时；经度修正加均时差。')
+        result.update(time_basis='true_solar', timezone=None, cast_time=solar_details['clock'],
+                      beijing_cast_time=local_time.isoformat(), solar_time=solar_details,
+                      cast_location=dict(input_data['cast_location']), convention_label=label,
+                      message='已按起卦地点换算真太阳时，日柱与时柱采用当地太阳时。')
+        result['calculation_policy'].update(policy_id='local_apparent_lichun_jie_midnight_late_zi_v1',
+            timezone=None, timezone_label='当地真太阳时', true_solar_time=True,
+            day_hour_basis='local_apparent_solar_time', term_boundary_basis='actual_instant_beijing_library',
+            solar_time_algorithm=solar_details['algorithm'])
+    return result
+
+
+def calculate_calendar(input_data):
+    result = _calculate_calendar(input_data)
+    if (isinstance(input_data, dict) and input_data.get('time_basis') == 'true_solar'
+            and result['status'] != 'computed'):
+        # Unknown time or a missing location must not advertise a Beijing
+        # fallback when the user is recording a solar-time case.
+        result.update(time_basis='true_solar', timezone=None,
+            convention_label='当地真太阳时；按起卦地点经度及均时差换算。起卦时刻未知时不生成四柱。')
+        result['calculation_policy'].update(policy_id='local_apparent_lichun_jie_midnight_late_zi_v1',
+            timezone=None, timezone_label='当地真太阳时', true_solar_time=True,
+            day_hour_basis='local_apparent_solar_time', term_boundary_basis='actual_instant_beijing_library',
+            solar_time_algorithm='NOAA_Meeus_Julian_century_v1')
     return result

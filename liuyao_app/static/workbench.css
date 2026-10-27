@@ -1,0 +1,31 @@
+/* Shared navigation; each specialist keeps its own useful controls. */
+.skill-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px;max-width:660px;margin:14px auto;background:#e9eee6;border:1px solid var(--line);border-radius:14px}
+.skill-nav button{background:transparent;border:0;border-radius:9px;min-height:44px;color:var(--muted);font-size:14px;cursor:pointer}
+.skill-nav button[aria-current=page]{background:#fffefb;color:var(--ink);font-weight:600;box-shadow:0 2px 8px #233f3710}
+.skill-workspace{max-width:900px;margin:32px auto;padding:0 24px 40px;min-width:0}
+.skill-workspace[hidden]{display:none!important}
+.skill-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:0 4px 24px}
+.skill-heading h1{font-size:30px;line-height:1.5;margin:4px 0 10px}.skill-heading .eyebrow{margin-bottom:6px}.skill-heading>.text-button{white-space:nowrap}
+.skill-workspace h2{font-size:20px}.skill-workspace label{display:block;font-size:13px;margin:16px 0 7px}
+.skill-workspace input,.skill-workspace textarea,.skill-workspace select{width:100%;max-width:100%;min-width:0}
+.skill-workspace textarea{line-height:1.8}.skill-workspace summary{cursor:pointer;padding:8px 0;font-weight:600;line-height:1.8}
+.skill-workspace .paper-card{margin-bottom:20px}.skill-workspace .small-note{margin:10px 0}
+.skill-status{min-height:24px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--accent);font-size:13px;margin:0 4px 12px}.skill-status.is-error{color:#8d422e}
+.skill-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:12px 0}
+.skill-toolbar select{flex:1;min-width:160px;width:auto}.skill-toolbar h2{margin:0}
+.kb-documents{margin:10px 0}.kb-document{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;border-bottom:1px solid var(--line);padding:12px 0;align-items:center}.kb-document strong{font-size:14px;overflow-wrap:anywhere}.kb-document p{margin:4px 0!important}.kb-document button{font-size:12px}
+.kb-import{border-top:1px solid var(--line);margin-top:14px;padding-top:8px}.kb-import form{margin-bottom:12px}
+.kb-turn{margin:20px 0;padding-bottom:20px;border-bottom:1px solid var(--line)}.kb-question-bubble{background:#eef3e9;padding:14px 18px;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere;font-weight:500}.kb-answer{padding:16px 2px 0;line-height:1.95;white-space:pre-wrap;overflow-wrap:anywhere}.kb-turn .small-note{font-size:12px}
+.kb-citation{border-left:2px solid #b6c9ad;padding:0 0 0 12px;margin:14px 0}.kb-citation summary{font-size:12px;font-weight:500}.kb-citation blockquote{margin:8px 0;font-size:13px;line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere;max-height:340px;overflow:auto}
+.kb-chat-card form{border-top:1px solid var(--line);padding-top:10px}.kb-chat-card form>.skill-toolbar{justify-content:space-between}
+.skill-issue{padding:18px 0;border-bottom:1px solid var(--line);min-width:0}.skill-issue h3{font-size:17px;margin:8px 0;overflow-wrap:anywhere}.skill-issue p,.skill-issue li{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.85;font-size:14px}.skill-issue details{margin:12px 0}.skill-issue a{font-size:12px}.skill-issue .soft-tag{display:inline-block;white-space:normal}
+.skill-version{padding:12px 0;border-bottom:1px solid var(--line)}.skill-version p{line-height:1.8;font-size:13px;overflow-wrap:anywhere}
+body[data-workbench-page=knowledge]>.workspace,body[data-workbench-page=issues]>.workspace,
+body[data-workbench-page=knowledge]>.mobile-nav,body[data-workbench-page=issues]>.mobile-nav{display:none!important}
+@media(max-width:760px){
+ .skill-nav{margin:10px 16px 0;padding:5px;gap:4px}.skill-nav button{font-size:13px;min-height:44px}
+ .skill-workspace{margin:22px auto 0;padding:0 16px 30px;max-width:620px}.skill-heading{margin:0 4px 18px}.skill-heading h1{font-size:25px}.skill-heading .text-button{font-size:12px}.skill-heading .small-note{font-size:12px}
+ .skill-workspace .paper-card{padding:20px 18px;border-radius:18px}.skill-workspace .skill-toolbar{gap:8px}.skill-workspace label{font-size:13px}.kb-answer{font-size:15px}.kb-question-bubble{font-size:14px;padding:13px 14px}.kb-citation blockquote{font-size:13px}
+ body[data-workbench-page=knowledge],body[data-workbench-page=issues]{padding-bottom:env(safe-area-inset-bottom)}
+ body[data-workbench-page=liuyao] .result-tabs{top:68px}
+}

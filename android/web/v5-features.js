@@ -147,11 +147,20 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         body.expected_version = editingVersion;
       }
       const p = await api("/api/profiles", body);
-      requestedProfile = p.person_id;
-      await loadProfiles();
-      editProfile(p.person_id);
-      $("profile-select").dispatchEvent(new Event("change"));
-      $("profile-message").textContent = "档案与自动计算的八字已保存，并选用于当前录入。";
+      if (window.DialogueUI) {
+        const linked = $("profile-select").value;
+        requestedProfile = linked;
+        await loadProfiles();
+        editProfile(p.person_id);
+        $("profile-message").textContent = "人物档案已保存，可在人物栏反复选用。";
+        document.dispatchEvent(new Event("profiles:changed"));
+      } else {
+        requestedProfile = p.person_id;
+        await loadProfiles();
+        editProfile(p.person_id);
+        $("profile-select").dispatchEvent(new Event("change"));
+        $("profile-message").textContent = "档案与自动计算的八字已保存，并选用于当前录入。";
+      }
     } catch (e2) {
       $("profile-message").textContent = e2.message;
     } finally {
@@ -469,7 +478,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       $("model-info-content").append(d);
     }
   }
-  window.LiuyaoV5 = { refreshRuleList() {
+  window.LiuyaoV5 = { loadProfiles, openProfiles, refreshRuleList() {
     rulePage = 0;
     refreshRules();
   }, setProfile, selectSelf, renderComprehensive, renderAudit, setAnalysisContext(input) {

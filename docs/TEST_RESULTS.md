@@ -1,6 +1,32 @@
 # 测试与验证结果
 
-复核日期：2026-10-08。
+复核日期：2026-10-24。
+
+## 名称与默认太阳时（1.1.1）
+
+应用显示名称、启动页和网页标题统一为“六爻占问”，内部版本号递增为 8。新起卦仅采用当地真太阳时，移除时间制选择器，“现在起卦”自动请求手机定位；定位不可用时可手填经度。时间未知时允许留空，已知时间必须提供地点。历史记录保留其保存口径，旧版未保存的新草稿按真太阳时恢复。
+
+本轮 99 项相关 Python 检查与 17 项 DOM 交互检查通过，覆盖默认值、无切换项、定位自动触发、缺失地点、未知时间、历史记录和多轮对话。沿用 1.1 的应用 ID 和签名用于覆盖升级。
+
+## 连续对话与当地真太阳时（2026-10-24）
+
+本轮将发送追问接入独立对话任务，绑定选中的历史分析，保存完整问答并复用原卦盘；重新解卦保留原四阶段流程。新增经度定位、手动经度和真太阳时选项，使用离线 NOAA / Meeus 均时差计算；年、月柱的节气边界仍按实际时刻，日、时柱按选定太阳钟。旧案例省略口径字段时保持北京时间。Android 内部版本号为 7，版本名 1.1。
+
+```bash
+PYTHONPATH=software_prep:. python -m unittest liuyao_app.test_conversation liuyao_app.test_solar_time liuyao_app.test_calendar_context liuyao_app.test_providers liuyao_app.test_series liuyao_app.test_selection_context
+python software_prep/run_checks.py
+node android/tests/conversation_dom.cjs
+node android/tests/series_model.cjs
+node android/tests/ui_state.cjs
+```
+
+结果：98 项 Python 检查通过（安装可选 jsonschema 后无跳过），9 组基础检查通过，11 项 DOM 交互检查通过，系列与既有界面状态脚本通过。覆盖双轮用户／助手上下文、单轮模型调用、重复提交、原分析与报告不变、用户补充进入后续重评、所属案例与版本校验、重开与导出、失败保留、服务重启、回复已保存但任务回执丢失；覆盖太阳时跨日、晚子时、六神、立春和节气秒级边界、时区等价时刻、输入校验以及旧北京时间兼容。DOM 联调另外发现并修复 datetime-local 省略零秒导致重开案例被误判修改的问题。
+
+网页已编译为 Chrome 58 脚本并重新生成校验一致的 content.zip，私有规则未进入资源包。MainActivity 已通过 Java 语法解析。所有模型调用均为替身，定位回调在 DOM 中模拟。
+
+本次环境不含 Android SDK，未执行 Gradle 构建、Lint、签名或生成新版 APK。Chromium 在环境内启动时退出（SIGTRAP），因此本轮没有完成真实浏览器布局验收；保留 conversation_browser.cjs 供有 Chromium 的环境检查 320、390、768 像素布局。DOM 测试不证明布局、系统定位权限或手机 GPS 正常。真实模型、Android 真机、拒绝／大致定位、室内无定位与应用进入后台仍需安装后验收。
+
+原 test_server 整组在无私有规则状态下会因 RULES_NOT_INSTALLED 返回 409，不能作为本轮全绿套件；本轮的对话 HTTP 用例从隔离数据库建立公开测试快照，专门验证新增接口，不绕过生产规则安装要求。
 
 ## 界面状态与公开功能复核（2026-10-08）
 

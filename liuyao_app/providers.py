@@ -281,6 +281,7 @@ def _usage(value) -> dict:
 def generate_json(provider: str, model: str | None, system_prompt: str,
                   user_payload: dict, timeout: float | None = None, *,
                   repair_context: dict | None = None,
+                  conversation_history: list | None = None,
                   transport: Transport | None = None) -> dict:
     """One non-streaming call; strict JSON object or ProviderError.
 
@@ -306,6 +307,12 @@ def generate_json(provider: str, model: str | None, system_prompt: str,
                        for value in repair_context.values())):
             raise ProviderError("invalid_input", "AI 修复请求须包含上次输出及校验错误。")
     seconds = _timeout(timeout)
+    if conversation_history is not None:
+        if (repair_context is not None or not isinstance(conversation_history,list)
+                or any(not isinstance(m,dict) or set(m) != {'role','content'}
+                       or m['role'] not in ('user','assistant') or not isinstance(m['content'],str)
+                       or not m['content'].strip() for m in conversation_history)):
+            raise ProviderError('invalid_input','对话记录格式无效。')
     if provider == "mock":
         if model not in (None, "", "offline-json"):
             raise ProviderError("invalid_model", "离线 mock 仅支持 offline-json。", provider="mock")
@@ -326,6 +333,8 @@ def generate_json(provider: str, model: str | None, system_prompt: str,
         "response_format": {"type": "json_object"}, "stream": False,
         "max_tokens": _max_tokens(provider), "tool_choice": "none",
     }
+    if conversation_history is not None:
+        request_body['messages'].extend(conversation_history)
     if repair_context is not None:
         request_body["messages"].extend([
             {"role": "assistant", "content": _safe_text(repair_context["previous_output"], key, MAX_RESPONSE_BYTES)},

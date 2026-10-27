@@ -1,0 +1,8 @@
+{
+  "id": "liuyao",
+  "name": "六爻占问",
+  "description": "记录起卦、按当地真太阳时排盘，依据正式规则分析并连续追问。",
+  "bundle_version": "1.3.0",
+  "tools": ["chart", "solar_time", "rules", "case_conversation"],
+  "entry": "liuyao"
+}
