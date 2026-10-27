@@ -218,6 +218,8 @@ class Application:
         with self.jobs_db() as db:
             db.execute('CREATE TABLE IF NOT EXISTS jobs (job_id TEXT PRIMARY KEY, owner_id TEXT NOT NULL, case_id TEXT NOT NULL, idem_key TEXT NOT NULL, request_digest TEXT NOT NULL, payload TEXT NOT NULL, state TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(owner_id,idem_key))')
         self.recover()
+        from .workbench import Workbench
+        self.workbench = Workbench(self)
 
     def store(self):
         return CaseStore(self.db_path)
@@ -372,6 +374,7 @@ class Application:
                         raise ApiError(400,'CONVERSATION_UNAVAILABLE',str(exc)) from None
                     finally:store.close()
                     body={**body,'_kind':'conversation','_turn_id':turn_id}
+                body={**body,'_skill_snapshot':self.workbench.store.skill(actor.owner_id,'liuyao')}
                 job_id = 'job_'+uuid.uuid4().hex
                 state = {'job_id':job_id, 'case_id':case_id,'status':'queued','stage':'queued','analysis_run_id':None,'result':None,'error':None,
                          'provider':body['provider'],'model':body['model'],'completed_stages':[],'reply_count':0,'attempt':0,'phase':'queued'}
@@ -422,7 +425,8 @@ class Application:
                 from .conversation import reply
                 self.update_job(job_id,status='running',stage='conversation')
                 store=self.store()
-                try:result=reply(store,actor,case_id,body['_turn_id'],body['provider'],body['model'])
+                try:result=reply(store,actor,case_id,body['_turn_id'],body['provider'],body['model'],
+                                 skill_snapshot=body.get('_skill_snapshot'))
                 finally:store.close()
                 self.update_job(job_id,status=result['status'],stage='finished',result=result,error=result.get('error'))
                 return
@@ -440,7 +444,7 @@ class Application:
                     if checkpoint.get('analysis_run_id') == value.get('analysis_run_id') and isinstance(checkpoint.get('user_report'), dict):
                         safe['_checkpoint'] = {k:v for k,v in checkpoint.items() if k in (
                             'analysis_run_id','status','chart','user_report','display_report','is_demo','unresolved','clarifying_questions',
-                            'rules_version','parameter_version','engine_build','ai_model','rules_snapshot','audit_report','stage_outputs','selection_note_reviews','logic_snapshot')}
+                            'rules_version','parameter_version','engine_build','ai_model','rules_snapshot','audit_report','stage_outputs','selection_note_reviews','logic_snapshot','skill_snapshot')}
                 if type(value.get('report_timeout_seconds')) is int:safe['report_timeout_seconds']=value['report_timeout_seconds']
                 self.update_job(job_id,**safe)
             extra = {}
@@ -451,6 +455,7 @@ class Application:
                         raise ProviderError('service_stopping','软件正在关闭，本次分析已停止，记录已经保留。')
                     return generate_json(*args, **kwargs)
                 extra['provider_call'] = provider_call
+                extra['skill_snapshot'] = body.get('_skill_snapshot')
             result=(self.pipeline or run_analysis)(self.db_path, actor, case_id, body['provider'], body['model'], body['expected_revision_seq'], progress=progress, **extra)
             self.update_job(job_id,status=result['status'],stage='finished',phase='finished',result=result,analysis_run_id=result.get('analysis_run_id'),error=result.get('error'),_checkpoint=None)
         except Exception:
@@ -581,7 +586,7 @@ class Handler(BaseHTTPRequestHandler):
             raise ApiError(415,'JSON_REQUIRED','请求须为 JSON。')
         try:size=int(self.headers.get('Content-Length','0'))
         except ValueError:raise ApiError(400,'INVALID_LENGTH','请求长度无效。')
-        limit = 7_000_000 if urlsplit(self.path).path=='/api/rules/import' else 65536
+        limit = 7_000_000 if urlsplit(self.path).path in ('/api/rules/import','/api/workbench/documents') else 65536
         if size<1 or size>limit:
             raise ApiError(413,'BODY_LIMIT','请求内容过大或为空。')
         def unique(pairs):
@@ -598,6 +603,10 @@ class Handler(BaseHTTPRequestHandler):
         try:
             self.guard(mutation)
             path=urlsplit(self.path).path
+            if not mutation and path in ('/static/workbench.js','/static/workbench.css'):
+                raw=(Path(__file__).parent/'static'/path.rsplit('/',1)[-1]).read_bytes()
+                self._headers(200,(mimetypes.guess_type(path)[0] or 'application/octet-stream')+'; charset=utf-8',len(raw))
+                self.wfile.write(raw);return
             if not mutation and path in ('/','/index.html','/app.js','/styles.css','/static/app.js','/static/styles.css','/chart-display.js','/static/chart-display.js','/v5-features.js','/static/v5-features.js','/static/report-views.js','/static/buzhai.js','/static/mobile.js','/static/mobile.css','/static/compat.js','/static/phone-chart.js','/static/analysis-status.js','/static/guidance.js','/static/rules-ui.js','/static/condition-rules.js','/static/rules.css','/static/series.js','/static/solar-time.js','/favicon.ico'):
                 if path=='/favicon.ico':
                     self._headers(204,'image/x-icon',0);return
@@ -618,6 +627,9 @@ class Handler(BaseHTTPRequestHandler):
             app=self.server.app
             parts=path.strip('/').split('/')
             if not mutation:
+                if path.startswith('/api/workbench/'):
+                    from .workbench_api import dispatch
+                    dispatch(self,actor,False);return
                 if path=='/api/config':self.send_json(app.config());return
                 if path=='/api/cases':self.send_json({'cases':app.list_cases(actor)});return
                 if path=='/api/series':
@@ -709,6 +721,9 @@ class Handler(BaseHTTPRequestHandler):
                 body=self.body()
                 idem=self.headers.get('X-Idempotency-Key')
                 text_field(idem,160)
+                if path.startswith('/api/workbench/'):
+                    from .workbench_api import dispatch
+                    dispatch(self,actor,True,body,idem);return
                 if path=='/api/calendar':
                     exact_fields(body,('actual_cast_time','time_basis','cast_location'))
                     from .calendar_context import calculate_calendar

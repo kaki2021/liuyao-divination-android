@@ -1642,6 +1642,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     }
   });
   function persistDraft() {
+    var _a2;
     if (!window.LiuyaoAndroid) return;
     const fields = {};
     document.querySelectorAll("#case-form input,#case-form textarea,#case-form select,#context-text,#feedback-form input,#feedback-form textarea,#feedback-form select").forEach((el, index) => {
@@ -1653,7 +1654,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       solarInput = window.LiuyaoSolarTime.read(false);
     } catch (_) {
     }
-    window.LiuyaoAndroid.saveDraft(JSON.stringify({ caseId: state.caseId, branchParent: state.branchParent, pendingCreate: state.pendingCreate, pendingConversation: state.pendingConversation, solarInput, fields, view: state.view }));
+    window.LiuyaoAndroid.saveDraft(JSON.stringify({ caseId: state.caseId, branchParent: state.branchParent, pendingCreate: state.pendingCreate, pendingConversation: state.pendingConversation, solarInput, fields, view: state.view, workbench: (_a2 = window.SkillWorkbench) == null ? void 0 : _a2.draft() }));
   }
   let draftTimer;
   document.addEventListener("input", () => {
@@ -1670,6 +1671,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   });
   window.LiuyaoApp = { reloadConfig: loadConfig, persistDraft, canLeave: mayDiscard, isAnalyzing: () => state.analyzing };
   Promise.allSettled([loadConfig(), refreshHistory()]).then(async (results) => {
+    var _a2;
     results.forEach((result) => {
       if (result.status === "rejected") banner(getError(result.reason), "error");
     });
@@ -1704,6 +1706,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       onInputChange();
       showView(draft.view);
       if (!draft.caseId && $("question").value) banner("已恢复上次尚未保存的输入。");
+      if (draft.workbench) await ((_a2 = window.SkillWorkbench) == null ? void 0 : _a2.restoreDraft(draft.workbench));
     } catch (_) {
       banner("上次输入未能完整恢复，已保存的案例可在档案中查看。", "warning");
     }

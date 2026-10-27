@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/static/styles.css">
   <link rel="stylesheet" href="/static/mobile.css">
   <link rel="stylesheet" href="/static/rules.css">
+  <link rel="stylesheet" href="/static/workbench.css">
   <script src="/static/compat.js" defer></script>
   <script src="/static/chart-display.js" defer></script>
   <script src="/static/rules-ui.js" defer></script>
@@ -22,12 +23,53 @@
   <script src="/static/solar-time.js" defer></script>
   <script src="/static/app.js" defer></script>
   <script src="/static/mobile.js" defer></script>
+  <script src="/static/workbench.js" defer></script>
 </head>
 <body>
   <header class="site-header">
     <a class="brand" href="/" aria-label="六爻占问首页"><span class="brand-mark" aria-hidden="true">䷀</span><span>六爻占问<small>真念取用 · 观象察变</small></span></a>
     <div class="header-meta"><span class="online-dot" aria-hidden="true"></span>本地工作台<button class="text-button" id="settings-open" type="button">模型设置 <span aria-hidden="true">↗</span></button></div>
   </header>
+  <nav class="skill-nav" aria-label="选择技能">
+    <button type="button" data-skill-page="liuyao" aria-current="page">六爻占问</button>
+    <button type="button" data-skill-page="knowledge">知识库问答</button>
+    <button type="button" data-skill-page="issues">技能反馈</button>
+  </nav>
+  <section id="knowledge-workspace" class="skill-workspace" aria-labelledby="kb-title" hidden>
+    <div class="skill-heading"><div><p class="eyebrow">从原文出发</p><h1 id="kb-title">和你的资料聊一聊。</h1><p class="small-note">导入资料后提问，回答与引用一并保存。与六爻共用模型设置。</p></div><button type="button" class="text-button skill-settings">模型设置 ↗</button></div>
+    <p id="kb-status" class="skill-status" role="status"></p>
+    <details id="kb-library" class="paper-card" open><summary>我的资料 <span id="kb-document-count" class="soft-tag">0</span></summary>
+      <div id="kb-documents" class="kb-documents"></div>
+      <details class="kb-import"><summary>＋ 导入资料</summary>
+        <form id="kb-import-form">
+          <label for="kb-document-title">资料标题</label><input id="kb-document-title" maxlength="200" placeholder="例如：归墟场论 · 五行与系统" required>
+          <label for="kb-file">选择文件</label><input id="kb-file" type="file" accept=".txt,.md,.markdown,.docx,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+          <p class="small-note">支持 TXT、Markdown、DOCX，每个文件不超过 4 MB、正文不超过 30 万字。PDF 和扫描件需先转为文字。</p>
+          <label for="kb-import-text">或粘贴文字</label><textarea id="kb-import-text" rows="5" maxlength="300000" placeholder="粘贴需要保存到知识库的原文"></textarea>
+          <p class="small-note">资料保存在本机。使用联网模型回答时，只发送相关检索片段和本次对话。</p>
+          <button type="submit" class="secondary-button" id="kb-import-button">保存资料</button>
+        </form>
+      </details>
+    </details>
+    <section class="paper-card kb-chat-card" aria-label="知识库对话">
+      <div class="skill-toolbar"><label for="kb-chat-select" class="sr-only">选择知识库对话</label><select id="kb-chat-select"><option value="">开始一段新对话</option></select><button id="kb-new-chat" class="text-button" type="button">新对话</button><a id="kb-export" href="#" download="知识库对话.json" class="text-button" hidden>导出</a></div>
+      <div id="kb-turns" class="kb-turns" aria-live="polite"><p class="empty-state">可以问：“资料中怎样解释五行？”</p></div>
+      <form id="kb-ask-form"><label for="kb-question">向知识库提问</label><textarea id="kb-question" maxlength="4000" rows="3" placeholder="可以围绕同一问题继续追问" required></textarea><div class="skill-toolbar"><span id="kb-model-note" class="small-note"></span><button id="kb-send" class="primary-button" type="submit">发送问题 ↗</button></div></form>
+    </section>
+  </section>
+  <section id="issues-workspace" class="skill-workspace" aria-labelledby="skill-issues-title" hidden>
+    <div class="skill-heading"><div><p class="eyebrow">让技能逐步改进</p><h1 id="skill-issues-title">哪里需要改一改？</h1><p class="small-note">直接描述问题，不需要会使用 GitHub。反馈与处理记录保存在本机，可导出交给开发者。</p></div><button type="button" class="text-button skill-settings">模型设置 ↗</button></div>
+    <p id="skill-issue-status" class="skill-status" role="status"></p>
+    <form id="skill-issue-form" class="paper-card">
+      <label for="issue-skill">哪个技能？</label><select id="issue-skill"><option value="liuyao">六爻占问</option><option value="knowledge">知识库问答</option></select>
+      <label for="issue-title">问题标题</label><input id="issue-title" maxlength="200" required placeholder="例如：回答太长，希望先给结论">
+      <label for="issue-description">具体情况与期望</label><textarea id="issue-description" maxlength="8000" rows="5" required placeholder="发生了什么？你希望怎样改？可以粘贴相关片段。"></textarea>
+      <p class="small-note">AI 可自动调整本机技能的回答长度、组织和术语解释，保留版本供回退。代码、计算规则或资料问题会生成待修复任务。</p>
+      <div class="skill-toolbar"><button type="submit" class="secondary-button" id="issue-save">保存反馈</button><button type="button" class="primary-button" id="issue-process">提交并由 AI 处理 ↗</button></div>
+    </form>
+    <details class="paper-card skill-versions"><summary>技能版本与回退</summary><label for="version-skill">选择技能</label><select id="version-skill"><option value="liuyao">六爻占问</option><option value="knowledge">知识库问答</option></select><div id="skill-version-list"></div></details>
+    <section class="paper-card"><div class="skill-toolbar"><h2>反馈与修复记录</h2><button type="button" class="text-button" id="issues-refresh">刷新</button></div><div id="skill-issue-list"></div></section>
+  </section>
   <main class="workspace">
     <aside class="history-panel" aria-label="系列档案">
       <div class="section-heading"><h2>系列档案</h2><button class="icon-button" id="refresh-history" title="刷新档案" aria-label="刷新档案" type="button">↻</button></div>

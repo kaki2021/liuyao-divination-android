@@ -204,7 +204,10 @@
         native.exportFile(a.href, a.download || "六爻记录.json");
       }
     }, true);
-    new MutationObserver(() => native.analysisState($("analysis-progress").dataset.running === "true")).observe($("analysis-progress"), { attributes: true, attributeFilter: ["data-running"] });
+    new MutationObserver(() => {
+      var _a2;
+      return native.analysisState($("analysis-progress").dataset.running === "true" || Boolean((_a2 = window.SkillWorkbench) == null ? void 0 : _a2.isBusy()));
+    }).observe($("analysis-progress"), { attributes: true, attributeFilter: ["data-running"] });
     window.addEventListener("pagehide", () => {
       var _a2;
       return (_a2 = window.LiuyaoApp) == null ? void 0 : _a2.persistDraft();

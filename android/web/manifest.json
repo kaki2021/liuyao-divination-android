@@ -7,8 +7,8 @@
       "output": "faedee383fa6bc19f40fe16cc4b2772081c56595a97546e8b9ae9645d575c13c"
     },
     "app.js": {
-      "source": "4494b590011d5dfd224478f1fbddf00afcab969bee8898093f02dbb7543f44df",
-      "output": "677fc7018a97ae5d23848d20547458761c7506106e59134cb36461b51a1869d8"
+      "source": "72961b310d8e9820b4d8ea4617161f74dab769258bb8678ff54a7e5d9110c763",
+      "output": "d36a8363ad7d62ce8f75bdd6cd24336f7ec11c44939c61c717db9992d95a9532"
     },
     "buzhai.js": {
       "source": "4cfc99fa96a4ea23e377d7ea3c28fa3a0452eec3764028a015962f6124374bc0",
@@ -31,8 +31,8 @@
       "output": "de0cd54f7eafc947e8923e4661b53fdb818027953b2ffc58784ccab5659ad89a"
     },
     "mobile.js": {
-      "source": "0579825123d5ac419533fd49526d45cc119f93b1c60c4d7870653363d2bebcb3",
-      "output": "48a2c257a58d150627bc43b7415bbed6e22ac662d4292ebec436ff319d92760c"
+      "source": "72ac9a0654a49b6312727b2cc76472378d08cbb7be6ea07129f8c1e589b1689c",
+      "output": "13c4a53e33f18afd654f7622191741b5c2d9b41aff66fbf49e22c62e6dc75f28"
     },
     "phone-chart.js": {
       "source": "8a81c78a10ead8bbfe77f50942e9d4231a6b39df9b43a614c3148bad9546fa83",
@@ -57,6 +57,10 @@
     "v5-features.js": {
       "source": "6cf142420e70512826f94560ac117ecbd0b94d76d0443013674cb0c6b77a67ae",
       "output": "b89de70ef0ade4334d07429254dd1af880fe75a658cd8e00dd3f300f1026afe7"
+    },
+    "workbench.js": {
+      "source": "c465fcb6ac0ee01ec4a57831c9bcb2a2fa3b6f3ad3cc6ede79a7cf5ed4bfa534",
+      "output": "50fe10a4b1b0e811154f7ae2b5f17ce338d7f896fa6b712bb91a048eed14b3f2"
     }
   }
 }

@@ -408,7 +408,7 @@ def _semantic_guards(stage, output, server_input):
 
 
 def _stage_call(store, actor, case_id, run_id, stage, server_input, pack,
-                provider, model, provider_call, progress, audit_warnings=None, series_context=None):
+                provider, model, provider_call, progress, audit_warnings=None, series_context=None, skill_snapshot=None):
     audit_warnings = audit_warnings if audit_warnings is not None else []
     input_schema=deepcopy(pack['stages'][stage]['input_schema'])
     if stage=='report': input_schema['properties']['analysis_chart']={'type':'object'}
@@ -419,6 +419,9 @@ def _stage_call(store, actor, case_id, run_id, stage, server_input, pack,
     if len(reference) > 65536:
         raise StageFailure('CONTEXT_TOO_LONG', '本系列背景过长，全部记录已保留，请缩小本次分析范围。', stage)
     prompt += reference
+    if stage == 'report' and skill_snapshot:
+        from .skill_registry import preference_prompt
+        prompt += preference_prompt(skill_snapshot)
     repair_context = None
     last_error = "invalid model JSON"
     deadline = time.monotonic() + REPORT_TIMEOUT_SECONDS if stage == 'report' else None
@@ -594,7 +597,7 @@ def result_from_outcome(run):
 
 
 def run_analysis(db_path, actor: Actor, case_id, provider, model, expected_revision_seq,
-                 progress: Callable | None = None, *, provider_call=None):
+                 progress: Callable | None = None, *, provider_call=None, skill_snapshot=None):
     """Retain one analysis on a frozen revision; always finish a started run.
 
     Actor is trusted service identity. Providers and secrets are never obtained
@@ -636,6 +639,8 @@ def run_analysis(db_path, actor: Actor, case_id, provider, model, expected_revis
                   audit_report={'warnings':[],'fatal_errors':[],'rules_version':rulebook.version,'model_version':'条件判断 1'})
     from .calculation_logic import logic_guide
     result['logic_snapshot'] = logic_guide(rulebook.version)
+    if skill_snapshot:
+        result['skill_snapshot'] = deepcopy(skill_snapshot)
     projections = []
     def emit(event):
         if progress is not None:
@@ -697,7 +702,7 @@ def run_analysis(db_path, actor: Actor, case_id, provider, model, expected_revis
                            "catalog_status": rule_table[r["rule_id"]]["status"],
                            "implementation_status": rule_table[r["rule_id"]]["implementation_status"]} for r in projected_rules]})
             output = _stage_call(store, actor, case_id, result["analysis_run_id"], stage, server_input,
-                                 pack, provider, model, provider_call, emit, result["audit_report"]["warnings"], snapshot.get('series_context'))
+                                 pack, provider, model, provider_call, emit, result["audit_report"]["warnings"], snapshot.get('series_context'), skill_snapshot)
             result["stage_outputs"][stage] = output
             return output
         def unresolved(output):

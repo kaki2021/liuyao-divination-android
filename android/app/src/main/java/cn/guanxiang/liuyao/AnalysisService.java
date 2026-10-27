@@ -27,7 +27,7 @@ public final class AnalysisService extends Service {
         manager.createNotificationChannel(new NotificationChannel("analysis", "AI 分析进度", NotificationManager.IMPORTANCE_LOW));
         PendingIntent open = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification = new Notification.Builder(this, "analysis").setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle("六爻占问 · 正在分析").setContentText("正在整理判断依据，点此查看进度").setOngoing(true).setContentIntent(open).build();
+            .setContentTitle("六爻占问 · 正在处理任务").setContentText("点此查看问答或分析进度").setOngoing(true).setContentIntent(open).build();
         startForeground(101, notification);
         wakeLock = getSystemService(PowerManager.class).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "liuyao:analysis");
         wakeLock.acquire(100L * 60 * 1000); // bounded by the four-stage request budgets

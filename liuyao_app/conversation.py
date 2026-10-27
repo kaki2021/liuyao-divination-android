@@ -89,7 +89,7 @@ def finish_turn(store, actor, case_id, turn_id, status, result):
     return store._write(actor,'conversation_finish',turn_id,{'status':status,'result':result},action)
 
 
-def reply(store, actor, case_id, turn_id, provider, model, *, provider_call=None):
+def reply(store, actor, case_id, turn_id, provider, model, *, provider_call=None, skill_snapshot=None):
     store._owned(actor,case_id)
     row=store.db.execute('SELECT * FROM conversation_turns WHERE turn_id=? AND case_id=?',(turn_id,case_id)).fetchone()
     if row is None:raise ValueError('追问记录不存在。')
@@ -99,7 +99,8 @@ def reply(store, actor, case_id, turn_id, provider, model, *, provider_call=None
             answer={'answer':'这是离线对话演示，已保留原卦盘和对话。请配置模型后继续交流。','requires_reanalysis':False}
             metadata={'provider':'demo','model':model,'demo':True}
         else:
-            response=(provider_call or generate_json)(provider,model,SYSTEM_PROMPT,frozen['context'],
+            from .skill_registry import preference_prompt
+            response=(provider_call or generate_json)(provider,model,SYSTEM_PROMPT+preference_prompt(skill_snapshot),frozen['context'],
                 timeout=180,conversation_history=frozen['history'])
             answer=response['parsed_json']
             if (not isinstance(answer,dict) or set(answer) != {'answer','requires_reanalysis'}
@@ -108,6 +109,7 @@ def reply(store, actor, case_id, turn_id, provider, model, *, provider_call=None
                 raise ProviderError('invalid_conversation','追问回复格式无效，已保留提问，请重试。')
             metadata={k:response.get(k) for k in ('provider','model','usage','elapsed_ms','finish_reason','demo')}
         result={**answer,'model_metadata':metadata,'context_digest':content_digest(frozen)}
+        if skill_snapshot:result['skill_snapshot']=skill_snapshot
         finish_turn(store,actor,case_id,turn_id,'completed',result)
         return {'status':'completed','turn_id':turn_id,'conversation':result}
     except ProviderError as exc:

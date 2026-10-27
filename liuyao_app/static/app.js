@@ -1095,7 +1095,7 @@
     if(!window.LiuyaoAndroid)return;
     const fields={};document.querySelectorAll('#case-form input,#case-form textarea,#case-form select,#context-text,#feedback-form input,#feedback-form textarea,#feedback-form select').forEach((el,index)=>{if(el.type==='file')return;fields[el.id||el.name+'::'+el.value]={value:el.value,checked:el.checked};});
     let solarInput=null;try{solarInput=window.LiuyaoSolarTime.read(false);}catch(_){}
-    window.LiuyaoAndroid.saveDraft(JSON.stringify({caseId:state.caseId,branchParent:state.branchParent,pendingCreate:state.pendingCreate,pendingConversation:state.pendingConversation,solarInput,fields,view:state.view}));
+    window.LiuyaoAndroid.saveDraft(JSON.stringify({caseId:state.caseId,branchParent:state.branchParent,pendingCreate:state.pendingCreate,pendingConversation:state.pendingConversation,solarInput,fields,view:state.view,workbench:window.SkillWorkbench?.draft()}));
   }
   let draftTimer;
   document.addEventListener('input',()=>{if(window.LiuyaoAndroid){clearTimeout(draftTimer);draftTimer=setTimeout(persistDraft,300);}});
@@ -1119,6 +1119,7 @@
       if(draft.solarInput)window.LiuyaoSolarTime.fill(draft.caseId?draft.solarInput:{...draft.solarInput,time_basis:'true_solar'});
       updateCastingMode();updatePersonFields();$('buzhai-enabled').dispatchEvent(new Event('change',{bubbles:true}));onInputChange();
       showView(draft.view);if(!draft.caseId&&$('question').value)banner('已恢复上次尚未保存的输入。');
+      if(draft.workbench)await window.SkillWorkbench?.restoreDraft(draft.workbench);
     }catch(_){banner('上次输入未能完整恢复，已保存的案例可在档案中查看。','warning');}
   });
 })();
