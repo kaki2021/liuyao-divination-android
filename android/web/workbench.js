@@ -62,8 +62,8 @@ var __spreadValues = (a, b) => {
     return { provider: $("provider-select").value, model: $("model-select").value };
   }
   function nativeBusy() {
-    var _a2, _b;
-    (_b = window.LiuyaoAndroid) == null ? void 0 : _b.analysisState(Boolean(state.jobs.size || ((_a2 = window.LiuyaoApp) == null ? void 0 : _a2.isAnalyzing())));
+    var _a2, _b, _c;
+    (_c = window.LiuyaoAndroid) == null ? void 0 : _c.analysisState(Boolean(state.jobs.size || ((_a2 = window.LiuyaoApp) == null ? void 0 : _a2.isAnalyzing()) || ((_b = window.DialogueUI) == null ? void 0 : _b.isBusy())));
   }
   function persist() {
     var _a2;
@@ -466,6 +466,7 @@ var __spreadValues = (a, b) => {
   $("kb-model-note").textContent = "使用模型设置中的选择";
   Promise.all([loadDocuments(), loadChats(), refreshIssues(), api("active")]).then((values) => {
     for (const job of values[3].jobs) {
+      if (job.kind === "assistant") continue;
       watch(job.job_id, job.kind, job.chat_id);
     }
   }).catch((error) => status("kb-status", error.message, true));

@@ -7,8 +7,8 @@
       "output": "faedee383fa6bc19f40fe16cc4b2772081c56595a97546e8b9ae9645d575c13c"
     },
     "app.js": {
-      "source": "72961b310d8e9820b4d8ea4617161f74dab769258bb8678ff54a7e5d9110c763",
-      "output": "d36a8363ad7d62ce8f75bdd6cd24336f7ec11c44939c61c717db9992d95a9532"
+      "source": "0fdeee6c889505d0f1263c252adf9a20c4ba8210fb5dcf90a7c197b192d2ac16",
+      "output": "8ed501ba4c7c76dd33c92e999bc0eeb2eee8308d2475cfb585894b8e32650939"
     },
     "buzhai.js": {
       "source": "4cfc99fa96a4ea23e377d7ea3c28fa3a0452eec3764028a015962f6124374bc0",
@@ -26,13 +26,17 @@
       "source": "d45483c894fcbec297b621277970bda11a3f82a496a920c3ba461c447edb1227",
       "output": "95010c86be55f9c1e337d8a561c7f09d4e3daba102144badda904c75f5a0078a"
     },
+    "dialogue.js": {
+      "source": "ffb25b400a7d1773bace3e5ab41c07e1c221c812645317c8eb84e26b4b1be787",
+      "output": "291dc5d33920239e61df31a71ea03a8d868320a86ff6b49195a66e800416734c"
+    },
     "guidance.js": {
       "source": "5cc700e2d5d132d491fbb4e1ea39513772ba87b216e5293cf2ed2983651bb6a3",
       "output": "de0cd54f7eafc947e8923e4661b53fdb818027953b2ffc58784ccab5659ad89a"
     },
     "mobile.js": {
-      "source": "72ac9a0654a49b6312727b2cc76472378d08cbb7be6ea07129f8c1e589b1689c",
-      "output": "13c4a53e33f18afd654f7622191741b5c2d9b41aff66fbf49e22c62e6dc75f28"
+      "source": "c47f04d30436fbb1623bc1a5158954121aec1fa794fabe1530f13e622e976a12",
+      "output": "8e7e87e259d49fe39432c1f9715c38f32a0013f54e2357d3c00fde542ba88459"
     },
     "phone-chart.js": {
       "source": "8a81c78a10ead8bbfe77f50942e9d4231a6b39df9b43a614c3148bad9546fa83",
@@ -55,12 +59,12 @@
       "output": "d223baf39dcf59e6d115706e8cdc46db2981f8270e11e54fb32e3310253c1502"
     },
     "v5-features.js": {
-      "source": "6cf142420e70512826f94560ac117ecbd0b94d76d0443013674cb0c6b77a67ae",
-      "output": "b89de70ef0ade4334d07429254dd1af880fe75a658cd8e00dd3f300f1026afe7"
+      "source": "8c5177622d12d36b458383b9fbd874fa5448a14bd0fce9682381376c7cd80557",
+      "output": "ac70ea772ca13bb1bc867f15dde139e6ea5fa9f6f788bd77a949af0fb8f88c19"
     },
     "workbench.js": {
-      "source": "c465fcb6ac0ee01ec4a57831c9bcb2a2fa3b6f3ad3cc6ede79a7cf5ed4bfa534",
-      "output": "50fe10a4b1b0e811154f7ae2b5f17ce338d7f896fa6b712bb91a048eed14b3f2"
+      "source": "10198c147d023823d8a4a41d20eeafd7f6d10a344f108f0228cda185cd0f81b9",
+      "output": "5a56043c97234ef2fdb4b60120f1b2aa1a61b1e2b87eae8cf38f148fa3b67cbc"
     }
   }
 }

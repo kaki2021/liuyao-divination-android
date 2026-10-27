@@ -66,6 +66,13 @@ class WorkbenchStore:
                     PRIMARY KEY(owner,idem));
                 CREATE INDEX IF NOT EXISTS wb_turn_chat ON wb_turns(chat_id,created_at);
                 CREATE INDEX IF NOT EXISTS wb_job_owner ON wb_jobs(owner,status);
+                CREATE TABLE IF NOT EXISTS wb_dialogues (
+                    dialogue_id TEXT PRIMARY KEY, owner TEXT NOT NULL, title TEXT NOT NULL,
+                    context_json TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS wb_dialogue_turns (
+                    turn_id TEXT PRIMARY KEY, dialogue_id TEXT NOT NULL, user_text TEXT NOT NULL,
+                    mode TEXT NOT NULL, status TEXT NOT NULL, result_json TEXT, created_at TEXT NOT NULL);
+                CREATE INDEX IF NOT EXISTS wb_dialogue_turn ON wb_dialogue_turns(dialogue_id);
             ''')
 
     @contextmanager
@@ -85,7 +92,7 @@ class WorkbenchStore:
 
     def owned(self, db, table, key, value, owner):
         if (table, key) not in (('wb_chats', 'chat_id'), ('wb_documents', 'document_id'),
-                               ('wb_issues', 'issue_id'), ('wb_jobs', 'job_id')):
+                               ('wb_issues', 'issue_id'), ('wb_jobs', 'job_id'), ('wb_dialogues', 'dialogue_id')):
             raise ValueError('invalid table')
         row = db.execute(f'SELECT * FROM {table} WHERE {key}=? AND owner=?', (value, owner)).fetchone()
         if row is None:
@@ -276,14 +283,33 @@ class WorkbenchStore:
         with self.db() as db:
             rows = db.execute('SELECT job_id,kind,status,payload FROM wb_jobs WHERE owner=? AND status IN (\'queued\',\'running\')', (owner,)).fetchall()
         return [{'job_id': r['job_id'], 'kind': r['kind'], 'status': r['status'],
-                 'chat_id': json.loads(r['payload']).get('chat_id')} for r in rows]
+                 'chat_id': json.loads(r['payload']).get('chat_id'),
+                 'dialogue_id': json.loads(r['payload']).get('dialogue_id')} for r in rows]
 
     def recover(self):
         error = dumps({'error': {'code': 'INTERRUPTED', 'message': '上次任务被中断，输入已保留；不会自动重复调用模型。'}})
         with self.db(True) as db:
             for row in db.execute('SELECT * FROM wb_jobs WHERE status IN (\'queued\',\'running\')').fetchall():
                 payload = json.loads(row['payload'])
-                if row['kind'] == 'knowledge':
+                if row['kind'] == 'assistant':
+                    turn=db.execute('SELECT result_json FROM wb_dialogue_turns WHERE turn_id=?',(payload['turn_id'],)).fetchone()
+                    marker=json.loads(turn[0]) if turn and turn[0] else {}
+                    if marker.get('_case_turn_id'):
+                        cases_path=self.path.with_name('cases.sqlite3')
+                        cases=sqlite3.connect(cases_path,timeout=15)
+                        try:
+                            outcome=cases.execute('''SELECT o.status,o.result_json FROM conversation_outcomes o
+                                JOIN conversation_turns t USING(turn_id) JOIN cases c USING(case_id)
+                                WHERE t.turn_id=? AND t.case_id=? AND c.owner_id=?''',
+                                (marker['_case_turn_id'],marker['case_id'],row['owner'])).fetchone()
+                        finally:cases.close()
+                        if outcome and outcome[0]=='completed':
+                            result=dumps({'action':'followup','case_id':marker['case_id'],**json.loads(outcome[1])})
+                            db.execute('UPDATE wb_dialogue_turns SET status=\'completed\',result_json=? WHERE turn_id=?',(result,payload['turn_id']))
+                            db.execute('UPDATE wb_jobs SET status=\'completed\',result=?,updated_at=? WHERE job_id=?',(result,now(),row['job_id']))
+                            continue
+                    db.execute('UPDATE wb_dialogue_turns SET status=\'failed\',result_json=? WHERE turn_id=?', (error, payload['turn_id']))
+                elif row['kind'] == 'knowledge':
                     db.execute('UPDATE wb_turns SET status=\'failed\',result=? WHERE turn_id=?', (error, payload['turn_id']))
                 else:
                     db.execute('UPDATE wb_issues SET status=\'failed\',result=? WHERE issue_id=?', (error, payload['issue_id']))

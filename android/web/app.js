@@ -129,6 +129,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     $("analyze-current-case").textContent = value && state.analyzing ? "分析进行中…" : "重新解卦";
     $("context-analyze").textContent = value && state.analyzing ? "正在回复…" : "发送追问";
     if (runSelect) runSelect.disabled = value;
+    document.dispatchEvent(new Event("liuyao:busy"));
   }
   function showView(view, { scroll = false } = {}) {
     var _a2;
@@ -439,10 +440,10 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     $("revision-reason").value = "";
     updateCastingMode();
   }
-  function resetCase({ transferContext = false } = {}) {
+  function resetCase({ transferContext = false, preserveDraft = false } = {}) {
     var _a2;
     if (state.busy) return false;
-    if (!mayDiscard({ transferContext })) return false;
+    if (!preserveDraft && !mayDiscard({ transferContext })) return false;
     window.AnalysisStatus.clear();
     currentJob = null;
     state.loadToken++;
@@ -658,6 +659,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       if (payload.active_job_kind === "conversation") resumeConversation(payload.active_job_id, caseId);
       else resumeJob(payload.active_job_id, caseId);
     }
+    document.dispatchEvent(new Event("liuyao:case-loaded"));
   }
   function appendMiniChart(container, structure, label) {
     const block = node("div", "chart-hex");
@@ -1053,6 +1055,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     const result = (stored == null ? void 0 : stored.report) && (stored.report.display_report || stored.report.stage_outputs || stored.report.is_demo !== void 0) ? stored.report : stored;
     renderAnalysis(result, run.status || ((_b = run.outcome) == null ? void 0 : _b.status) || "running", run.analysis_run_id, notice);
     renderConversation();
+    document.dispatchEvent(new Event("liuyao:case-loaded"));
   }
   function renderRunSelector() {
     const area = $("run-history");
@@ -1642,7 +1645,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     }
   });
   function persistDraft() {
-    var _a2;
+    var _a2, _b;
     if (!window.LiuyaoAndroid) return;
     const fields = {};
     document.querySelectorAll("#case-form input,#case-form textarea,#case-form select,#context-text,#feedback-form input,#feedback-form textarea,#feedback-form select").forEach((el, index) => {
@@ -1654,7 +1657,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       solarInput = window.LiuyaoSolarTime.read(false);
     } catch (_) {
     }
-    window.LiuyaoAndroid.saveDraft(JSON.stringify({ caseId: state.caseId, branchParent: state.branchParent, pendingCreate: state.pendingCreate, pendingConversation: state.pendingConversation, solarInput, fields, view: state.view, workbench: (_a2 = window.SkillWorkbench) == null ? void 0 : _a2.draft() }));
+    window.LiuyaoAndroid.saveDraft(JSON.stringify({ caseId: state.caseId, branchParent: state.branchParent, pendingCreate: state.pendingCreate, pendingConversation: state.pendingConversation, solarInput, fields, view: state.view, workbench: (_a2 = window.SkillWorkbench) == null ? void 0 : _a2.draft(), dialogue: (_b = window.DialogueUI) == null ? void 0 : _b.draft() }));
   }
   let draftTimer;
   document.addEventListener("input", () => {
@@ -1669,9 +1672,72 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       draftTimer = setTimeout(persistDraft, 300);
     }
   });
-  window.LiuyaoApp = { reloadConfig: loadConfig, persistDraft, canLeave: mayDiscard, isAnalyzing: () => state.analyzing };
-  Promise.allSettled([loadConfig(), refreshHistory()]).then(async (results) => {
-    var _a2;
+  function captureCard() {
+    const fields = {};
+    document.querySelectorAll("#case-form input,#case-form textarea,#case-form select").forEach((el) => {
+      if (el.type !== "file") fields[el.id || el.name + "::" + el.value] = { value: el.value, checked: Boolean(el.checked) };
+    });
+    let solar_input = null;
+    try {
+      solar_input = window.LiuyaoSolarTime.read(false);
+    } catch (_) {
+    }
+    return { fields, solar_input };
+  }
+  function restoreCard(draft) {
+    document.querySelectorAll("#case-form input,#case-form textarea,#case-form select").forEach((el) => {
+      var _a2;
+      const f = (_a2 = draft.fields) == null ? void 0 : _a2[el.id || el.name + "::" + el.value];
+      if (f) {
+        el.value = f.value;
+        el.checked = f.checked;
+      }
+    });
+    if (draft.solar_input) window.LiuyaoSolarTime.fill(draft.solar_input);
+    $("profile-select").dispatchEvent(new Event("change", { bubbles: true }));
+    window.Buzhai.fill(window.Buzhai.read(false));
+    updateCastingMode();
+    updatePersonFields();
+    onInputChange();
+  }
+  async function prepareDialogue(prefill, profileId, draft) {
+    var _a2, _b;
+    if (state.busy) throw new Error("当前卦例仍在分析，请完成后再打开另一起卦卡片。");
+    resetCase({ preserveDraft: true });
+    const person = __spreadValues(__spreadValues({}, prefill.person), profileId ? { profile_id: profileId } : {});
+    fillInput(__spreadValues(__spreadValues({
+      question: prefill.question,
+      time_basis: "true_solar",
+      casting: { method: "meibu", results: [] }
+    }, Object.keys(person).length ? { person_info: person } : {}), prefill.buzhai ? { buzhai: prefill.buzhai } : {}));
+    if ((_a2 = window.LiuyaoV5) == null ? void 0 : _a2.loadProfiles) await window.LiuyaoV5.loadProfiles().catch(() => {
+    });
+    if (profileId) window.LiuyaoV5.setProfile(profileId);
+    else (_b = window.LiuyaoV5) == null ? void 0 : _b.selectSelf();
+    if (draft) {
+      restoreCard(draft);
+    } else if (prefill.time_policy === "current") $("cast-now").click();
+    else {
+      $("time-details").open = true;
+      $("cast-time").value = "";
+    }
+    onInputChange();
+    showView("input");
+  }
+  window.LiuyaoApp = {
+    reloadConfig: loadConfig,
+    persistDraft,
+    canLeave: mayDiscard,
+    isAnalyzing: () => state.analyzing,
+    loadCase,
+    prepareDialogue,
+    captureCard,
+    restoreCard,
+    showView,
+    context: () => ({ caseId: state.caseId, revision: state.revision, runId: state.runId, busy: state.busy, input: state.input, view: state.view })
+  };
+  const initialization = Promise.allSettled([loadConfig(), refreshHistory()]).then(async (results) => {
+    var _a2, _b;
     results.forEach((result) => {
       if (result.status === "rejected") banner(getError(result.reason), "error");
     });
@@ -1707,8 +1773,10 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       showView(draft.view);
       if (!draft.caseId && $("question").value) banner("已恢复上次尚未保存的输入。");
       if (draft.workbench) await ((_a2 = window.SkillWorkbench) == null ? void 0 : _a2.restoreDraft(draft.workbench));
+      if (draft.dialogue) (_b = window.DialogueUI) == null ? void 0 : _b.restoreDraft(draft.dialogue);
     } catch (_) {
       banner("上次输入未能完整恢复，已保存的案例可在档案中查看。", "warning");
     }
   });
+  window.LiuyaoApp.ready = initialization;
 })();

@@ -28,7 +28,7 @@ async function launchServer(){
     }
   }
   const log=new VirtualConsole();log.on('jsdomError',error=>{if(error.type!=='css parsing')errors.push(error.message);});
-  dom=await JSDOM.fromURL(config.url,{resources:new Assets(),runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:log,beforeParse(w){
+  dom=await JSDOM.fromURL(config.url+'?legacy=1',{resources:new Assets(),runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:log,beforeParse(w){
     w.matchMedia=()=>({matches:false,addListener(){},removeListener(){},addEventListener(){},removeEventListener(){}});
     w.HTMLElement.prototype.scrollIntoView=function(){};w.confirm=()=>true;
     w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};

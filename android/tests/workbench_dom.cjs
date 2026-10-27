@@ -16,7 +16,7 @@ async function launch(){
  const config=await launch();
  class Assets extends ResourceLoader{fetch(url,options){const name=path.basename(new URL(url).pathname),compiled=path.join(root,'android/web',name);if(url.includes('/static/')&&name.endsWith('.js')&&fs.existsSync(compiled))return Promise.resolve(fs.readFileSync(compiled));return super.fetch(url,options);}}
  const log=new VirtualConsole();log.on('jsdomError',error=>{if(error.type!=='css parsing')errors.push(error.message);});
- dom=await JSDOM.fromURL(config.url,{resources:new Assets(),runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:log,beforeParse(w){
+ dom=await JSDOM.fromURL(config.url+'?legacy=1',{resources:new Assets(),runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:log,beforeParse(w){
   w.matchMedia=()=>({matches:false,addListener(){},removeListener(){},addEventListener(){},removeEventListener(){}});w.scrollTo=()=>{};
   w.HTMLElement.prototype.scrollIntoView=function(){};w.confirm=()=>true;w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
  }});
@@ -57,7 +57,7 @@ async function launch(){
  await pause(100);check('脚本无异常',errors.length===0);
  dom.window.close();let savedDraft=null;
  const nativeDraft={fields:{},workbench:{page:'knowledge',chatId:chat,question:'尚未发送的追问',issueSkill:'knowledge',issueTitle:'未提交标题',issueDescription:'未提交描述'}};
- dom=await JSDOM.fromURL(config.url,{resources:new Assets(),runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:log,beforeParse(w){
+ dom=await JSDOM.fromURL(config.url+'?legacy=1',{resources:new Assets(),runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:log,beforeParse(w){
   w.matchMedia=()=>({matches:false,addListener(){},removeListener(){},addEventListener(){},removeEventListener(){}});w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=function(){};
   w.confirm=()=>true;w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
   w.LiuyaoAndroid={readDraft(){return JSON.stringify(nativeDraft);},saveDraft(value){savedDraft=JSON.parse(value);},analysisState(){},configureModel(){},exportFile(){}};

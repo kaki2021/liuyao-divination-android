@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/static/mobile.css">
   <link rel="stylesheet" href="/static/rules.css">
   <link rel="stylesheet" href="/static/workbench.css">
+  <link rel="stylesheet" href="/static/dialogue.css">
   <script src="/static/compat.js" defer></script>
   <script src="/static/chart-display.js" defer></script>
   <script src="/static/rules-ui.js" defer></script>
@@ -24,12 +25,33 @@
   <script src="/static/app.js" defer></script>
   <script src="/static/mobile.js" defer></script>
   <script src="/static/workbench.js" defer></script>
+  <script src="/static/dialogue.js" defer></script>
 </head>
-<body>
+<body class="chat-first">
   <header class="site-header">
     <a class="brand" href="/" aria-label="六爻占问首页"><span class="brand-mark" aria-hidden="true">䷀</span><span>六爻占问<small>真念取用 · 观象察变</small></span></a>
     <div class="header-meta"><span class="online-dot" aria-hidden="true"></span>本地工作台<button class="text-button" id="settings-open" type="button">模型设置 <span aria-hidden="true">↗</span></button></div>
   </header>
+  <div class="dialogue-toolbar" aria-label="公共操作">
+    <button id="dialogue-new" type="button" class="text-button">＋ 新对话</button>
+    <div><button id="dialogue-history-open" type="button" class="text-button">历史</button><button id="dialogue-documents-open" type="button" class="text-button">资料</button><button id="dialogue-people-open" type="button" class="text-button">人物档案</button><button id="dialogue-more-open" type="button" class="text-button" aria-label="更多操作">···</button></div>
+  </div>
+  <main id="dialogue-workspace" class="dialogue-layout">
+    <aside class="dialogue-sidebar"><p class="eyebrow">留存每一次交流</p><div id="dialogue-recent"></div><section id="dialogue-people-panel"><h2>人物档案</h2><p class="small-note">资料可反复选用。本次关联的人物可随时更改。</p><label for="dialogue-profile">本次关联</label><select id="dialogue-profile"><option value="">暂不关联人物</option></select><button id="dialogue-profile-manage" type="button" class="text-button">管理人物资料 ↗</button><p id="dialogue-profile-note" class="small-note"></p></section></aside>
+    <section class="dialogue-main" aria-label="统一对话">
+      <header class="dialogue-heading"><div><p class="eyebrow">从此刻想问的事开始</p><h1 id="dialogue-title">今天想聊什么？</h1></div><a id="dialogue-export" class="text-button" href="#" download="六爻占问对话.json" hidden>导出对话</a></header>
+      <div id="dialogue-status" class="dialogue-status" role="status"></div>
+      <div id="dialogue-feed" class="dialogue-feed" aria-live="polite"><section class="dialogue-welcome"><span class="dialogue-seal" aria-hidden="true">䷀</span><h2>说说你想做什么。</h2><p>可以起一卦，也可以围绕你的资料继续讨论。</p><div class="dialogue-suggestions"><button type="button" data-dialogue-prompt="我想起一卦，问问最近的工作。">起一卦问工作</button><button type="button" data-dialogue-prompt="我想卜宅，看看备选的房子是否适合自住。">卜宅与选房</button><button type="button" data-dialogue-prompt="根据知识库资料，解释一下五行。">和资料聊一聊</button></div></section></div>
+      <form id="dialogue-form" class="dialogue-composer"><label class="sr-only" for="dialogue-input">发送消息</label><textarea id="dialogue-input" rows="2" maxlength="4000" placeholder="说说你的问题，也可以补充刚才的情况…" required></textarea><div class="dialogue-compose-tools"><span id="dialogue-context-label">我会根据你的问题展开需要的操作。</span><div><label class="sr-only" for="dialogue-mode">本条消息的用途</label><select id="dialogue-mode"><option value="auto">自动识别</option><option value="liuyao">新起一卦</option><option value="knowledge">查知识库</option><option value="feedback">提反馈</option></select><button id="dialogue-send" type="submit" class="primary-button">发送 ↗</button></div></div></form>
+    </section>
+  </main>
+  <div id="dialogue-parking" hidden></div>
+  <dialog id="dialogue-history-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭历史">×</button></form><h2>历史对话</h2><div id="dialogue-history-list"></div><details><summary>以前保存的卦例</summary><div id="dialogue-legacy-cases"></div></details></dialog>
+  <dialog id="dialogue-documents-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭资料">×</button></form><h2>我的资料</h2><p class="small-note">导入后，回到同一个对话框直接提问。</p></dialog>
+  <dialog id="dialogue-people-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭人物栏">×</button></form></dialog>
+  <dialog id="dialogue-more-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭更多操作">×</button></form><h2>更多</h2><button id="dialogue-feedback-open" type="button" class="secondary-button full-width">反馈与技能版本</button><button id="dialogue-rules-open" type="button" class="secondary-button full-width">规则与使用原理</button><button id="dialogue-settings-open" type="button" class="secondary-button full-width">模型设置</button></dialog>
+  <dialog id="dialogue-feedback-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭反馈记录">×</button></form></dialog>
+  <dialog id="dialogue-rules-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="关闭规则">×</button></form></dialog>
   <nav class="skill-nav" aria-label="选择技能">
     <button type="button" data-skill-page="liuyao" aria-current="page">六爻占问</button>
     <button type="button" data-skill-page="knowledge">知识库问答</button>

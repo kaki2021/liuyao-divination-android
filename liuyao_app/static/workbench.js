@@ -17,7 +17,7 @@
     element.textContent = message;element.classList.toggle('is-error', error);
   }
   function model() {return {provider: $('provider-select').value, model: $('model-select').value};}
-  function nativeBusy() {window.LiuyaoAndroid?.analysisState(Boolean(state.jobs.size || window.LiuyaoApp?.isAnalyzing()));}
+  function nativeBusy() {window.LiuyaoAndroid?.analysisState(Boolean(state.jobs.size || window.LiuyaoApp?.isAnalyzing() || window.DialogueUI?.isBusy()));}
   function persist() {window.LiuyaoApp?.persistDraft();}
   async function api(path, data, idempotencyKey) {
     return new Promise((resolve, reject) => {
@@ -203,6 +203,7 @@
   page('liuyao', false);$('kb-model-note').textContent = '使用模型设置中的选择';
   Promise.all([loadDocuments(), loadChats(), refreshIssues(), api('active')]).then(values => {
     for (const job of values[3].jobs) {
+      if(job.kind==='assistant')continue;
       watch(job.job_id, job.kind, job.chat_id);
     }
   }).catch(error => status('kb-status', error.message, true));

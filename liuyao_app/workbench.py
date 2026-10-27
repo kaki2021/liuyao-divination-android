@@ -25,6 +25,8 @@ class Workbench:
         self.app = app
         self.store = WorkbenchStore(app.directory / 'workbench.sqlite3')
         self.lock = threading.RLock()
+        from .dialogue import DialogueService
+        self.dialogues = DialogueService(self)
         self.store.recover()
 
     def catalog(self, owner):
@@ -169,6 +171,12 @@ class Workbench:
                 db.execute('UPDATE wb_jobs SET status=\'running\',updated_at=? WHERE job_id=?', (now(), job_id))
                 if kind == 'knowledge':
                     db.execute('UPDATE wb_turns SET status=\'running\' WHERE turn_id=?', (payload['turn_id'],))
+            if kind == 'assistant':
+                result = self.dialogues.execute(owner, payload)
+                with self.lock, self.store.db(True) as db:
+                    self.dialogues.finish(db, owner, payload, 'completed', result)
+                    db.execute('UPDATE wb_jobs SET status=\'completed\',result=?,updated_at=? WHERE job_id=?', (dumps(result), now(), job_id))
+                return
             result = self._knowledge(payload) if kind == 'knowledge' else self._issue(payload)
             result['skill_version'] = payload['skill']['version']
             result['bundle_version'] = skill_info(payload['skill']['skill_id'])['bundle_version']
@@ -191,11 +199,13 @@ class Workbench:
                     db.execute('UPDATE wb_issues SET status=?,result=? WHERE issue_id=?', (status, dumps(result), payload['issue_id']))
                 db.execute('UPDATE wb_jobs SET status=\'completed\',result=?,updated_at=? WHERE job_id=?', (dumps(result), now(), job_id))
         except Exception as exc:
-            message = exc.message if isinstance(exc, ProviderError) else str(exc) if isinstance(exc, ValueError) else '本次任务未完成，输入已保留，请重试。'
+            message = exc.message if isinstance(exc, ProviderError) else str(exc) if isinstance(exc, (ValueError,Conflict)) else '本次任务未完成，输入已保留，请重试。'
             code = exc.code if isinstance(exc, ProviderError) else 'WORKBENCH_TASK_FAILED'
             result = {'error': {'code': code, 'message': message}}
             with self.store.db(True) as db:
-                if kind == 'knowledge':
+                if kind == 'assistant':
+                    self.dialogues.finish(db, owner, payload, 'failed', result)
+                elif kind == 'knowledge':
                     db.execute('UPDATE wb_turns SET status=\'failed\',result=? WHERE turn_id=?', (dumps(result), payload['turn_id']))
                 else:
                     db.execute('UPDATE wb_issues SET status=\'failed\',result=? WHERE issue_id=?', (dumps(result), payload['issue_id']))

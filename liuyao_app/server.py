@@ -603,7 +603,7 @@ class Handler(BaseHTTPRequestHandler):
         try:
             self.guard(mutation)
             path=urlsplit(self.path).path
-            if not mutation and path in ('/static/workbench.js','/static/workbench.css'):
+            if not mutation and path in ('/static/workbench.js','/static/workbench.css','/static/dialogue.js','/static/dialogue.css'):
                 raw=(Path(__file__).parent/'static'/path.rsplit('/',1)[-1]).read_bytes()
                 self._headers(200,(mimetypes.guess_type(path)[0] or 'application/octet-stream')+'; charset=utf-8',len(raw))
                 self.wfile.write(raw);return

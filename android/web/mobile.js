@@ -205,8 +205,8 @@
       }
     }, true);
     new MutationObserver(() => {
-      var _a2;
-      return native.analysisState($("analysis-progress").dataset.running === "true" || Boolean((_a2 = window.SkillWorkbench) == null ? void 0 : _a2.isBusy()));
+      var _a2, _b2;
+      return native.analysisState($("analysis-progress").dataset.running === "true" || Boolean((_a2 = window.SkillWorkbench) == null ? void 0 : _a2.isBusy()) || Boolean((_b2 = window.DialogueUI) == null ? void 0 : _b2.isBusy()));
     }).observe($("analysis-progress"), { attributes: true, attributeFilter: ["data-running"] });
     window.addEventListener("pagehide", () => {
       var _a2;

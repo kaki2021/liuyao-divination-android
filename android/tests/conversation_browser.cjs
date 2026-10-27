@@ -26,7 +26,7 @@ async function launchServer(){
     const file=path.join(root,'android/web',path.basename(new URL(route.request().url()).pathname));
     return fs.existsSync(file)?route.fulfill({contentType:'text/javascript',body:fs.readFileSync(file)}):route.continue();
   });
-  await page.goto(config.url);
+  await page.goto(config.url+'?legacy=1');
   await page.locator('.history-item').first().click();
   await page.waitForFunction(()=>document.querySelector('#question').value.includes('工作'));
   const original=await page.locator('#analysis-content').textContent();
