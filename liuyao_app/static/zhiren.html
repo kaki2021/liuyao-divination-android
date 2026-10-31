@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>知人 · 本地人物记忆</title>
+<link rel="stylesheet" href="/static/zhiren.css">
+<script src="/static/zhiren.js" defer></script>
+</head>
+<body>
+<header class="top"><a href="/" class="brand">← 观象</a><strong>知人 <small>人物记忆 Skill · 本地预览</small></strong><span class="local">数据仅存本机</span></header>
+<main class="frame">
+<section class="hero"><div><p class="eyebrow">记住人 · 理解关系 · 找到合作</p><h1>你认识的人，可以重新连接起来。</h1><p class="muted">人物档案与六爻案例分开保存。推荐来自本地规则，不会向联系人自动发送消息。</p></div></section>
+<nav class="tabs" aria-label="知人功能"><button data-tab="people" class="active">人脉</button><button data-tab="match">智能找人</button><button data-tab="publish">发布与邀请</button><button data-tab="cards">我的名片</button></nav>
+<div id="notice" role="status" aria-live="polite"></div>
+<section id="people" class="page">
+ <div class="heading"><h2>人脉档案</h2><span class="muted" id="people-count"></span></div>
+ <div class="toolbar"><input id="people-filter" placeholder="搜索称呼、行业、地点、兴趣"><select id="category-filter"><option value="">全部分类</option></select><button id="new-person">＋ 新增人物</button></div>
+ <div id="people-list" class="people-grid"></div>
+ <details id="person-editor" class="panel"><summary>编辑人物资料</summary>
+  <form id="person-form">
+   <input type="hidden" id="person-id"><input type="hidden" id="person-version">
+   <div class="fields">
+   <label>称呼 / 姓名 *<input name="name" required maxlength="120"></label>
+   <label>城市<input name="city" maxlength="120"></label>
+   <label>行业<input name="industry" maxlength="160"></label>
+   <label>职业<input name="occupation" maxlength="160"></label>
+   <label>分类（逗号分隔）<input name="categories" placeholder="朋友、客户、合作伙伴"></label>
+   <label>技能（逗号分隔）<input name="skills" placeholder="AI、开发、摄影"></label>
+   <label>兴趣（逗号分隔）<input name="interests" placeholder="徒步、旅行"></label>
+   <label>近期需求（逗号分隔）<input name="needs"></label>
+   <label>联系方式<input name="contact" maxlength="400"></label>
+   <label>人物关系<input name="relationship" maxlength="120"></label>
+   </div>
+   <label>私密备注<textarea name="notes" maxlength="3000" rows="3"></textarea></label>
+   <div class="actions"><button type="submit">保存到本地</button><button type="button" id="cancel-person" class="secondary">收起</button></div>
+  </form>
+ </details>
+</section>
+<section id="match" class="page" hidden>
+ <div class="heading"><h2>智能找人</h2></div>
+ <p class="muted">例如：“想在成都组织 AI 交流会”或“找喜欢露营的朋友”。</p>
+ <form id="match-form" class="search-bar"><input id="match-text" required maxlength="1000" placeholder="说出你的活动、分享或合作需求"><button>查找匹配人物</button></form>
+ <p class="muted">结果默认全选；取消勾选不会列入邀请草稿。</p>
+ <div id="match-list"></div>
+ <button id="use-match" class="secondary" disabled>用所选人创建邀请草稿</button>
+</section>
+<section id="publish" class="page" hidden>
+ <div class="heading"><h2>发布与邀请</h2></div>
+ <form id="post-form" class="panel">
+   <div class="chips"><label><input type="radio" name="kind" value="需求" checked>需求</label><label><input type="radio" name="kind" value="动态">动态</label><label><input type="radio" name="kind" value="倡议">倡议</label><label><input type="radio" name="kind" value="活动">活动</label></div>
+   <textarea id="post-text" required maxlength="4000" rows="4" placeholder="像发朋友圈一样直接说想做什么……"></textarea>
+   <button type="button" id="suggest-people" class="secondary">根据内容智能找人</button>
+   <div id="post-recipients"></div>
+   <div class="actions"><button type="submit">保存发布草稿</button></div>
+   <p class="muted">当前只保存本地草稿和拟通知名单，不会给其他人的终端发送通知。</p>
+ </form>
+ <h3>本地草稿</h3><div id="post-list"></div>
+</section>
+<section id="cards" class="page" hidden>
+ <div class="heading"><h2>我的名片</h2><span class="muted">自主选择展示字段</span></div>
+ <div class="panel"><div class="card-nav"><button id="prev-card" class="secondary" aria-label="上一张名片">←</button><div id="card-preview">尚未创建名片</div><button id="next-card" class="secondary" aria-label="下一张名片">→</button></div><p id="card-position" class="muted center"></p></div>
+ <form id="card-form" class="panel">
+  <label>名片名称<input name="name" required maxlength="80" placeholder="如 名片A"></label>
+  <label>指定关系 / 人物说明<input name="audience" maxlength="200" placeholder="例如 朋友、客户、指定某人"></label>
+  <fieldset><legend>展示哪些字段</legend><div id="card-fields" class="chips"></div></fieldset>
+  <button type="submit">创建一张名片</button>
+ </form>
+ <p class="muted">第一版仅保存名片模板，不含二维码交换、自动分享和远端通信。</p>
+</section>
+</main>
+</body>
+</html>

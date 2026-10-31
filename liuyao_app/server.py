@@ -535,14 +535,14 @@ class Handler(BaseHTTPRequestHandler):
         try:
             self.guard(mutation)
             path=urlsplit(self.path).path
-            if not mutation and path in ('/','/index.html','/app.js','/styles.css','/static/app.js','/static/styles.css','/chart-display.js','/static/chart-display.js','/v5-features.js','/static/v5-features.js','/static/report-views.js','/static/buzhai.js','/static/mobile.js','/static/mobile.css','/static/compat.js','/static/phone-chart.js','/static/analysis-status.js','/static/guidance.js','/static/rules-ui.js','/static/condition-rules.js','/static/rules.css','/static/series.js','/favicon.ico'):
+            if not mutation and path in ('/','/index.html','/zhiren','/static/zhiren.js','/static/zhiren.css','/app.js','/styles.css','/static/app.js','/static/styles.css','/chart-display.js','/static/chart-display.js','/v5-features.js','/static/v5-features.js','/static/report-views.js','/static/buzhai.js','/static/mobile.js','/static/mobile.css','/static/compat.js','/static/phone-chart.js','/static/analysis-status.js','/static/guidance.js','/static/rules-ui.js','/static/condition-rules.js','/static/rules.css','/static/series.js','/favicon.ico'):
                 if path=='/favicon.ico':
                     self._headers(204,'image/x-icon',0);return
-                name='index.html' if path in ('/','/index.html') else path.rsplit('/',1)[-1]
+                name='index.html' if path in ('/','/index.html') else 'zhiren.html' if path=='/zhiren' else path.rsplit('/',1)[-1]
                 target=Path(__file__).parent/'static'/name
                 raw=target.read_bytes()
                 extra={}
-                if name=='index.html':
+                if name in ('index.html','zhiren.html'):
                     token,_=self.server.app.session()
                     extra['Set-Cookie']=f'liuyao_session={token}; HttpOnly; SameSite=Strict; Path=/'
                 self._headers(200,(mimetypes.guess_type(name)[0] or 'application/octet-stream')+'; charset=utf-8',len(raw),extra)
@@ -554,6 +554,38 @@ class Handler(BaseHTTPRequestHandler):
             actor=self.actor()
             app=self.server.app
             parts=path.strip('/').split('/')
+            # 知人 Skill：复用同源本机会话，但持久化数据与六爻案例隔离。
+            if path=='/api/skills' and not mutation:
+                self.send_json({'skills':[
+                    {'id':'liuyao','title':'六爻占问','ready':True},
+                    {'id':'zhiren','title':'知人','ready':True,'delivery':False}]});return
+            if path.startswith('/api/zhiren/'):
+                from .zhiren_store import ZhirenStore, ZhirenError
+                from .zhiren_match import matches
+                z=ZhirenStore(app.directory / 'zhiren.sqlite3')
+                action=path[len('/api/zhiren/'):]
+                owner=actor.owner_id
+                try:
+                    if not mutation:
+                        if action=='people':self.send_json({'people':z.list_people(owner)});return
+                        if action=='posts':self.send_json({'posts':z.list_posts(owner)});return
+                        if action=='cards':self.send_json({'cards':z.list_cards(owner)});return
+                    else:
+                        body=self.body()
+                        idem=self.headers.get('X-Idempotency-Key')
+                        text_field(idem,160)
+                        if action=='people':
+                            self.send_json(z.save_person(owner,body,idem),201);return
+                        if action=='match':
+                            exact_fields(body,('text',),('text',))
+                            self.send_json(matches(body['text'],z.list_people(owner)));return
+                        if action=='posts':
+                            self.send_json(z.save_post(owner,body,idem),201);return
+                        if action=='cards':
+                            self.send_json(z.save_card(owner,body,idem),201);return
+                except ZhirenError as exc:
+                    raise ApiError(400,'ZHIREN_INVALID',str(exc))
+                raise ApiError(404,'NOT_FOUND','没有此知人操作。')
             if not mutation:
                 if path=='/api/config':self.send_json(app.config());return
                 if path=='/api/cases':self.send_json({'cases':app.list_cases(actor)});return
