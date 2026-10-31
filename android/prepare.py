@@ -15,7 +15,7 @@ def public_source(path):
     return True
 
 paths = []
-for name in ('liuyao_app', 'software_prep', 'knowledge_base'):
+for name in ('liuyao_app', 'software_prep', 'knowledge_base', 'skills'):
     for path in (ROOT / name).rglob('*'):
         if path.is_file() and public_source(path) and '__pycache__' not in path.parts and path.suffix != '.pyc' and not path.name.startswith('test_'):
             paths.append(path)
@@ -51,6 +51,7 @@ else:
     raise FileNotFoundError('Missing timezone data: restore the verified content.zip or provide ROOT/tzdata')
 
 assert 'tzdata/zoneinfo/Asia/Shanghai' in payload, 'Missing bundled timezone data'
+assert 'skills/zhiren/SKILL.md' in payload and 'skills/liuyao/SKILL.md' in payload, 'Missing bundled Skill definitions'
 assert not any(name == 'knowledge_base/compiled_rules.json' or
                name == 'knowledge_base/rules.xlsx' or
                name == 'knowledge_base/rules.xlsx.inspect.ndjson' or

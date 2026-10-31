@@ -31,3 +31,7 @@
 - HTML 使用相同来源的接口及会话 cookie；页面遵循现有 CSP，不引入 CDN。
 - 由于原六爻公开源码没有真实规则表，仍应使用原有私有加密规则包，不要将真实规则、口令、联系人或 API 密钥提交 Git。
 - 此阶段不修改六爻排盘、规则引擎、模型密钥和历史数据库。
+
+## 独立测试安装
+- GitHub Actions 使用 `-PzhirenPreview=true assembleDebug` 构建 `cn.guanxiang.liuyao.zhirenpreview`，应用名称为「知人·观象测试」，与正式的 `cn.guanxiang.liuyao` 分开安装。
+- `android/prepare.py` 会将两个 SKILL.md 作为 APP 资源打包，但当前没有完整的通用 Skill 动态加载运行时，仍为专门 API 实现。

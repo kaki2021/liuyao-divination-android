@@ -40,7 +40,7 @@ jobs:
         run: python android/prepare.py
       - name: Build Android debug package
         working-directory: android
-        run: bash ./gradlew --no-daemon assembleDebug
+        run: bash ./gradlew --no-daemon -PzhirenPreview=true assembleDebug
       - name: Record SHA256
         run: sha256sum android/app/build/outputs/apk/debug/app-debug.apk > app-debug.apk.sha256
       - name: Upload test APK
