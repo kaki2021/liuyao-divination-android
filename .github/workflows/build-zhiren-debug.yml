@@ -1,0 +1,53 @@
+name: Build debug APK (Zhiren + Liuyao)
+on:
+  push:
+    branches:
+      - 'feature/zhiren-skill-local-mvp-20261031'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android-debug:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: android/package-lock.json
+      - name: Run Zhiren offline tests
+        run: python -m unittest liuyao_app.test_zhiren
+      - name: Recompile browser scripts
+        working-directory: android
+        run: |
+          npm ci
+          npm run build:web
+      - name: Prepare Android embedded content
+        run: python android/prepare.py
+      - name: Build Android debug package
+        working-directory: android
+        run: bash ./gradlew --no-daemon assembleDebug
+      - name: Record SHA256
+        run: sha256sum android/app/build/outputs/apk/debug/app-debug.apk > app-debug.apk.sha256
+      - name: Upload test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhiren-liuyao-debug-apk
+          path: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+            app-debug.apk.sha256
+          if-no-files-found: error
