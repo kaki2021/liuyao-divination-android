@@ -13,7 +13,7 @@
 | `GongPlaceFormatter.java` / `TestGongPlaceFormatter.java` | 地理编码结果的区县格式化及样例测试 |
 | `test_people_assistant.py` | 人物助手服务测试 |
 
-请勿向此分支提交个人资料、模型密钥、签名材料或私有规则。请阅读 [设计与状态说明](../docs/gong/README.md)。
+请勿向此分支提交个人资料、模型密钥、签名材料或私有规则。请阅读 [项目总览与状态说明](../README.md)。
 
 ## 平台组合版代码快照
 

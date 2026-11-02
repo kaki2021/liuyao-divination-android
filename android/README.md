@@ -29,7 +29,7 @@ python android/prepare.py
 
 `build-web.mjs` 会生成兼容旧 WebView 的脚本并记录源码、输出摘要；`prepare.py` 会核对摘要，再生成确定性的 `app/src/main/assets/content.zip` 与 `content.sha256`。
 
-公开 payload 不含真实规则表或编译规则。APK 首次启动后需在“规则”页面导入单独取得的 `.lyrules` 加密规则包，详见根目录 README。
+公开 payload 不含真实规则表或编译规则。APK 首次启动后需在“规则”页面导入单独取得的 `.lyrules` 加密规则包，详见[早期六爻 Android README](../README-liuyao-legacy.md)的规则包说明。
 
 ## SDK 配置
 

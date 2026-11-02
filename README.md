@@ -18,7 +18,7 @@
 - 共同基础资料、界面风格与偏好未来可在用户授权下复用，避免重复填写；目前尚未完全统一。
 - 以本地数据为基础，用户决定是否连接模型、知识库与云端服务。涉及私人资料或对外操作时，清楚说明范围并保留用户确认。
 
-[了解完整产品思路](docs/gong/vision.md)
+[了解 Skill 平台设计](docs/gong/skills.md)
 
 ## 二、面向什么人、解决什么需求
 
@@ -95,7 +95,7 @@ Android 测试版使用原生壳、WebView 和本地 Python 服务；Windows 电
 
 ## 七、开发者从哪里开始
 
-1. 阅读 [整体设计和文档导航](docs/gong/README.md)，再分别阅读 [六爻](docs/gong/liuyao.md)、[知人](docs/gong/zhiren.md) 和 [Skill 设计](docs/gong/skills.md)。
+1. 阅读本页总览，再分别阅读 [六爻](docs/gong/liuyao.md)、[知人](docs/gong/zhiren.md) 和 [Skill 设计](docs/gong/skills.md)。
 2. 阅读 [开发者交接与代码地图](docs/gong/developer-guide.md)，了解公开基础工程与新版参考代码的区别。
 3. 浏览 [平台及人物相关代码快照](reference/README.md)；这些代码依赖组合工程，不能单独构建出完整应用。
 4. 早期公开六爻工程的构建、规则包格式、界面和测试说明保留在 [早期六爻 Android README](README-liuyao-legacy.md)。其中的版本和规则包行为不自动适用于最新组合测试包。

@@ -10,7 +10,7 @@
 
 | 目的 | 位置 | 说明 |
 | --- | --- | --- |
-| 平台目标 | [产品设计](./vision.md)、[Skill 设计](./skills.md) | 已实现与规划分开 |
+| 平台目标 | [产品总览](../../README.md)、[Skill 设计](./skills.md) | 已实现与规划分开 |
 | 六爻原始公开说明 | [公开 Skill 说明](../../skills/liuyao/SKILL.md)、[早期六爻 Android README](../../README-liuyao-legacy.md) | 面向较早公开版本，和新 APK 存在差异 |
 | 知人早期 Skill | [知人 Skill](../../skills/zhiren/SKILL.md)、[早期 MVP 文档](../ZHIREN_SKILL_MVP.md) | 不是最近人物编辑器全部功能 |
 | 最近平台代码快照 | [平台参考目录](../../reference/platform/) | 来自最近测试 APK，不能单独运行 |
