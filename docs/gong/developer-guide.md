@@ -11,7 +11,7 @@
 | 目的 | 位置 | 说明 |
 | --- | --- | --- |
 | 平台目标 | [产品设计](./vision.md)、[Skill 设计](./skills.md) | 已实现与规划分开 |
-| 六爻原始公开说明 | [公开 Skill 说明](../../skills/liuyao/SKILL.md)、[原仓库 README](../../README.md) | 面向较早公开版本，和新 APK 存在差异 |
+| 六爻原始公开说明 | [公开 Skill 说明](../../skills/liuyao/SKILL.md)、[早期六爻 Android README](../../README-liuyao-legacy.md) | 面向较早公开版本，和新 APK 存在差异 |
 | 知人早期 Skill | [知人 Skill](../../skills/zhiren/SKILL.md)、[早期 MVP 文档](../ZHIREN_SKILL_MVP.md) | 不是最近人物编辑器全部功能 |
 | 最近平台代码快照 | [平台参考目录](../../reference/platform/) | 来自最近测试 APK，不能单独运行 |
 | 人物和名片新功能 | [人物参考目录](../../reference/README.md) | 属于片段快照，依赖宿主 |
@@ -21,7 +21,7 @@
 
 ## 先做什么
 
-1. 阅读 [六爻设计](./liuyao.md) 和 [知人功能](./product.md)，确认实际需求。
+1. 阅读 [六爻设计](./liuyao.md) 和 [知人功能](./zhiren.md)，确认实际需求。
 2. 对照本地接口、模型路由、人员和案例存储，列出组合构建与公开树的差异。
 3. 与项目所有者确认完整源码、私有规则使用范围及签名 / 测试设备安排。
 4. 先建立可复现的构建、基础测试和迁移策略，再增加新 Skill、共享数据和云同步。
