@@ -1,0 +1,15 @@
+{
+  "id": "zhiren",
+  "name": "知人",
+  "description": "人物资料、名片和邀请对象匹配",
+  "bundle_version": "0.9.0",
+  "tools": [
+    "people",
+    "cards",
+    "match",
+    "posts",
+    "local_state"
+  ],
+  "entry": "zhiren",
+  "status": "local_persistent_ui"
+}

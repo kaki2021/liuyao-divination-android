@@ -1,0 +1,8 @@
+{
+  "id": "knowledge",
+  "name": "知识库问答",
+  "description": "连接已授权并完成索引的 Dify Cloud 知识库，检索原文、标注出处并连续讨论。",
+  "bundle_version": "1.4.1",
+  "tools": ["cloud_sources", "cloud_search", "source_citations", "knowledge_conversation"],
+  "entry": "knowledge"
+}

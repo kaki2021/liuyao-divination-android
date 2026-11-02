@@ -14,3 +14,7 @@
 | `test_people_assistant.py` | 人物助手服务测试 |
 
 请勿向此分支提交个人资料、模型密钥、签名材料或私有规则。请阅读 [设计与状态说明](../docs/gong/README.md)。
+
+## 平台组合版代码快照
+
+[platform/](./platform/) 中包含最近测试包的意图路由、会话处理、固定 Skill 登记、部分 JSON 运行入口及三个 Skill manifest，帮助理解六爻、知人和知识库如何接入平台。它们依赖组合应用中的其他模块和资源，不能单独运行；参见 [开发者交接](../docs/gong/developer-guide.md)。
